@@ -33,6 +33,7 @@
       github.copilot-chat
       streetsidesoftware.code-spell-checker
       pkief.material-icon-theme
+      tamasfe.even-better-toml
     ] ++ pkgs.vscode-utils.extensionsFromVscodeMarketplace [
       {
         publisher = "fill-labs";
