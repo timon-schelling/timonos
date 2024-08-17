@@ -34,13 +34,8 @@
       streetsidesoftware.code-spell-checker
       pkief.material-icon-theme
       tamasfe.even-better-toml
+      fill-labs.dependi
     ] ++ pkgs.vscode-utils.extensionsFromVscodeMarketplace [
-      {
-        publisher = "fill-labs";
-        name = "dependi";
-        version = "0.7.2";
-        sha256 = "sha256-S3R1oLk7facP5Rn9czmHlffhMtLNrSaGYbaU3/x6/aM=";
-      }
       {
         publisher = "streetsidesoftware";
         name = "code-spell-checker-german";
