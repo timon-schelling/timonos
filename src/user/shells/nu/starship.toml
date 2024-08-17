@@ -1,0 +1,41 @@
+format = """
+$username $directory ($git_branch$git_status$git_state)
+$character
+"""
+
+add_newline = false
+
+[username]
+style_root = 'red bold'
+style_user = 'blue'
+format = '[$user]($style)'
+show_always = true
+
+[hostname]
+style = 'blue'
+format = '[$ssh_symbol$hostname]($style)'
+ssh_only = false
+
+[directory]
+style = 'purple'
+read_only_style = 'red'
+format = '[$path]($style)[$read_only]($read_only_style)'
+truncate_to_repo = false
+truncation_length = 0
+
+[git_branch]
+style = 'yellow'
+format = '[$branch(:$remote_branch)]($style)'
+
+[git_state]
+style = 'bold green'
+format = '\[[$state( $progress_current/$progress_total)]($style)\]'
+
+[git_status]
+style = 'green'
+format = '([\[$all_status$ahead_behind\]]($style))'
+
+[character]
+success_symbol = '[❯](green)'
+error_symbol = '[❯](red)'
+format = '$symbol '

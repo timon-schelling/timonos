@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+cd "$(dirname "$0")"
+
+git pull
+git add .
+git commit -m "rebuild $(date +%F_%T)"
+git push
+
+sudo nixos-rebuild boot --show-trace $@ --flake .

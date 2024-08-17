@@ -1,0 +1,221 @@
+{
+    // General Settings
+    "layer": "top",
+    "margin-top": 0,
+    "margin-bottom": 0,
+    "margin-left": 0,
+    "margin-right": 0,
+    "spacing": 0,
+    "modules-left": [
+        "hyprland/workspaces"
+        // "hyprland/window"
+    ],
+    "modules-center": [
+        // "hyprland/workspaces"
+        "clock"
+    ],
+    "modules-right": [
+        // "custom/updates",
+        // "pulseaudio",
+        // "bluetooth",
+        // "network",
+        // "group/hardware",
+        "battery",
+        "cpu",
+        "memory",
+        "disk",
+        // "custom/cliphist",
+        // "idle_inhibitor",
+        "group/power-menu"
+    ],
+
+    "hyprland/workspaces" : {
+        "on-click": "activate",
+        "active-only": false,
+        "all-outputs": false,
+        "format": "{}",
+        "format-icons": {
+            "urgent": "",
+            "active": "",
+            "default": ""
+        },
+        "on-scroll-up": "hyprctl dispatch workspace r+1",
+        "on-scroll-down": "hyprctl dispatch workspace r-1"
+    },
+
+    "clock": {
+        "format": "{:%Y-%m-%d %H:%M:%S}",
+        "interval": 1,
+        "timezone": "Europe/Berlin",
+    },
+
+    // "custom/system": {
+    //     "format": "",
+    //     "tooltip": false
+    // },
+    "battery": {
+        "interval": 1,
+        "states": {
+            "warning": 30,
+            "critical": 15
+        },
+        "format": "{icon} {capacity:02}",
+        "format-plugged": " {capacity:02}",
+        "format-icons": [" ", " ", " ", " ", " "]
+    },
+    "cpu": {
+        "interval": 1,
+        "format": " {usage:02}",
+    },
+    "memory": {
+        "interval": 1,
+        "format": " {percentage:02}",
+    },
+    "disk": {
+        "interval": 30,
+        "format": " {percentage_used:02}",
+        "path": "/",
+    },
+    // "group/hardware": {
+    //     "orientation": "inherit",
+    //     "drawer": {
+    //         "transition-duration": 400,
+    //         "children-class": "not-memory",
+    //         "transition-left-to-right": false
+    //     },
+    //     "modules": [
+    //         "custom/system",
+    //         "cpu",
+    //         "memory",
+    //         "disk"
+    //     ],
+    // },
+
+    "custom/suspend": {
+        "format": "󰒲",
+        "tooltip": false,
+        "on-click": "systemctl suspend"
+    },
+    "custom/hibernate": {
+        "format": "󰤄",
+        "tooltip": false,
+        "on-click": "systemctl hibernate"
+    },
+    "custom/logout": {
+        "format": "󰍃",
+        "tooltip": false,
+        "on-click": "hyperctl dispatch exit"
+    },
+    "custom/reboot": {
+        "format": "󰑓",
+        "tooltip": false,
+        "on-click": "systemctl reboot"
+    },
+    "custom/poweroff": {
+        "format": "",
+        "tooltip": false,
+        "on-click": "systemctl poweroff"
+    },
+    "group/power-menu": {
+        "orientation": "inherit",
+        "drawer": {
+            "transition-duration": 250,
+            "children-class": "not-memory",
+            "transition-left-to-right": true
+        },
+        "modules": [
+            "custom/poweroff",
+            "custom/reboot",
+            "custom/logout"
+            // TODO: Implement these correctly
+            // "custom/hibernate",
+            // "custom/suspend"
+        ]
+    },
+
+    // Group Settings
+    "group/settings": {
+        "orientation": "horizontal",
+        "modules": [
+            // START CHATGPT TOOGLE
+            "custom/chatgpt",
+            // END CHATGPT TOOGLE
+            "custom/settings",
+            "custom/waybarthemes",
+            "custom/wallpaper"
+        ]
+    },
+
+    // Group Quicklinks
+    "group/quicklinks": {
+        "orientation": "horizontal",
+        "modules": [
+            "custom/browser",
+            "custom/filemanager",
+         ]
+    },
+
+    // Network
+    "network": {
+        "format": "{ifname}",
+        "format-wifi": "   {signalStrength}%",
+        "format-ethernet": "  {ifname}",
+        "format-disconnected": "Disconnected",
+        "tooltip-format": " {ifname} via {gwaddri}",
+        "tooltip-format-wifi": "  {ifname} @ {essid}\nIP: {ipaddr}\nStrength: {signalStrength}%\nFreq: {frequency}MHz\nUp: {bandwidthUpBits} Down: {bandwidthDownBits}",
+        "tooltip-format-ethernet": " {ifname}\nIP: {ipaddr}\n up: {bandwidthUpBits} down: {bandwidthDownBits}",
+        "tooltip-format-disconnected": "Disconnected",
+        "max-length": 50,
+        "on-click": "~/dotfiles/.settings/networkmanager.sh"
+    },
+
+    // Pulseaudio
+    "pulseaudio": {
+        // "scroll-step": 1, // %, can be a float
+        "format": "{icon} {volume}%",
+        "format-bluetooth": "{volume}% {icon} {format_source}",
+        "format-bluetooth-muted": " {icon} {format_source}",
+        "format-muted": " {format_source}",
+        "format-source": "{volume}% ",
+        "format-source-muted": "",
+        "format-icons": {
+            "headphone": " ",
+            "hands-free": " ",
+            "headset": " ",
+            "phone": " ",
+            "portable": " ",
+            "car": " ",
+            "default": [" ", " ", " "]
+        },
+        "on-click": "pavucontrol"
+    },
+
+    // Bluetooth
+    "bluetooth": {
+        "format": " {status}",
+        "format-disabled": "",
+        "format-off": "",
+        "interval": 30,
+        "on-click": "blueman-manager",
+        "format-no-controller": ""
+    },
+
+    // Other
+    "user": {
+        "format": "{user}",
+        "interval": 60,
+        "icon": false,
+    },
+
+    // Idle Inhibator
+    "idle_inhibitor": {
+        "format": "{icon}",
+        "tooltip": true,
+        "format-icons":{
+            "activated": "",
+            "deactivated": ""
+        },
+        "on-click-right": "hyprlock"
+    }
+
+}

@@ -1,0 +1,72 @@
+[
+    {
+        "key": "ctrl+p",
+        "command": "-workbench.action.quickOpen"
+    },
+    {
+        "key": "ctrl+alt+left",
+        "command": "jump-extension.jump-to-the-start-of-a-word",
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "alt+q alt+q",
+        "command": "-jump-extension.jump-to-the-start-of-a-word",
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "ctrl+alt+right",
+        "command": "jump-extension.jump-to-the-end-of-a-word",
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "alt+q alt+w",
+        "command": "-jump-extension.jump-to-the-end-of-a-word",
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "ctrl+shift+alt+right",
+        "command": "jump-extension.select-to-the-end-of-a-word",
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "alt+q alt+r",
+        "command": "-jump-extension.select-to-the-end-of-a-word",
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "ctrl+shift+alt+left",
+        "command": "jump-extension.select-to-the-start-of-a-word",
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "alt+q alt+e",
+        "command": "-jump-extension.select-to-the-start-of-a-word",
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "ctrl+shift+g",
+        "command": "-workbench.view.scm",
+        "when": "workbench.scm.active"
+    },
+    {
+        "key": "ctrl+g",
+        "command": "-hexEditor.goToOffset",
+        "when": "activeCustomEditorId == 'hexEditor.hexedit'"
+    },
+    {
+        "key": "ctrl+g",
+        "command": "-workbench.action.gotoLine"
+    },
+    {
+        "key": "ctrl+t",
+        "command": "-workbench.action.showAllSymbols"
+    },
+    {
+        "key": "ctrl+t",
+        "command": "workbench.action.files.newUntitledFile"
+    },
+    {
+        "key": "ctrl+n",
+        "command": "-workbench.action.files.newUntitledFile"
+    }
+]
