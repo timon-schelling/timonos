@@ -2,6 +2,7 @@
   opts.user.profiles.default.enable = lib.mkDefault true;
   opts.user.apps = {
     editor = {
+      lapce.enable = lib.mkDefault true;
     };
     browser = {
       chromium.enable = lib.mkDefault true;
