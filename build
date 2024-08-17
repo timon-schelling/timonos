@@ -1,10 +1,9 @@
 #!/usr/bin/env bash
-
 cd "$(dirname "$0")"
 
 if command -v nh &> /dev/null
 then
-    nh os boot --ask . $@
+    nh os build . $@
 else
-    nix run nixpkgs#nh -- os boot --ask . $@
+    nix run nixpkgs#nh -- os build . $@
 fi
