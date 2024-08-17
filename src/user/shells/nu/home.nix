@@ -40,12 +40,24 @@
     enableNushellIntegration = true;
   };
 
+  systemd.user.services."atuind" = {
+    Install = {
+      WantedBy = [ "default.target" ];
+    };
+    Service = {
+      Type = "simple";
+      ExecStart = "${pkgs.atuin}/bin/atuin daemon";
+    };
+  };
   programs.atuin = {
     enable = true;
     enableNushellIntegration = true;
     flags = [ "--disable-up-arrow" "--disable-ctrl-r" ];
     settings = {
       style = "compact";
+      daemon = {
+        enabled = true;
+      };
     };
   };
   programs.nushell.extraEnv = ''
@@ -54,8 +66,7 @@
   programs.nushell.extraConfig = lib.mkAfter ''
     $env.config = (
       $env.config | upsert keybindings (
-        $env.config.keybindings
-        | append {
+        $env.config.keybindings | append {
           name: atuin
           modifier: shift
           keycode: up
