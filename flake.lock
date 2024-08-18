@@ -72,10 +72,10 @@
         ]
       },
       "locked": {
-        "lastModified": 1723951906,
-        "narHash": "sha256-yATRvUMshF/7PQUBb7pWCf8rxxYMAo3Lvw/kO22vuFw=",
+        "lastModified": 1724003161,
+        "narHash": "sha256-twSAx/bTnu3JIbfe83Ck7XuumZmWyOV5bC86QeHkd4E=",
         "ref": "lapce",
-        "rev": "41b9a7c88ccdfaa5175a32ba2e0fa627420060b9",
+        "rev": "caaaa0043743eda8e537ecd52038188515124f36",
         "revCount": 3673,
         "type": "git",
         "url": "https://github.com/timon-schelling/home-manager"
