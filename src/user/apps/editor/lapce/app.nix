@@ -192,7 +192,7 @@ in
 
   xdg =
   let
-    appName = "lapce-nightly";
+    appName = "lapce-stable";
     toml = pkgs.formats.toml { };
     pluginsPkg = import ./plugins.nix { inherit plugins pkgs; };
   in

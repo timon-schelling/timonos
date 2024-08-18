@@ -15,7 +15,9 @@ inputs: self: super: with super; {
     in
     rustPlatform.buildRustPackage rec {
       pname = "lapce";
-      version = "unstable-2024-05-12";
+
+      # needs to start with "v" otherwise lapce will use nightly config and data dirs
+      version = "v1.0.0-rc-b46aa99ed1a13ff668f0e814af94e94be9e879f3";
 
       src = fetchFromGitHub {
         owner = "timon-schelling";
