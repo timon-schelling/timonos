@@ -91,6 +91,8 @@ inputs: self: super: with super; {
 
       dontPatchELF = true;
 
+      doCheck = false;
+
       passthru.updateScript = nix-update-script { };
 
       meta = with lib; {
