@@ -72,18 +72,18 @@
         ]
       },
       "locked": {
-        "lastModified": 1722936497,
-        "narHash": "sha256-UBst8PkhY0kqTgdKiR8MtTBt4c1XmjJoOV11efjsC/o=",
-        "ref": "master",
-        "rev": "a6c743980e23f4cef6c2a377f9ffab506568413a",
-        "revCount": 3669,
+        "lastModified": 1723951906,
+        "narHash": "sha256-yATRvUMshF/7PQUBb7pWCf8rxxYMAo3Lvw/kO22vuFw=",
+        "ref": "lapce",
+        "rev": "41b9a7c88ccdfaa5175a32ba2e0fa627420060b9",
+        "revCount": 3673,
         "type": "git",
-        "url": "https://github.com/nix-community/home-manager"
+        "url": "https://github.com/timon-schelling/home-manager"
       },
       "original": {
-        "ref": "master",
+        "ref": "lapce",
         "type": "git",
-        "url": "https://github.com/nix-community/home-manager"
+        "url": "https://github.com/timon-schelling/home-manager"
       }
     },
     "hyprcursor": {

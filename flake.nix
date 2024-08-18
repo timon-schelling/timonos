@@ -2,7 +2,8 @@
   inputs = {
     nixpkgs.url = "git+https://github.com/nixos/nixpkgs?ref=nixos-unstable";
     home-manager = {
-      url = "git+https://github.com/nix-community/home-manager?ref=master";
+      # TODO: change to upstream once merged into home-manager
+      url = "git+https://github.com/timon-schelling/home-manager?ref=lapce";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     disko = {

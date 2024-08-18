@@ -186,30 +186,16 @@ let
   };
 in
 {
-  home.packages = [
-    pkgs.lapce
-  ];
+  programs.lapce = {
+    enable = true;
+    settings = settings;
+    plugins = plugins;
+    keymaps = keymaps;
+  };
 
-  xdg =
-  let
-    appName = "lapce-stable";
-    toml = pkgs.formats.toml { };
-    pluginsPkg = import ./plugins.nix { inherit plugins pkgs; };
-  in
-  {
-    configFile = {
-      "${appName}/settings.toml".source =
-        toml.generate "settings.toml" settings;
-      "${appName}/keymaps.toml".source =
-        toml.generate "keymaps.toml" { inherit keymaps; };
-    };
-    dataFile = {
-      "${appName}/plugins".source = pluginsPkg;
-      "${appName}/themes/custom.toml".source = toml.generate "custom.toml" {
-        color-theme = {
-          name = "Custom";
-        } // theme;
-      };
-    };
+  xdg.dataFile."lapce-stable/themes/custom.toml".source = (pkgs.formats.toml {}).generate "custom.toml" {
+    color-theme = {
+      name = "Custom";
+    } // theme;
   };
 }
