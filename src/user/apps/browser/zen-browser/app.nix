@@ -1,12 +1,30 @@
 { config, lib, pkgs, ... }:
 
+let
+  buildFirefoxXpiAddon = lib.makeOverridable ({ stdenv ? pkgs.stdenv
+    , fetchurl ? pkgs.fetchurl, pname, version, addonId, url, sha256, ...
+    }:
+    stdenv.mkDerivation {
+      name = "${pname}-${version}";
+      src = fetchurl { inherit url sha256; };
+      preferLocalBuild = true;
+      allowSubstitutes = true;
+      passthru = { inherit addonId; };
+      buildCommand = ''
+        dst="$out/share/mozilla/extensions/{ec8030f7-c20a-464f-9b0e-13a3a9e97384}"
+        mkdir -p "$dst"
+        install -v -m644 "$src" "$dst/${addonId}.xpi"
+      '';
+    });
+
+in
 {
   platform.user.persist.folders = [
-    ".mozilla/firefox/main"
+    ".zen/main"
     # ".cache/mozilla"
   ];
 
-  programs.firefox = {
+  programs.zen-browser = {
     enable = true;
     policies = {
       DisableTelemetry = true;
@@ -30,10 +48,6 @@
       DefaultDownloadDirectory = "~/tmp";
 
       Preferences = {
-        "browser.newtabpage.pinned" = [{
-          title = "NixOS";
-          url = "https://nixos.org";
-        }];
         "browser.contentblocking.category" = "strict";
         "browser.disableResetPrompt" = true;
         "browser.download.panel.shown" = true;
@@ -129,33 +143,36 @@
           ];
         });
       };
-
-      ExtensionSettings = with builtins;
-        let extension = shortId: uuid: {
-          name = uuid;
-          value = {
-            install_url = "https://addons.mozilla.org/en-US/firefox/downloads/latest/${shortId}/latest.xpi";
-            installation_mode = "force_installed";
-          };
-        };
-        in listToAttrs [
-          (extension "perfectdarktheme" "")
-          (extension "darkreader" "addon@darkreader.org")
-          (extension "user-agent-string-switcher" "{a6c4a591-f1b2-4f03-b3ff-767e5bedf4e7}")
-          # (extension "tree-style-tab" "treestyletab@piro.sakura.ne.jp")
-          # (extension "uborigin" "uBlock0@raymondhill.net")
-          # (extension "clearurls" "{74145f27-f039-47ce-a470-a662b129930a}")
-        ];
-        # To add additional extensions,find it on addons.mozilla.org, find
-        # the short ID in the url (like !SHORT_ID!/)
-        # install it in firefox, then go to about:support#addons, or
-        # download the XPI by filling it in to the install_url template, unzip it,
-        # run `jq .browser_specific_settings.gecko.id manifest.json` or
-        # `jq .applications.gecko.id manifest.json` to get the UUID
     };
 
-    profiles.main = {
+    profiles."main" = {
       name = "main";
+      settings = {
+        "extensions.autoDisableScopes" = 0;
+      };
+      extensions = [
+        (buildFirefoxXpiAddon {
+          pname = "perfect-dark-theme";
+          version = "1.1";
+          addonId = "{47a97a22-13b8-410a-9bd8-2bf689498872}";
+          url = "https://addons.mozilla.org/firefox/downloads/file/3869647/perfect_dark_theme-1.1.xpi";
+          sha256 = "sha256-dEPynn2Rhf+G9c9PUpMHErZmfpq5+4oawEk1wmktjFc=";
+        })
+        (buildFirefoxXpiAddon {
+          pname = "darkreader";
+          version = "4.9.88";
+          addonId = "addon@darkreader.org";
+          url = "https://addons.mozilla.org/firefox/downloads/file/4317971/darkreader-4.9.88.xpi";
+          sha256 = "sha256-epZdWIC+n7+L6BoQas0ZaCY7GswtsK3VgLMPLdcZVLM=";
+        })
+        (buildFirefoxXpiAddon {
+          pname = "user-agent-string-switcher";
+          version = "0.5.0";
+          addonId = "{a6c4a591-f1b2-4f03-b3ff-767e5bedf4e7}";
+          url = "https://addons.mozilla.org/firefox/downloads/file/4098688/user_agent_string_switcher-0.5.0.xpi";
+          sha256 = "sha256-ncjaPIxG1PBNEv14nGNQH6ai9QL4WbKGk5oJDbY+rjM=";
+        })
+      ];
       extraConfig = ''
       '';
       userChrome = ''
