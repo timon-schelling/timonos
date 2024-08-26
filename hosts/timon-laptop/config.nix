@@ -1,10 +1,15 @@
 { lib, pkgs, ... }:
 
 {
+  imports = [
+    ./gpu.nix
+  ];
+
   opts = {
     system = {
       drive = "/dev/nvme0n1";
       platform = "x86_64-linux";
+      hardware.gpu.nvidia.mobile.mode = "integrated";
     };
     users = {
       timon = {
@@ -36,32 +41,12 @@
   hardware = {
     enableRedistributableFirmware = true;
     cpu.intel.updateMicrocode = true;
-    graphics = {
-      package = lib.mkForce (pkgs.mesa.override {
-        galliumDrivers = [
-          "nouveau"
-          "swrast"
-          "iris"
-          "zink"
-        ];
-      }).drivers;
-      extraPackages = with pkgs; [
-        intel-media-driver
-        intel-vaapi-driver
-      ];
-      extraPackages32 = with pkgs.driversi686Linux; [
-        intel-media-driver
-        intel-vaapi-driver
-      ];
-      enable32Bit = true;
-    };
-    nvidia.prime = {
-      offload = {
-        enable = true;
-        enableOffloadCmd = lib.mkForce true;
-      };
-      nvidiaBusId = "PCI:1:0:0";
-      intelBusId = "PCI:0:2:0";
+  };
+
+  specialisation = {
+    "dedicated-gpu".configuration = {
+      opts.system.hardware.gpu.nvidia.mobile.mode = lib.mkForce "hybrid";
+      system.nixos.tags = [ "dedicated-gpu" ];
     };
   };
 }
