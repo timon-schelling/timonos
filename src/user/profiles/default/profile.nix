@@ -5,6 +5,7 @@
     };
     settings = {
       wifi.enable = lib.mkDefault true;
+      audio.enable = lib.mkDefault true;
     };
     editor = {
       vscode.enable = lib.mkDefault true;
