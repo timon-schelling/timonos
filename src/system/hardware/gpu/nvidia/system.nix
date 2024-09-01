@@ -19,6 +19,7 @@ in
   hardware.graphics = {
     enable = true;
     package = driverPkg;
+    enable32Bit = true;
   };
   nixpkgs.config = {
     allowUnfree = true;
