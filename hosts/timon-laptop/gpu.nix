@@ -24,10 +24,6 @@ in
       };
     })
     (lib.mkIf (cfg == "integrated") {
-      # boot.extraModprobeConfig = ''
-      #   blacklist nouveau
-      #   options nouveau modeset=0
-      # '';
       services.udev.extraRules = ''
         # Remove NVIDIA devices
         ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x0c0330", ATTR{power/control}="auto", ATTR{remove}="1"
@@ -52,11 +48,6 @@ in
           intel-media-driver
           intel-vaapi-driver
         ];
-        extraPackages32 = with pkgs.driversi686Linux; [
-          intel-media-driver
-          intel-vaapi-driver
-        ];
-        enable32Bit = true;
       };
     })
   ];
