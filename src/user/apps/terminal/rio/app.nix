@@ -47,7 +47,7 @@
       };
       fonts = {
         family = "JetBrainsMono Nerd Font";
-        size = 24;
+        size = 20;
         extras = [
           { family = "Cascadia Mono"; }
         ];
