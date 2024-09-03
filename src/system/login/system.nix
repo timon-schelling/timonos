@@ -39,17 +39,26 @@ in
               };
               window.decorations = "Disabled";
             };
+            nushellConfigFile = pkgs.writeText "greeter-nushell-config.nu" ''
+              (
+                ${pkgs.greetd.tuigreet}/bin/tuigreet
+                  -g ""
+                  --time --time-format "%Y-%m-%d %H:%M:%S"
+                  --remember --remember-user-session
+                  --asterisks
+              )
+              loop { sleep 1sec }
+            '';
           in
           (pkgs.nu.writeScript "greetd-terminal-rio" ''
+            mkdir /tmp/greeter-home/.config
             mkdir /tmp/greeter-home/.config/rio
-            cp ${terminalConfigFile} /tmp/greeter-home/.config/rio/config.toml
-            (
-              ${pkgs.cage}/bin/cage -m last --
-              ${pkgs.rio}/bin/rio --command
-              ${pkgs.greetd.tuigreet}/bin/tuigreet
-                -g "" --time --time-format "%Y-%m-%d %H:%M:%S"
-                --remember --remember-user-session --asterisks
-            )
+            ln -s ${terminalConfigFile} /tmp/greeter-home/.config/rio/config.toml
+            mkdir /tmp/greeter-home/.config/nushell
+            touch /tmp/greeter-home/.config/nushell/env.nu
+            ln -s ${nushellConfigFile} /tmp/greeter-home/.config/nushell/config.nu
+            ${pkgs.cage}/bin/cage -m last -- ${pkgs.rio}/bin/rio --command nu --login
+            nu --login --no-config-file
           '');
           user = "greeter";
         };
@@ -82,7 +91,7 @@ in
         settings = {
           GTK = {
             application_prefer_dark_theme = true;
-            cursor_theme_name = "oreo_custom_cursors";
+            cursor_theme_name = lib.mkForce "oreo_custom_cursors";
           };
           appearance.greeting_msg = "TimonOS";
         };
