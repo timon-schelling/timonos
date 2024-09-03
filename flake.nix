@@ -12,24 +12,6 @@
     };
     impermanence.url = "github:nix-community/impermanence";
     nix-systems-default-linux.url = "github:nix-systems/default-linux";
-    hyprland = {
-      url = "git+https://github.com/hyprwm/Hyprland?submodules=1&ref=refs/tags/v0.41.2";
-      inputs = {
-        nixpkgs.follows = "nixpkgs";
-        systems.follows = "nix-systems-default-linux";
-      };
-    };
-    hyprland-plugin-touch-gestures = {
-      url = "github:horriblename/hyprgrass";
-      inputs.hyprland.follows = "hyprland";
-    };
-    hyprland-plugin-virtual-desktops = {
-      url = "github:levnikmyskin/hyprland-virtual-desktops";
-      inputs = {
-        hyprland.follows = "hyprland";
-        nixpkgs.follows = "nixpkgs";
-      };
-    };
     anyrun = {
       url = "github:Kirottu/anyrun";
       inputs = {
