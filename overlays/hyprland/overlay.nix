@@ -1,5 +1,5 @@
 inputs: self: super: {
-  # hyprland = inputs.hyprland.packages.${super.system}.default;
+  hyprland = inputs.hyprland.packages.${super.system}.default;
   # hyprland-plugins = {
   #   touch-gestures = inputs.hyprland-plugin-touch-gestures.packages.${super.system}.default;
   #   virtual-desktops = inputs.hyprland-plugin-virtual-desktops.packages.${super.system}.default;
@@ -25,7 +25,6 @@ inputs: self: super: {
         hash = "sha256-6dCg/U/SIjtvo07Z3tn0Hn8Xwx72nwVz6Q2cFnObonU=";
       })
     ];
-
     depsBuildBuild = [
       super.pkg-config
     ];

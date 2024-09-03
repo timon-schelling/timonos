@@ -12,6 +12,13 @@
     };
     impermanence.url = "github:nix-community/impermanence";
     nix-systems-default-linux.url = "github:nix-systems/default-linux";
+    hyprland = {
+      url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        systems.follows = "nix-systems-default-linux";
+      };
+    };
     anyrun = {
       url = "github:Kirottu/anyrun";
       inputs = {
