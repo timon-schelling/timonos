@@ -17,8 +17,11 @@ in
         enable = true;
         settings.default_session = {
           command = let
+            cageWithoutCursorsPkg = pkgs.cage.overrideAttrs {
+              patches = [ ./cage-hide-cursor.patch ];
+            };
             terminalConfigFile = (pkgs.formats.toml { }).generate "greeter-terminal-config.toml" {
-              cursor = "|";
+              cursor = " ";
               blinking-cursor = false;
               padding-x = 0;
               navigation.mode = "CollapsedTab";
@@ -42,22 +45,29 @@ in
             nushellConfigFile = pkgs.writeText "greeter-nushell-config.nu" ''
               (
                 ${pkgs.greetd.tuigreet}/bin/tuigreet
-                  -g ""
                   --time --time-format "%Y-%m-%d %H:%M:%S"
                   --remember --remember-user-session
-                  --asterisks
+                  --asterisks --asterisks-char "•"
+                  --container-padding 1
+                  --width 50
+                  --theme "border=darkgray;text=gray;prompt=gray;action=darkgray;button=darkgray;input=gray"
               )
+              try {
+                ${pkgs.rusty-rain}/bin/rusty-rain -C 74,74,74 -H 110,110,110
+              }
               loop { sleep 1sec }
             '';
           in
           (pkgs.nu.writeScript "greetd-terminal-rio" ''
-            mkdir /tmp/greeter-home/.config
-            mkdir /tmp/greeter-home/.config/rio
-            ln -s ${terminalConfigFile} /tmp/greeter-home/.config/rio/config.toml
-            mkdir /tmp/greeter-home/.config/nushell
-            touch /tmp/greeter-home/.config/nushell/env.nu
-            ln -s ${nushellConfigFile} /tmp/greeter-home/.config/nushell/config.nu
-            ${pkgs.cage}/bin/cage -m last -- ${pkgs.rio}/bin/rio --command nu --login
+            mkdir /tmp/greeter-home
+            cd /tmp/greeter-home
+            mkdir .config
+            mkdir .config/rio
+            ln -s ${terminalConfigFile} .config/rio/config.toml
+            mkdir .config/nushell
+            touch .config/nushell/env.nu
+            ln -s ${nushellConfigFile} .config/nushell/config.nu
+            ${cageWithoutCursorsPkg}/bin/cage -m last -- ${pkgs.rio}/bin/rio --command nu --login
             nu --login --no-config-file
           '');
           user = "greeter";
