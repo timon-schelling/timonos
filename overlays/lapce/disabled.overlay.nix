@@ -17,30 +17,31 @@ inputs: self: super: with super; {
       pname = "lapce";
 
       # needs to start with "v" otherwise lapce will use nightly config and data dirs
-      version = "v1.0.0-rc-b46aa99ed1a13ff668f0e814af94e94be9e879f3";
+      version = "v1.0.0-rc-39053ea7817a561222a285427e8b237041f49824";
 
       src = fetchFromGitHub {
         owner = "timon-schelling";
         repo = "lapce";
-        rev = "b46aa99ed1a13ff668f0e814af94e94be9e879f3";
-        hash = "sha256-YvfjTuoK04MeApBR2YBdMh9uGMo03Un4RU5T8eqVYUc=";
+        rev = "39053ea7817a561222a285427e8b237041f49824";
+        hash = "sha256-+6W7dUsU7g5fvz1F3W9A5X/P6mEkO0OEB92oeuGpn/Y=";
       };
 
       cargoLock = {
         lockFile = ./Cargo.lock;
         outputHashes = {
-          "floem-0.1.1" = "sha256-km+WcrOvg2Cd3OQXaHAyF8cfdFlPt5kmgU5lElPguh8=";
+          "alacritty_terminal-0.24.1-dev" = "sha256-aVB1CNOLjNh6AtvdbomODNrk00Md8yz8QzldzvDo1LI=";
+          "floem-0.1.1" = "sha256-/4Y38VXx7wFVVEzjqZ2D6+jiXCXPfzK44rDiNOR1lAk=";
           "human-sort-0.2.2" = "sha256-tebgIJGXOY7pwWRukboKAzXY47l4Cn//0xMKQTaGu8w=";
+          "locale_config-0.3.1-alpha.0" = "sha256-cCEO+dmU05TKkpH6wVK6tiH94b7k2686xyGxlhkcmAM=";
           "lsp-types-0.95.1" = "sha256-+tWqDBM5x/gvQOG7V3m2tFBZB7smgnnZHikf9ja2FfE=";
           "psp-types-0.1.0" = "sha256-/oFt/AXxCqBp21hTSYrokWsbFYTIDCrHMUBuA2Nj5UU=";
           "regalloc2-0.9.3" = "sha256-tzXFXs47LDoNBL1tSkLCqaiHDP5vZjvh250hz0pbEJs=";
-          "structdesc-0.1.0" = "sha256-gMTnRudc3Tp9JRa+Cob5Ke23aqajP8lSun5CnT13+eQ=";
+          "structdesc-0.1.0" = "sha256-KiR0R2YWZ7BucXIIeziu2FPJnbP7WNSQrxQhcNlpx2Q=";
           "tracing-0.2.0" = "sha256-31jmSvspNstOAh6VaWie+aozmGu4RpY9Gx2kbBVD+CI=";
-          "tree-sitter-bash-0.19.0" = "sha256-gTsA874qpCI/N5tmBI5eT8KDaM25gXM4VbcCbUU2EeI=";
-          "tree-sitter-md-0.1.2" = "sha256-gKbjAcY/x9sIxiG7edolAQp2JWrx78mEGeCpayxFOuE=";
           "wasi-experimental-http-wasmtime-0.10.0" = "sha256-FuF3Ms1bT9bBasbLK+yQ2xggObm/lFDRyOvH21AZnQI=";
         };
       };
+      cargoHash = "";
 
       env = {
         # Get openssl-sys to use pkg-config
@@ -48,6 +49,9 @@ inputs: self: super: with super; {
 
         # This variable is read by build script, so that Lapce editor knows its version
         RELEASE_TAG_NAME = "${version}";
+
+        # see https://github.com/rust-lang/cargo/issues/10679
+        RUSTFLAGS = "-Ctarget-feature=-crt-static";
       };
 
       postPatch = ''
