@@ -7,11 +7,22 @@
     users = {
       user = {
         passwordHash = "$6$rounds=262144$qsdAwOt1Y50jB7oF$0oYPN0qt7pm7Dv4qD75o.gOD28THHSxNxGWRMGAdbOgQ6H.if236GYIyTVe.n502fSSCZ.MYEY0RtBCqerhvF1";
+        admin = true;
         home = {
           name = "User";
           email = "user.storage-0.homelab@timon.zip";
         };
       };
     };
+  };
+
+  boot = {
+    initrd.availableKernelModules = [ "xhci_pci" "ahci" "usbhid" "ums_realtek" "usb_storage" "sd_mod" "sr_mod" ];
+    kernelModules = [ "kvm-intel" ];
+  };
+
+  hardware = {
+    enableRedistributableFirmware = true;
+    cpu.intel.updateMicrocode = true;
   };
 }
