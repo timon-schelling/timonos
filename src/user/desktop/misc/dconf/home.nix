@@ -1,8 +1,0 @@
-{ ... }:
-
-{
-  dconf = {
-    enable = true;
-    settings = { };
-  };
-}
