@@ -1,0 +1,25 @@
+diff --git a/src/main.rs b/src/main.rs
+index 4d40a96..2bdb084 100644
+--- a/src/main.rs
++++ b/src/main.rs
+@@ -9,9 +9,6 @@ use settings::{DeprecationWarnings, TereSettings};
+ mod app_state;
+ use app_state::TereAppState;
+
+-mod first_run_check;
+-use first_run_check::check_first_run_with_prompt;
+-
+ mod ui;
+ use ui::TereTui;
+
+@@ -60,10 +57,6 @@ fn main() -> Result<(), TereError> {
+                     .flush()
+                     .map_err(TereError::from)
+                     .and_then(|_| TereSettings::parse_cli_args(&cli_args))
+-                    .and_then(|(settings, warnings)| {
+-                        check_first_run_with_prompt(&settings, &mut stderr)?;
+-                        Ok((settings, warnings))
+-                    })
+                     .and_then(|(settings, warnings)| {
+                         TereAppState::init(settings, &warnings)
+                             .and_then(|state| TereTui::init(state, &mut stderr))
