@@ -17,9 +17,6 @@ in
         enable = true;
         settings.default_session = {
           command = let
-            cageWithoutCursorsPkg = pkgs.cage.overrideAttrs {
-              patches = [ ./cage-hide-cursor.patch ];
-            };
             terminalConfigFile = (pkgs.formats.toml { }).generate "greeter-terminal-config.toml" {
               cursor = "⠀";
               blinking-cursor = false;
@@ -67,7 +64,7 @@ in
             mkdir .config/nushell
             touch .config/nushell/env.nu
             ln -s ${nushellConfigFile} .config/nushell/config.nu
-            ${cageWithoutCursorsPkg}/bin/cage -m last -- ${pkgs.rio}/bin/rio --command nu --login
+            ${pkgs.cage-no-cursor}/bin/cage -m last -- ${pkgs.rio}/bin/rio --command nu --login
           '');
           user = "greeter";
         };
