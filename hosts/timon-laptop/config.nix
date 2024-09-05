@@ -7,7 +7,7 @@
 
   opts = {
     system = {
-      drive = "/dev/nvme0n1";
+      drive = "/dev/disk/by-id/nvme-MTFDKBA1T0TFH-1BC1AABHA_UMDMD0153GYBFB";
       platform = "x86_64-linux";
       hardware.gpu.nvidia.mobile.mode = "integrated";
     };
@@ -44,9 +44,9 @@
   };
 
   specialisation = {
-    "dedicated-gpu".configuration = {
+    "hybrid-gpu".configuration = {
       opts.system.hardware.gpu.nvidia.mobile.mode = lib.mkForce "hybrid";
-      system.nixos.tags = [ "dedicated-gpu" ];
+      system.nixos.tags = [ "hybrid-gpu" ];
     };
   };
 }
