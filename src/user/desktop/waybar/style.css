@@ -1,0 +1,341 @@
+@define-color backgroundlight #444444;
+@define-color backgrounddark #a89232;
+@define-color workspacesbackground1 #444444;
+@define-color workspacesbackground2 #999999;
+@define-color bordercolor #32a883;
+@define-color textcolor1 #777777;
+@define-color textcolor2 #aaaaaa;
+@define-color textcolor3 #757375;
+@define-color iconcolor #777777;
+
+* {
+  font-family: "FiraMono Nerd Font";
+  border: none;
+  border-radius: 0px;
+}
+
+window#waybar {
+  background: transparent;
+  transition-property: background-color;
+  transition-duration: .2s;
+}
+
+/* -----------------------------------------------------
+* Workspaces
+* ----------------------------------------------------- */
+
+#workspaces {
+  background: @workspacesbackground1;
+  padding: 2px;
+  margin-top: 6px;
+  margin-left: 8px;
+  margin-right: 8px;
+  margin-bottom: 0px;
+  border-radius: 10px;
+  border: 0px;
+  font-weight: bold;
+  font-style: normal;
+  opacity: 0.8;
+}
+
+#workspaces button {
+  padding: 0px;
+  margin: 2px;
+  border-radius: 5px;
+  border: 5px;
+  background-color: @workspacesbackground2;
+  transition: all 0.3s ease-in-out;
+  opacity: 0.5;
+  min-height: 10px;
+  min-width: 10px;
+}
+
+#workspaces label {
+  font-size: 1px;
+}
+
+#workspaces button:hover {
+  opacity: 0.7;
+}
+
+#workspaces button.active {
+  opacity: 1.0;
+  min-width: 20px;
+}
+
+/* -----------------------------------------------------
+* Clock
+* ----------------------------------------------------- */
+
+#clock {
+  font-size: 16px;
+  color: @textcolor1;
+  font-weight: bold;
+  margin-top: 4px;
+  margin-left: 8px;
+  margin-right: 8px;
+  margin-bottom: 0px;
+}
+
+/* -----------------------------------------------------
+* Hardware Group
+* ----------------------------------------------------- */
+
+#custom-system,
+#cpu,
+#memory,
+#disk {
+  margin-top: 4px;
+  margin-left: 0px;
+  margin-right: 10px;
+  margin-bottom: 0px;
+  font-size: 16px;
+  font-weight: bold;
+  color: @iconcolor;
+}
+
+#battery {
+  margin-top: 4px;
+  margin-left: 0px;
+  margin-right: 10px;
+  margin-bottom: 0px;
+  font-size: 16px;
+  font-weight: bold;
+  color: @iconcolor;
+}
+#battery.critical:not(.charging) {
+  color: #f53c3c;
+}
+
+#custom-suspend,
+#custom-hibernate,
+#custom-logout,
+#custom-reboot,
+#custom-poweroff {
+  margin-top: 4px;
+  margin-left: 0px;
+  padding-right: 14px;
+  margin-bottom: 0px;
+  font-size: 16px;
+  font-weight: bold;
+  color: @iconcolor;
+}
+
+
+/* -----------------------------------------------------
+* Tooltips
+* ----------------------------------------------------- */
+
+tooltip {
+  border-radius: 10px;
+  background-color: @backgroundlight;
+  padding: 12px;
+  margin: 0px;
+}
+
+tooltip label {
+  color: @textcolor2;
+}
+
+/* -----------------------------------------------------
+* Window
+* ----------------------------------------------------- */
+
+#window {
+  background: @backgroundlight;
+  margin: 5px 15px 5px 0px;
+  padding: 2px 10px 0px 10px;
+  border-radius: 12px;
+  color: @textcolor2;
+  font-size: 16px;
+  font-weight: normal;
+  opacity: 0.8;
+}
+
+window#waybar.empty #window {
+  background-color: transparent;
+}
+
+/* -----------------------------------------------------
+* Taskbar
+* ----------------------------------------------------- */
+
+#taskbar {
+  background: @backgroundlight;
+  margin: 3px 15px 3px 0px;
+  padding: 0px;
+  border-radius: 15px;
+  font-weight: normal;
+  font-style: normal;
+  opacity: 0.8;
+  border: 3px solid @backgroundlight;
+}
+
+#taskbar button {
+  margin: 0;
+  border-radius: 15px;
+  padding: 0px 5px 0px 5px;
+}
+
+/* -----------------------------------------------------
+* Idle Inhibator
+* ----------------------------------------------------- */
+
+#idle_inhibitor {
+  margin-right: 15px;
+  font-size: 22px;
+  font-weight: bold;
+  opacity: 0.8;
+  color: @iconcolor;
+}
+
+#idle_inhibitor.activated {
+  margin-right: 15px;
+  font-size: 20px;
+  font-weight: bold;
+  opacity: 0.8;
+  color: #dc2f2f;
+}
+
+/* -----------------------------------------------------
+* Custom Modules
+* ----------------------------------------------------- */
+
+#custom-appmenu,
+#custom-appmenuwlr {
+  background-color: @backgrounddark;
+  font-size: 16px;
+  color: @textcolor1;
+  border-radius: 15px;
+  padding: 0px 10px 0px 10px;
+  margin: 3px 15px 3px 14px;
+  opacity: 0.8;
+  border: 3px solid @bordercolor;
+}
+
+/* -----------------------------------------------------
+* Custom Updates
+* ----------------------------------------------------- */
+
+#custom-updates {
+  background-color: @backgroundlight;
+  font-size: 16px;
+  color: @textcolor2;
+  border-radius: 15px;
+  padding: 2px 10px 0px 10px;
+  margin: 5px 15px 5px 0px;
+  opacity: 0.8;
+}
+
+#custom-updates.green {
+  background-color: @backgroundlight;
+}
+
+#custom-updates.yellow {
+  background-color: #ff9a3c;
+  color: #FFFFFF;
+}
+
+#custom-updates.red {
+  background-color: #dc2f2f;
+  color: #FFFFFF;
+}
+
+/* -----------------------------------------------------
+* Custom Youtube
+* ----------------------------------------------------- */
+
+#custom-youtube {
+  background-color: @backgroundlight;
+  font-size: 16px;
+  color: @textcolor2;
+  border-radius: 15px;
+  padding: 2px 10px 0px 10px;
+  margin: 5px 15px 5px 0px;
+  opacity: 0.8;
+}
+
+#language {
+  margin-right: 10px;
+}
+
+/* -----------------------------------------------------
+* Pulseaudio
+* ----------------------------------------------------- */
+
+#pulseaudio {
+  background-color: @backgroundlight;
+  font-size: 16px;
+  color: @textcolor2;
+  border-radius: 15px;
+  padding: 2px 10px 0px 10px;
+  margin: 5px 15px 5px 0px;
+  opacity: 0.8;
+}
+
+#pulseaudio.muted {
+  background-color: @backgrounddark;
+  color: @textcolor1;
+}
+
+/* -----------------------------------------------------
+* Network
+* ----------------------------------------------------- */
+
+#network {
+  background-color: @backgroundlight;
+  font-size: 16px;
+  color: @textcolor2;
+  border-radius: 15px;
+  padding: 2px 10px 0px 10px;
+  margin: 5px 15px 5px 0px;
+  opacity: 0.8;
+}
+
+#network.ethernet {
+  background-color: @backgroundlight;
+  color: @textcolor2;
+}
+
+#network.wifi {
+  background-color: @backgroundlight;
+  color: @textcolor2;
+}
+
+/* -----------------------------------------------------
+* Bluetooth
+* ----------------------------------------------------- */
+
+#bluetooth,
+#bluetooth.on,
+#bluetooth.connected {
+  background-color: @backgroundlight;
+  font-size: 16px;
+  color: @textcolor2;
+  border-radius: 15px;
+  padding: 2px 10px 0px 10px;
+  margin: 5px 15px 5px 0px;
+  opacity: 0.8;
+}
+
+#bluetooth.off {
+  background-color: transparent;
+  padding: 0px;
+  margin: 0px;
+}
+
+/* -----------------------------------------------------
+* Tray
+* ----------------------------------------------------- */
+
+#tray {
+  padding: 0px 15px 0px 0px;
+}
+
+#tray>.passive {
+  -gtk-icon-effect: dim;
+}
+
+#tray>.needs-attention {
+  -gtk-icon-effect: highlight;
+}

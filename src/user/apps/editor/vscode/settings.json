@@ -1,0 +1,56 @@
+{
+    "editor.fontFamily": "FiraCode, DroidSansMono",
+    "git.enableSmartCommit": true,
+    "terminal.integrated.scrollback": 10000,
+    "explorer.confirmDelete": false,
+    "workbench.startupEditor": "none",
+    "security.workspace.trust.untrustedFiles": "open",
+    "editor.minimap.enabled": false,
+    "files.trimTrailingWhitespace": true,
+    "files.trimFinalNewlines": true,
+    "editor.renderWhitespace": "all",
+    "files.autoSave": "onFocusChange",
+    "keyboard.dispatch": "keyCode",
+    "editor.inlineSuggest.enabled": true,
+    "github.copilot.enable": {
+        "*": true
+    },
+    "editor.cursorSurroundingLines": 7,
+    "editor.lineNumbers": "relative",
+    "projectManager.git.baseFolders": [
+        "~/dev"
+    ],
+    "rust-analyzer.cargo.target": "x86_64-unknown-linux-gnu",
+    "rust-analyzer.diagnostics.disabled": [
+        "unresolved-proc-macro"
+    ],
+    "explorer.confirmDragAndDrop": true,
+    "git.confirmSync": false,
+    "diffEditor.ignoreTrimWhitespace": false,
+    "editor.inlayHints.enabled": "offUnlessPressed",
+    "terminal.external.linuxExec": "wezterm",
+    "nix.enableLanguageServer": true,
+    "nix.serverPath": "nil",
+    "workbench.editor.empty.hint": "hidden",
+    "typst-lsp.exportPdf": "never",
+    "typst-lsp.experimentalFormatterMode": "on",
+    "typst-preview.partialRendering": false,
+    "[typst]": {
+        "editor.defaultFormatter": "nvarner.typst-lsp"
+    },
+    "cSpell.language": "en,de-de",
+    "cSpell.enableFiletypes": [
+        "typst"
+    ],
+    "window.zoomLevel": 2,
+    "extensions.ignoreRecommendations": true,
+    "workbench.activityBar.location": "top",
+    "window.customTitleBarVisibility": "auto",
+    "window.menuBarVisibility": "toggle",
+    "workbench.sideBar.location": "right",
+    "editor.cursorBlinking": "solid",
+    "editor.cursorSmoothCaretAnimation": "on",
+    "telemetry.telemetryLevel": "off",
+    "update.showReleaseNotes": false,
+    "workbench.colorTheme": "Min Dark"
+}
