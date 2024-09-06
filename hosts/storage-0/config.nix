@@ -11,8 +11,15 @@
         home = {
           name = "User";
           email = "user.storage-0.homelab@timon.zip";
+          persist.data.folders = [
+            "tmp"
+          ];
         };
       };
+    };
+    services.openssh = {
+      enable = true;
+      passwordAuthentication = true;
     };
   };
 
