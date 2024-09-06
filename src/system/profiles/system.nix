@@ -31,7 +31,7 @@ let
     ) profiles;
 in
 {
-  options.opts.user = {
+  options.opts.system = {
     profile = lib.mkOption {
       type = lib.types.enum (lib.lists.map (x: lib.strings.concatStringsSep "." x) profilePaths);
       default = "default";
@@ -40,11 +40,11 @@ in
   };
   config = lib.mkMerge ((
     lib.lists.map (
-      e: (lib.mkIf ((lib.attrsets.getAttrFromPath e.fst config.opts.user.profiles).enable) (import e.snd args))
+      e: (lib.mkIf ((lib.attrsets.getAttrFromPath e.fst config.opts.system.profiles).enable) (import e.snd args))
     ) (lib.lists.zipLists profilePaths profileFiles)
   ) ++ [
     {
-      opts.user.profiles = lib.attrsets.setAttrByPath (lib.strings.splitString "." config.opts.user.profile) { enable = true; };
+      opts.system.profiles = lib.attrsets.setAttrByPath (lib.strings.splitString "." config.opts.system.profile) { enable = true; };
     }
   ]);
 }
