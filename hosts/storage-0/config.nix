@@ -17,10 +17,11 @@
         };
       };
     };
-    services.openssh = {
-      enable = true;
-      passwordAuthentication = true;
-    };
+  };
+
+  services.openssh = {
+    enable = true;
+    passwordAuthentication = true;
   };
 
   boot = {
