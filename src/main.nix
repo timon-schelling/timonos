@@ -9,7 +9,7 @@ lib.nixosSystem {
     (../hosts + "/${host}/config.nix")
 
     {
-      imports = (lib.imports.type "system" ./.);
+      imports = (lib.imports.type "system" ./.) ++ [ ../profiles/system/system.nix ];
     }
 
     {

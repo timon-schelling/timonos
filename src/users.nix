@@ -38,7 +38,6 @@
             isNormalUser = true;
             home = "/home/${name}";
             hashedPassword = user.passwordHash;
-            description = user.home.name;
             extraGroups = user.groups ++ (if user.admin then [ "admin" ] else [ ]);
             shell = pkgs.nushell;
           };
@@ -61,7 +60,7 @@
               inherit username;
               user = user.home;
             };
-            modules = lib.imports.type "home" ./.;
+            modules = (lib.imports.type "home" ./.) ++ [ ../profiles/home/home.nix ];
           in
           {
             ${username} = { lib, ...}: {
