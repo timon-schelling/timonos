@@ -1,17 +1,11 @@
-{ inputs, config, pkgs, lib, ... }:
+{ pkgs, ... }:
 
-let
-  pluginPkgs = inputs.anyrun.packages.${config.opts.system.platform};
-in
 {
-  imports = [
-    inputs.anyrun.homeManagerModules.default
-  ];
-
   programs.anyrun = {
     enable = true;
+    package = pkgs.anyrun;
     config = {
-      plugins = with pluginPkgs; [
+      plugins = with pkgs.anyrun-plugins; [
         applications
         rink
         symbols
@@ -67,7 +61,7 @@ in
       anyrun-select
     '')
     (pkgs.nu.writeScriptBin "anyrun-select"''
-      ^anyrun --plugins "${pluginPkgs.stdin}/lib/libstdin.so" --hide-plugin-info true
+      ^anyrun --plugins "${pkgs.anyrun-plugins.stdin}/lib/libstdin.so" --hide-plugin-info true
     '')
   ];
 
