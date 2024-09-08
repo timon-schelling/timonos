@@ -1,14 +1,15 @@
-{ lib, pkgs, ... }:
+{ lib, ... }:
 
 {
-  imports = [
-    ./gpu.nix
-  ];
-
   opts.system = {
-    profile = "users.timon";
     drive = "/dev/disk/by-id/nvme-MTFDKBA1T0TFH-1BC1AABHA_UMDMD0153GYBFB";
-    hardware.gpu.nvidia.mobile.mode = "integrated";
+    profile = "users.timon";
+    hardware.gpu.nvidia-intel-mobile = {
+      enable = true;
+      mode = "integrated";
+      nvidiaBusId = "PCI:1:0:0";
+      intelBusId = "PCI:0:2:0";
+    };
   };
 
   boot = {
@@ -26,7 +27,7 @@
 
   specialisation = {
     "hybrid-gpu".configuration = {
-      opts.system.hardware.gpu.nvidia.mobile.mode = lib.mkForce "hybrid";
+      opts.system.hardware.gpu.nvidia-intel-mobile.mode = lib.mkForce "hybrid";
       system.nixos.tags = [ "hybrid-gpu" ];
     };
   };
