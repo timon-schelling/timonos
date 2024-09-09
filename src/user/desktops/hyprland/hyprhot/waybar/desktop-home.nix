@@ -33,12 +33,16 @@ let
     };
 
     battery = {
-      format = "{icon} {capacity:02} 󱎫{time}  {power:02.0f}";
+      format = "{icon} {capacity:02}";
       format-charging = " {capacity:02}";
       format-full = " {capacity:02}";
       format-icons = [ "" "" "" "" "" ];
       format-plugged = " {capacity:02}";
       format-time = " {H}:{m}";
+      tooltip-format = ''
+        󱎫{time}
+         {power:0.1f}W
+         {cycles}'';
       interval = 1;
       states = {
         critical = 15;
@@ -48,25 +52,32 @@ let
 
     network = {
       format = "󰛳";
-      format-disconnected = "󰍸";
       format-ethernet = "󰈀";
       format-wifi = " {signalStrength:02}";
-      on-click = "settings-wifi";
-      tooltip-format = " {ifname} {gwaddri}";
-      tooltip-format-disconnected = "󰍸 Disconnected";
+      format-disconnected = "󰍸";
+      tooltip-format = ''
+        󰩟 {ipaddr}
+        󰑩 {gwaddr}
+        󰈀 {ifname}
+         {bandwidthDownBits}
+         {bandwidthUpBits}'';
       tooltip-format-ethernet = ''
         󰩟 {ipaddr}
-         {bandwidthUpBits}
+        󰑩 {gwaddr}
+        󰈀 {ifname}
          {bandwidthDownBits}
-        󰈀 {ifname}'';
+         {bandwidthUpBits}'';
       tooltip-format-wifi = ''
         󰩟 {ipaddr}
-         {bandwidthUpBits}
-         {bandwidthDownBits}
+        󰑩 {gwaddr}
         󰈀 {ifname}
+         {bandwidthDownBits}
+         {bandwidthUpBits}
         󰿀 {essid}
         󰤥 {signalStrength}%
         󰐻 {frequency}MHz'';
+      tooltip-format-disconnected = "󰍸 Disconnected";
+      on-click = "settings-wifi";
     };
 
     cpu = {
