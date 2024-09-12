@@ -7,6 +7,7 @@
         enable = true;
         monitorDdcciFixEnable = true;
       };
+      desktops.hyprland.enable = true;
     };
     users = {
       user = {
@@ -18,6 +19,7 @@
           persist.data.folders = [
             "tmp"
           ];
+          desktops.hyprland.rainbow.enable = true;
         };
       };
     };
