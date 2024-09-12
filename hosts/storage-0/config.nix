@@ -20,6 +20,7 @@
             "tmp"
           ];
           desktops.hyprland.rainbow.enable = true;
+          profiles.default-desktop-apps.enable = true;
         };
       };
     };
