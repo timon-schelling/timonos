@@ -60,10 +60,10 @@ in
             cd /tmp/greeter-home
             mkdir .config
             mkdir .config/rio
-            ln -s ${terminalConfigFile} .config/rio/config.toml
+            try { ln -s ${terminalConfigFile} .config/rio/config.toml }
             mkdir .config/nushell
-            touch .config/nushell/env.nu
-            ln -s ${nushellConfigFile} .config/nushell/config.nu
+            try { touch .config/nushell/env.nu }
+            try { ln -s ${nushellConfigFile} .config/nushell/config.nu }
             ${pkgs.cage-no-cursor}/bin/cage -m last -- ${pkgs.rio}/bin/rio --command nu --login
           '');
           user = "greeter";
