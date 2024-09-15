@@ -1,17 +1,16 @@
 inputs: self: super: {
-  # TODO: remove this once the https://github.com/mgunyho/tere/pull/104 is merged and packaged in nixpkgs unstable
+  # TODO: remove this once the https://github.com/NixOS/nixpkgs/pull/342144 is merged in nixpkgs unstable
   tere-unwrapped = super.tere.override {
     rustPlatform = super.rustPlatform // {
       buildRustPackage = args: self.rustPlatform.buildRustPackage (args // {
-        version = "576dfab4efce0048d34712e33d181a20e9dca1a7";
+        version = "v1.6.0";
         src = super.fetchFromGitHub {
-          owner = "timon-schelling";
+          owner = "mgunyho";
           repo = "tere";
-          rev = "576dfab4efce0048d34712e33d181a20e9dca1a7";
-          hash = "sha256-VvL5xqWQhfu8BSKEYZINk6tma0TXy7rQnFWft/fA6vI=";
+          rev = "5adf1176e8c12c073ad244cac7773a7808ed2021";
+          hash = "sha256-oY4oeSttM8LLXLirYq/B7Nzajkg4Pw26uig5gZxqU3s=";
         };
-        cargoHash = "sha256-FrI3nk/ZeIHp9KMHFYIYzm8FiFhQFzdGoGhn445F3H0=";
-        doCheck = false;
+        cargoHash = "sha256-1QLVtNGaxdLfnazUeAFUSqadQT+J3NY40zUDa6LCtiY=";
       });
     };
   };
