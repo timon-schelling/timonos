@@ -1,20 +1,15 @@
-{ ... }:
+{ config, lib, ... }:
 
+let
+  cfg = config.opts.system.desktop.keyboard.remapping;
+in
 {
-  users.groups."input-local" = {};
 
-  environment.etc."keyd/default.conf" = {
-    group = "input-local";
-    mode = "0664";
-  };
-
-  # TODO: make settings overriteable by user
-
-  services.keyd = {
-    enable = true;
-    keyboards.default = {
-      ids = [ "*" ];
-      extraConfig = ''
+  options.opts.system.desktop.keyboard.remapping = {
+    enable = lib.mkEnableOption "Enable keyboard remapping";
+    config = lib.mkOption {
+      type = lib.types.str;
+      default = ''
         [main]
         esc = clear()
 
@@ -295,6 +290,25 @@
         [normal+special]
         esc = noop
       '';
+    };
+  };
+
+  config = lib.mkIf cfg.enable {
+    users.groups."input-local" = {};
+
+    environment.etc."keyd/default.conf" = {
+      group = "input-local";
+      mode = "0664";
+    };
+
+    # TODO: make settings overriteable by user
+
+    services.keyd = {
+      enable = true;
+      keyboards.default = {
+        ids = [ "*" ];
+        extraConfig = cfg.config;
+      };
     };
   };
 }
