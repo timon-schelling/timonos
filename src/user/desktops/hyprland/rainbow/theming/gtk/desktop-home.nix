@@ -1,17 +1,23 @@
 { config, pkgs, ... }:
 
+let
+  themePkg = pkgs.whitesur-gtk-theme.override {
+    defaultActivities = true;
+  };
+  themeName = "WhiteSur-Dark-solid";
+in
 {
   home.sessionVariables = {
-    GTK_THEME = config.gtk.theme.name;
+    GTK_THEME = themeName;
   };
   systemd.user.sessionVariables = {
-    GTK_THEME = config.gtk.theme.name;
+    GTK_THEME = themeName;
   };
   gtk = {
     enable = true;
     theme = {
-      package = pkgs.whitesur-gtk-theme;
-      name = "WhiteSur-Dark-solid";
+      package = themePkg;
+      name = themeName;
     };
 
     iconTheme = {
@@ -28,6 +34,11 @@
     };
     gtk4.extraConfig = {
       gtk-application-prefer-dark-theme = 1;
+    };
+  };
+  dconf.settings = {
+    "org/gnome/desktop/wm/preferences" = {
+      button-layout = "close,minimize,maximize:";
     };
   };
 }
