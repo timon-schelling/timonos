@@ -5,6 +5,6 @@
     ".local/share/epiphany"
   ];
   home.packages = [
-    pkgs.pkgs.gnome.epiphany
+    pkgs.epiphany
   ];
 }

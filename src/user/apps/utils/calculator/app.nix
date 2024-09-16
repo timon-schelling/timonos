@@ -2,6 +2,6 @@
 
 {
   home.packages = [
-    pkgs.pkgs.gnome.gnome-calculator
+    pkgs.gnome-calculator
   ];
 }

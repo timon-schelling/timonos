@@ -2,7 +2,7 @@
 
 {
   home.packages = [
-    pkgs.pkgs.gnome.gnome-screenshot
+    pkgs.gnome-screenshot
   ];
   dconf.settings = {
     "org/gnome/gnome-screenshot"= {
