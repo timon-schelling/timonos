@@ -14,7 +14,7 @@
       firefox.enable = lib.mkDefault true;
     };
     filemanager = {
-      gnome.enable = lib.mkDefault true;
+      nautilus.enable = lib.mkDefault true;
     };
   };
 }
