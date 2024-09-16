@@ -1,9 +1,7 @@
 { config, pkgs, ... }:
 
 let
-  themePkg = pkgs.whitesur-gtk-theme.override {
-    defaultActivities = true;
-  };
+  themePkg = pkgs.whitesur-gtk-theme;
   themeName = "WhiteSur-Dark-solid";
 in
 {
