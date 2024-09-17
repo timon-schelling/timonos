@@ -102,7 +102,7 @@ let
         transition-duration = 250;
         transition-left-to-right = true;
       };
-      modules = [ "custom/poweroff" "custom/reboot" "custom/logout" ];
+      modules = [ "custom/poweroff" "custom/reboot" "custom/logout" "custom/hibernate" "custom/suspend" ];
       orientation = "inherit";
     };
     "custom/suspend" = {
