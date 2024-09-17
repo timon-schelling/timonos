@@ -117,7 +117,7 @@ let
     };
     "custom/logout" = {
       format = "󰍃";
-      on-click = "hyperctl dispatch exit";
+      on-click = "hyprctl dispatch exit";
       tooltip = false;
     };
     "custom/reboot" = {
