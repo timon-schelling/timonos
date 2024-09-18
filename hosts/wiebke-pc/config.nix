@@ -44,10 +44,25 @@ in
     };
     users = {
       wiebke = {
-        passwordHash = "$6$rounds=262144$btdA4Fl2MtXbCcEw$wzDDnSCaBlgUYNIXQm0fK8dKjHQAPFP6AiQz6qpZi3l9/h69WmbMAhSNtPYN5qSGcEw4yJGQT4W0KdPFvAcYg0";
+        passwordHash = "$6$rounds=262144$iqUJl7kM9QWQ7caJ$CCAqlz1iix27sf6Uc//2QOBIK6v.yc8kstK.N2XLvTeMHtkx38qdPPd27QBcraTktwZdfAPqP78cNngtWHicI/";
         home = {
           name = "Wiebke";
           email = "wiebke.users@timon.zip";
+          persist.data.folders = [
+            "data"
+            "tmp"
+          ];
+          desktops.gnome.mac.enable = true;
+          profiles.default-desktop-apps.enable = true;
+          inherit apps;
+        };
+      };
+      admin = {
+        passwordHash = "$6$rounds=262144$iqUJl7kM9QWQ7caJ$CCAqlz1iix27sf6Uc//2QOBIK6v.yc8kstK.N2XLvTeMHtkx38qdPPd27QBcraTktwZdfAPqP78cNngtWHicI/";
+        admin = true;
+        home = {
+          name = "Admin";
+          email = "admin.users@timon.zip";
           persist.data.folders = [
             "data"
             "tmp"
@@ -74,6 +89,28 @@ in
     };
   };
 
+  # TODO: find a better way
+  users.users = {
+    admin.uid = 1000;
+    timon.uid = 1001;
+    wiebke.uid = 1002;
+  };
+
+  home-manager.users.wiebke.xdg.desktopEntries.files = {
+    name = "Data";
+    genericName = "Filemanager";
+    exec = "${pkgs.nu.writeScript "launch-nautilus-in-home-data" ''
+      ${pkgs.nautilus}/bin/nautilus --new-window ($env.HOME + "/data")
+    ''}";
+    terminal = false;
+    icon = "org.gnome.Nautilus";
+  };
+
+  # TODO: find a better way
+  console.keyMap = "de";
+  services.xserver.xkb.layout = "de";
+
+  # TODO: find a better way
   services.openssh = {
     enable = true;
     settings.PasswordAuthentication = true;
