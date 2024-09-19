@@ -46,7 +46,10 @@
     };
     Service = {
       Type = "simple";
-      ExecStart = "${pkgs.atuin}/bin/atuin daemon";
+      ExecStart = "${pkgs.nu.writeScript "atuin-daemon" ''
+        try { rm ~/.local/share/atuin/atuin.sock }
+        ${pkgs.atuin}/bin/atuin daemon
+      ''}";
     };
   };
   programs.atuin = {
