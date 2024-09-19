@@ -27,6 +27,7 @@ let
       signal.enable = true;
       discord-webcord.enable = true;
       spotify.enable = true;
+      steam.enable = true;
     };
   };
 in
@@ -128,10 +129,4 @@ in
 
   # disable the tpm module because it not supported and causes failures during boot
   boot.blacklistedKernelModules = [ "tpm" "tpm_atmel" "tpm_infineon" "tpm_nsc" "tpm_tis" "tpm_crb" ];
-
-  # steam
-  # hardware.graphics.enable32Bit = true; should be set in nvidia module
-  opts.users.wiebke.home.persist.state.folders = [ ".local/share/Steam" ];
-  home-manager.users.timon.home.packages = [ pkgs.steam ];
-  # for unity games set data folder with `XDG_CONFIG_HOME=~/.local/share/Steam/data %command%` in steam launch options
 }
