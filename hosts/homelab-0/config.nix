@@ -46,6 +46,9 @@
     };
   };
 
+  services.upower.ignoreLid = true;
+  services.logind.lidSwitch = "ignore";
+
   # TODO: find a better way
   services.openssh = {
     enable = true;
