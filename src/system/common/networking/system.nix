@@ -1,4 +1,4 @@
-{ config, ... }:
+{ config, lib,  ... }:
 
 {
 
@@ -10,6 +10,7 @@
     hostName = config.opts.system.host;
     nameservers = [ "1.1.1.1#one.one.one.one" "1.0.0.1#one.one.one.one" ];
     useNetworkd = true;
+    networkmanager.enable = lib.mkOverride 900 false;
   };
 
   services.resolved = {
