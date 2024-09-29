@@ -75,4 +75,8 @@
 
   # disable the tpm module because it not supported and causes failures during boot
   boot.blacklistedKernelModules = [ "tpm" "tpm_atmel" "tpm_infineon" "tpm_nsc" "tpm_tis" "tpm_crb" ];
+
+  imports = [
+    ./smarthome-containers.nix
+  ];
 }
