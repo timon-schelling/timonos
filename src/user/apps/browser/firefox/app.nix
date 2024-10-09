@@ -27,7 +27,7 @@
       DisplayBookmarksToolbar = "never";
       DisplayMenuBar = "default-off";
       SearchBar = "unified";
-      DefaultDownloadDirectory = "~/tmp";
+      DefaultDownloadDirectory = "\${home}/tmp";
 
       Preferences = {
         "browser.newtabpage.pinned" = [{
