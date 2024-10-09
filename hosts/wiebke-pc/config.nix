@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
 
 let
   apps = {
@@ -97,14 +97,20 @@ in
     wiebke.uid = 1002;
   };
 
-  home-manager.users.wiebke.xdg.desktopEntries.files = {
-    name = "Data";
-    genericName = "Filemanager";
-    exec = "${pkgs.nu.writeScript "launch-nautilus-in-home-data" ''
-      ${pkgs.nautilus}/bin/nautilus --new-window ($env.HOME + "/data")
-    ''}";
-    terminal = false;
-    icon = "org.gnome.Nautilus";
+  home-manager.users.wiebke = {
+    xdg.desktopEntries.files = {
+      name = "Data";
+      genericName = "Filemanager";
+      exec = "${pkgs.nu.writeScript "launch-nautilus-in-home-data" ''
+        ${pkgs.nautilus}/bin/nautilus --new-window ($env.HOME + "/data")
+      ''}";
+      terminal = false;
+      icon = "org.gnome.Nautilus";
+    };
+    # TODO: shoud be done with a generic option for window decoration for all desktops
+    programs.firefox.profiles.main.userChrome = lib.mkAfter ''
+        .titlebar-buttonbox-container{ display: grid !important }
+    '';
   };
 
   # TODO: find a better way
