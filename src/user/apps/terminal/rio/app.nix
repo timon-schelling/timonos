@@ -4,10 +4,12 @@
   programs.rio = {
     enable = true;
     settings = {
-      cursor = "|";
-      blinking-cursor = false;
+      cursor = {
+        shape = "beam";
+        blink = false;
+      };
       padding-x = 4;
-      navigation.mode = "CollapsedTab";
+      navigation.mode = "Plain";
       colors = {
         background = "#1c1c1c";
         foreground = "#aaaaaa";
@@ -49,9 +51,15 @@
         family = "JetBrainsMono Nerd Font";
         size = 20;
         extras = [
-          { family = "Cascadia Mono"; }
+          {
+            family = "Cascadia Mono";
+            style = "Normal";
+          }
         ];
-        regular.weight = 600;
+        regular = {
+          weight = 600;
+          style = "Normal";
+        };
       };
       window.decorations = "Disabled";
     };

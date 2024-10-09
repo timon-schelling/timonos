@@ -18,20 +18,20 @@ in
         settings.default_session = {
           command = let
             terminalConfigFile = (pkgs.formats.toml { }).generate "greeter-terminal-config.toml" {
-              cursor = "⠀";
-              blinking-cursor = false;
+              cursor = {
+                shape = "beam";
+                blink = false;
+              };
               padding-x = 0;
-              navigation.mode = "CollapsedTab";
+              navigation.mode = "Plain";
               colors = {
                 background = "#1c1c1c";
                 foreground = "#aaaaaa";
                 cursor = "#aaaaaa";
                 selection-background = "#888888";
                 selection-foreground = "#1c1c1c";
-
                 black = "#464646";
                 white = "#727272";
-
                 dim-black = "#272727";
               };
               fonts = {
