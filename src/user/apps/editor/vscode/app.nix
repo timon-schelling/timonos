@@ -29,18 +29,28 @@
       mhutchie.git-graph
       thenuprojectcontributors.vscode-nushell-lang
       ms-vscode.hexeditor
-      github.copilot
-      github.copilot-chat
       streetsidesoftware.code-spell-checker
       pkief.material-icon-theme
       tamasfe.even-better-toml
       fill-labs.dependi
     ] ++ pkgs.vscode-utils.extensionsFromVscodeMarketplace [
       {
+        publisher = "github";
+        name = "copilot";
+        version = "1.236.1144";
+        sha256 = "sha256-qZMRbskvPaLOCbA+tm3HZJwYALvT1u7TsZmAnK7Mzsk=";
+      }
+      {
+        publisher = "github";
+        name = "copilot-chat";
+        version = "0.22.2024100901";
+        sha256 = "sha256-fqlzar8vFmDGPYc0ubyitzlN+DrJr2dYZvGsM6Uh5oQ=";
+      }
+      {
         publisher = "streetsidesoftware";
         name = "code-spell-checker-german";
-        version = "2.3.1";
-        sha256 = "sha256-LxgftSpGk7+SIUdZcNpL7UZoAx8IMIcwPYIGqSfVuDc=";
+        version = "2.3.2";
+        sha256 = "sha256-40Oc6ycNog9cxG4G5gCps2ADrM/wLuKWFrD4lnd91Z4=";
       }
       {
         publisher = "bierner";
