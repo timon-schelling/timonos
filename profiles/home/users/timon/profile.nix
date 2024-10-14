@@ -31,5 +31,6 @@
         spotify.enable = lib.mkDefault true;
       };
     };
+    podman.enable = true;
   };
 }
