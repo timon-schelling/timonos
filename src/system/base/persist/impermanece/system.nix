@@ -9,7 +9,7 @@
   environment.persistence."/persist/system" = {
     hideMounts = true;
     directories = config.platform.system.persist.folders ++ config.opts.system.persist.folders;
-    files = config.platform.system.persist.files ++ config.opts.system.persist.folders;
+    files = config.platform.system.persist.files ++ config.opts.system.persist.files;
   };
 
   systemd.services."create-persist-user-dir" = {
