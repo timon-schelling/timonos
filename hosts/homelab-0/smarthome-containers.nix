@@ -1,3 +1,5 @@
+# TODO: this should be properly done with a rootless podman setup with a homelab user
+
 { pkgs, lib, ... }:
 
 let
@@ -84,7 +86,7 @@ let
     mqtt = {
       image = "docker.io/library/eclipse-mosquitto:2.0.15";
       volumes = [
-        "${configDir}/mqtt/config:/mosquitto/config/mosquitto.conf:rw"
+        "${configDir}/mqtt/config:/mosquitto/config/mosquitto.conf:ro"
         "${dataDir}/mqtt/log:/mosquitto/log:rw"
         "${dataDir}/mqtt/data:/mosquitto/data:rw"
       ];
@@ -103,7 +105,12 @@ let
         "TZ" = "Europe/Berlin";
       };
       volumes = [
-        "${configDir}/zigbee2mqtt/config.yaml:/app/data/configuration.yaml:rw"
+        # TODO: do this properly by copying the config file to the right place if it doesn't exist
+        # this way the container writes to the nix store and that's really bad
+        # "${configDir}/zigbee2mqtt/config.yaml:/app/data/configuration.yaml:ro"
+        "${dataDir}/zigbee2mqtt/data/configuration.yaml:/app/data/configuration.yaml:rw"
+        "${dataDir}/zigbee2mqtt/data/configuration.yaml:/app/configuration.yaml:rw"
+
         "${dataDir}/zigbee2mqtt/data:/app/data:rw"
         "/run/udev:/run/udev:ro"
       ];
