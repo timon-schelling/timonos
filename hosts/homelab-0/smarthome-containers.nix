@@ -201,7 +201,20 @@ in
         enable = true;
         autoPrune.enable = true;
         dockerCompat = true;
-        defaultNetwork.settings.dns_enabled = true;
+        defaultNetwork.settings = {
+          dns_enabled = true;
+          ipv6_enabled = true;
+          subnets = [
+            {
+              gateway = "10.112.0.1";
+              subnet = "10.112.0.0/16";
+            }
+            {
+              gateway = "fd9f:925c:9301::1";
+              subnet = "fd9f:925c:9301::/64";
+            }
+          ];
+        };
       };
       oci-containers.backend = "podman";
     })
