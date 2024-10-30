@@ -49,9 +49,6 @@ in
                   --width 50
                   --theme "border=darkgray;text=gray;prompt=gray;action=darkgray;button=darkgray;input=gray"
               )
-              # try {
-              #   ${pkgs.rusty-rain}/bin/rusty-rain -C 74,74,74 -H 110,110,110
-              # }
               exit
             '';
           in
