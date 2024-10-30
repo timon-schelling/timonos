@@ -190,7 +190,7 @@ $env.config = {
         # foreground: "#bbbbbb"
         # cursor: "#bbbbbb"
     }
-    footer_mode: "25" # always, never, number_of_rows, auto
+    footer_mode: "auto"
     float_precision: 2
     # buffer_editor: "emacs" # command that will be used to edit the current line buffer with ctrl+o, if unset fallback to $env.EDITOR and $env.VISUAL
     use_ansi_coloring: true

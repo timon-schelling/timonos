@@ -23,10 +23,10 @@
 }:
 
 let
-  version = "1.0.0-a.29";
+  version = "1.0.1-a.14";
   src = builtins.fetchTarball {
     url = "https://github.com/zen-browser/desktop/releases/download/${version}/zen.linux-specific.tar.bz2";
-    sha256 = "sha256:0nmfqrr7x16p989m63inr9qz80l3hy94ymidn0x76j1hjldr37z5";
+    sha256 = "sha256:0hfi40c0vwrpdgxwp7si9swzg5xmhm67dq797ggpvd6h942xbg2w";
   };
   runtimeLibs = [
         libGL stdenv.cc.cc fontconfig libxkbcommon zlib freetype

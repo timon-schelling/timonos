@@ -5,11 +5,11 @@
     enable = true;
     package = pkgs.anyrun;
     config = {
-      plugins = with pkgs.anyrun-plugins; [
-        applications
-        rink
-        symbols
-        websearch
+      plugins = [
+        "${pkgs.anyrun}/lib/libapplications.so"
+        "${pkgs.anyrun}/lib/librink.so"
+        "${pkgs.anyrun}/lib/libsymbols.so"
+        "${pkgs.anyrun}/lib/libwebsearch.so"
       ];
       width = { absolute = 1000; };
       x = { fraction = 0.5; };
@@ -61,7 +61,7 @@
       anyrun-select
     '')
     (pkgs.nu.writeScriptBin "anyrun-select"''
-      ^anyrun --plugins "${pkgs.anyrun-plugins.stdin}/lib/libstdin.so" --hide-plugin-info true
+      ^anyrun --plugins "${pkgs.anyrun}/lib/libstdin.so" --hide-plugin-info true
     '')
   ];
 
