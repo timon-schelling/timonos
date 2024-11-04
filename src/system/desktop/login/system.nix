@@ -40,6 +40,16 @@ in
               window.decorations = "Disabled";
             };
             nushellConfigFile = pkgs.writeText "greeter-nushell-config.nu" ''
+
+              # TODO: remove this fix once the issue is resolved
+              # dirty fix to tuigreet from crashing
+              # could be an issue with tuigreet, nushell or rio
+              # probably related to a not properly initialized terminal
+              # right after starting the session
+              sleep 10ms
+              print " "
+              sleep 10ms
+
               (
                 ${pkgs.greetd.tuigreet}/bin/tuigreet
                   --time --time-format "%Y-%m-%d %H:%M:%S"
