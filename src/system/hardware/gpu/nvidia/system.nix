@@ -13,11 +13,6 @@ in
     boot.kernelParams = [
       "nvidia.NVreg_PreserveVideoMemoryAllocations=1"
       "nvidia_drm.fbdev=1"
-
-      # TODO: remove after https://github.com/NVIDIA/open-gpu-kernel-modules/pull/692
-      # and similar are merged and build in nixpkgs-unstable.
-      # WARNING: this disables tty output and thus hides boot logs.
-      "initcall_blacklist=simpledrm_platform_driver_init"
     ];
     hardware.nvidia = {
       modesetting.enable = true;
