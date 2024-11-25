@@ -185,10 +185,11 @@
 
       bind = $mainMod, B, exec, waybar-toggle
 
-      bind = , XF86MonBrightnessUp, exec, monitor-set-brightness +10%
-      bind = , XF86MonBrightnessDown, exec, monitor-set-brightness 10-%
-      # bind = , XF86AudioRaiseVolume, exec, monitor-set-brightness +10%
-      # bind = , XF86AudioLowerVolume, exec, monitor-set-brightness 10-%
+      binde = , XF86MonBrightnessUp, exec, monitor-set-brightness +10%
+      binde = , XF86MonBrightnessDown, exec, monitor-set-brightness 10-%
+      binde = , XF86AudioRaiseVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+ -l 2.0
+      binde = , XF86AudioLowerVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%- -l 2.0
+      bind = , XF86AudioMute, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle
 
       bind = ALT, space, exec, anyrun
 

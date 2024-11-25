@@ -189,7 +189,8 @@ in
         [desktop]
         esc = clear()
 
-        h = M-b
+        y = M-b
+        h = mute
         u = volumeup
         j = volumedown
         i = brightnessup
