@@ -1,15 +1,13 @@
-{ pkgs, lib, config, ... }:
+{ pkgs, config, ... }:
 
 {
   wayland.windowManager.hyprland = {
     enable = true;
     xwayland.enable = true;
     systemd.enable = true;
-    # plugins = with pkgs.hyprland-plugins; [
-    #   touch-gestures
-    #   virtual-desktops
-    # ];
     extraConfig = ''
+
+      #TODO: monitors should be set per host
 
       # desktop
       monitor = DP-3, 2560x1440, 1200x250, 1
@@ -85,14 +83,13 @@
       decoration {
         rounding = 10
         blur {
-            enabled = true
-            size = 3
-            passes = 1
+          enabled = true
+          size = 3
+          passes = 1
         }
-        drop_shadow = false
-        shadow_range = 20
-        shadow_render_power = 50
-        col.shadow = rgba(1a1a1aee)
+        shadow {
+          enabled = false
+        }
       }
 
       animations {
