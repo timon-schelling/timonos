@@ -20,7 +20,7 @@ in
         enable = true;
         finegrained = false;
       };
-      open = false;
+      open = true;
       nvidiaSettings = false;
       package = driverPkg;
     };
