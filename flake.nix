@@ -1,6 +1,6 @@
 {
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
+    nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-24.11";
     home-manager = {
       # TODO: change to upstream once merged into home-manager
       url = "github:timon-schelling/home-manager?ref=lapce";
