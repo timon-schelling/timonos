@@ -124,6 +124,9 @@ in
           user = "greeter";
         };
       };
+
+      # Set kernel console to tty1 to prevent the kernel from overwriting tuigreet output
+      boot.kernelParams = [ "console=tty1"];
     })
 
     (lib.mkIf (cfg.greeter == "tui" || cfg.greeter == "tty") {
