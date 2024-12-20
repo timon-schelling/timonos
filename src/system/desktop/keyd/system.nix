@@ -195,6 +195,7 @@ in
         j = volumedown
         i = brightnessup
         k = brightnessdown
+        n = print
 
         # compose key macros compose key is set to 'scrolllock'
         # compose table of special characters https://help.ubuntu.com/community/GtkComposeTable
