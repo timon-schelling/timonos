@@ -62,6 +62,7 @@
         };
       };
       window.decorations = "Disabled";
+      confirm-before-quit = false;
     };
   };
 }
