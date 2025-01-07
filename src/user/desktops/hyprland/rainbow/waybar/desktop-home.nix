@@ -10,7 +10,7 @@ let
     spacing = 0;
     modules-center = [ "clock" ];
     modules-left = [ "hyprland/workspaces" ];
-    modules-right = [ "battery" "network" "cpu" "memory" "disk" "group/power-menu" ];
+    modules-right = [ "battery" "network" "group/system-monitor" "group/power-menu" ];
 
     "hyprland/workspaces" = {
       active-only = false;
@@ -80,20 +80,26 @@ let
       on-click = "settings-wifi";
     };
 
+    "group/system-monitor" = {
+      modules = [ "cpu" "memory" "disk" ];
+      orientation = "inherit";
+      on-click = "system-monitor";
+    };
     cpu = {
       format = " {usage:02}";
       interval = 1;
+      on-click = "system-monitor";
     };
-
     memory = {
       format = " {percentage:02}";
       interval = 1;
+      on-click = "system-monitor";
     };
-
     disk = {
       format = " {percentage_used:02}";
-      interval = 30;
+      interval = 10;
       path = "/";
+      on-click = "system-monitor";
     };
 
     "group/power-menu" = {

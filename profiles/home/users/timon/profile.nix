@@ -30,6 +30,9 @@
         discord-webcord.enable = lib.mkDefault true;
         spotify.enable = lib.mkDefault true;
       };
+      utils = {
+        btop.enable = lib.mkDefault true;
+      };
     };
     podman.enable = true;
   };
