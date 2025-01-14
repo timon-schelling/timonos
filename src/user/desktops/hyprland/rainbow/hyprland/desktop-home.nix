@@ -215,7 +215,7 @@
         '' else ""
       }
 
-      # see is a window runs in xwayland
+      # see if a window runs in xwayland
       windowrulev2 = bordercolor rgb(b53600), xwayland: 1
 
       # app specific rules

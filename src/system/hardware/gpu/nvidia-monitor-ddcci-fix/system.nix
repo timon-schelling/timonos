@@ -11,17 +11,18 @@ let
     ${pkgs.dbus-listen}/bin/dbus-listen --system --interface ${serviceName} --member ${methodName} ${scriptPkg}
   '';
   scriptPkg = pkgs.nu.writeScript "ddcci-load-i2c-devices" ''
-    if ('/tmp/ddcci-load-i2c-devices.lock' | path exists) {
-        print "Already running"
+    let lock_file = '/var/lock/ddcci-load-i2c-devices'
+
+    if ($lock_file | path exists) {
         exit 0
     }
 
-    $nu.pid | save /tmp/ddcci-load-i2c-devices.lock
+    $nu.pid | save $lock_file
 
-    if ((open /tmp/ddcci-load-i2c-devices.lock | into int) == $nu.pid) {
-        print "Lock acquired"
+    if ((open $lock_file | into int) == $nu.pid) {
+        print $"Lock acquired pid ($nu.pid)"
     } else {
-        print $"Failed to acquire lock ($nu.pid)"
+        print $"Failed to acquire lock pid ($nu.pid)"
         exit 1
     }
 
@@ -34,21 +35,14 @@ let
 
     mut device_names = (get_device_names)
 
-    print $device_names
-
-    # todo: make this configurable, probably count the number of monitors in an future opts.system.monitors option
-    while (($device_names | length) != 3) {
-        sleep 2sec
-        $device_names = (get_device_names)
-        print $device_names
-    }
-    print $device_names
-
-    sleep 5sec
-
     let target_files = $device_names | each { $"/sys/bus/i2c/devices/($in)/new_device" }
-    $target_files | each { |it| try { "ddcci 0x37" | save -f $it } }
-    print $target_files
+    $target_files | par-each { |it|
+      try { "ddcci 0x37" | save -f $it }
+      print $"done with ($it) at (date now | format date "%Y-%m-%d_%H:%M:%S")"
+    }
+
+    print $"Returning lock and exiting pid ($nu.pid)"
+    rm $lock_file
   '';
   dbusService = pkgs.writeTextFile {
     name = systemdUnitName;
