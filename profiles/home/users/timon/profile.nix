@@ -24,14 +24,17 @@
       passwordmanager = {
         enpass.enable = lib.mkDefault true;
       };
+      media = {
+        spotify.enable = lib.mkDefault true;
+        music-player.enable = lib.mkDefault true;
+      };
+      utils = {
+        btop.enable = lib.mkDefault true;
+      };
       other = {
         beeper.enable = lib.mkDefault true;
         signal.enable = lib.mkDefault true;
         discord-webcord.enable = lib.mkDefault true;
-        spotify.enable = lib.mkDefault true;
-      };
-      utils = {
-        btop.enable = lib.mkDefault true;
       };
     };
     podman.enable = true;
