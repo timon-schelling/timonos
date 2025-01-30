@@ -23,10 +23,12 @@
 }:
 
 let
-  version = "1.0.2-b.5";
+  version = "1.7.2b";
+  hash = "1j15cmwyy0pw339c6as7afw3x4478h0cmk1xwf3zbaz63kmfbf42";
+
   src = builtins.fetchTarball {
     url = "https://github.com/zen-browser/desktop/releases/download/${version}/zen.linux-x86_64.tar.bz2";
-    sha256 = "sha256:1xp0z86l7z661cwckgr623gwwjsy3h66900xqjq6dvgx5a3njbxi";
+    sha256 = "sha256:${hash}";
   };
   runtimeLibs = [
         libGL stdenv.cc.cc fontconfig libxkbcommon zlib freetype
