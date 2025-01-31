@@ -1,0 +1,8 @@
+builds:
+  - branch: main
+    exclude:
+      - 'nixosConfigurations.default'
+    include:
+      - '*.x86_64-linux.*'
+      - 'nixosConfigurations.*'
+      - 'homeConfigurations.*'
