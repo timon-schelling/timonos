@@ -37,7 +37,7 @@
             filemanager = {
               nautilus.enable = true;
             };
-            other = {
+            media = {
               spotify.enable = true;
             };
           };

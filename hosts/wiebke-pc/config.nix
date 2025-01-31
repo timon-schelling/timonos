@@ -23,10 +23,12 @@ let
     utils = {
       calculator.enable = true;
     };
+    media = {
+      spotify.enable = true;
+    };
     other = {
       signal.enable = true;
       discord-webcord.enable = true;
-      spotify.enable = true;
       steam.enable = true;
     };
   };
