@@ -1,0 +1,43 @@
+From f7271e843fc0630becaa7c5504ab12b6630003da Mon Sep 17 00:00:00 2001
+From: David Stevens <stevensd@chromium.org>
+Date: Thu, 13 Oct 2022 10:37:47 +0900
+Subject: [PATCH 4/4] vhost_user: add protocol flag for shmem
+SPDX-FileCopyrightText: 2019-2021 Alibaba Cloud. All rights reserved.
+SPDX-FileCopyrightText: The Chromium OS Authors
+SPDX-FileCopyrightText: 2023-2024 Alyssa Ross <hi@alyssa.is>
+SPDX-License-Identifier: Apache-2.0
+
+Add a vhost protocol feature flag for shared memory region support. This
+is necessary to avoid sending the GET_SHARED_MEMORY_REGIONS message to
+backends which don't support it.
+
+BUG=b:252901073
+TEST=crosvm device wl
+
+Change-Id: I044926e982526c3c76063b5386cab0db72524707
+Reviewed-on: https://chromium-review.googlesource.com/c/crosvm/crosvm/+/3951472
+Reviewed-by: Daniel Verkamp <dverkamp@chromium.org>
+Commit-Queue: David Stevens <stevensd@chromium.org>
+(cherry-picked from commit 60aa43629ae9be2cc3df37c648ab7e0e5ff2172c)
+[renumbered for crosvm commit 6795b3edf3ddc0b3a2e2b928033f21dabcf8be78]
+Signed-off-by: Alyssa Ross <hi@alyssa.is>
+---
+ vhost/src/vhost_user/message.rs | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/vhost/src/vhost_user/message.rs b/vhost/src/vhost_user/message.rs
+index f090466..f77e098 100644
+--- a/vhost/src/vhost_user/message.rs
++++ b/vhost/src/vhost_user/message.rs
+@@ -444,6 +444,8 @@ bitflags! {
+         const SHARED_OBJECT = 0x0004_0000;
+         /// Support transferring internal device state.
+         const DEVICE_STATE = 0x0008_0000;
++        /// Support shared memory regions. (Non-standard.)
++        const SHARED_MEMORY_REGIONS = 0x8000_0000;
+     }
+ }
+ 
+-- 
+2.47.0
+
