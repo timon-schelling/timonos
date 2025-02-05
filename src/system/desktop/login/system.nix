@@ -5,13 +5,51 @@ let
 in
 {
   options = {
-    opts.system.login.greeter = lib.mkOption {
-      type = lib.types.enum [ "tui" "gui" "tty" ];
-      default = "tui";
+    opts.system.login = {
+      greeter = lib.mkOption {
+        type = lib.types.enum [ "tui" "gui" "tty" ];
+        default = "tui";
+      };
+      auto = lib.mkOption {
+        type = lib.types.submodule {
+          options = {
+            enable = lib.mkEnableOption "Enable auto login";
+            user = lib.mkOption {
+              type = lib.types.str;
+            };
+            command = lib.mkOption {
+              type = lib.types.path;
+              default = pkgs.nu.writeScript "greetd-auto-login" ''
+                let user = getent passwd $env.USER | complete | get stdout | lines | first
+                let start_shell_pos = ($user | str index-of --end ":") + 1
+                run-external ( $user | str substring $start_shell_pos.. )
+              '';
+            };
+          };
+        };
+        default = {};
+      };
     };
   };
 
   config = lib.mkMerge [
+
+    {
+      services.greetd.enable = true;
+    }
+
+    (lib.mkIf cfg.auto.enable {
+      services = {
+        greetd.settings.initial_session = {
+          user = cfg.auto.user;
+          command = "${cfg.auto.command}";
+        };
+        getty = {
+          autologinUser = cfg.auto.user;
+        };
+      };
+    })
+
     (lib.mkIf (cfg.greeter == "tui") {
       services.greetd = {
         enable = true;
