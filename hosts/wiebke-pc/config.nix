@@ -37,8 +37,10 @@ in
 {
   opts = {
     system = {
-      drive = "/dev/disk/by-id/ata-SAMSUNG_MZNLF128HCHP-00000_S28TNXAGB25148";
-      swap.size = "16G";
+      filesystem = {
+        drive = "/dev/disk/by-id/ata-SAMSUNG_MZNLF128HCHP-00000_S28TNXAGB25148";
+        swap.size = "16G";
+      };
       hardware.gpu.nvidia = {
         enable = true;
         monitorDdcciFixEnable = true;

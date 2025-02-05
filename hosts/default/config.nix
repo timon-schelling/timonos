@@ -1,7 +1,7 @@
 {
   opts = {
     system = {
-      drive = "/dev/<drive>"; !!! NEEDS TO BE SET MANUALLY !!!
+      filesystem.drive = "/dev/<drive>"; !!! NEEDS TO BE SET MANUALLY !!!
     };
     users = {
       user = {

@@ -3,7 +3,7 @@
 {
   opts = {
     system = {
-      drive = "/dev/nvme1n1";
+      filesystem.drive = "/dev/nvme1n1";
       profile = "users.timon";
       hardware.gpu.nvidia = {
         enable = true;

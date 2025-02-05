@@ -2,7 +2,7 @@
 
 {
   opts.system = {
-    drive = "/dev/disk/by-id/nvme-MTFDKBA1T0TFH-1BC1AABHA_UMDMD0153GYBFB";
+    filesystem.drive = "/dev/disk/by-id/nvme-MTFDKBA1T0TFH-1BC1AABHA_UMDMD0153GYBFB";
     profile = "users.timon";
     hardware.gpu.nvidia-intel-mobile = {
       enable = true;

@@ -28,22 +28,24 @@ let
         umount /btrfs_tmp
     '';
 in
-lib.mkMerge [
-    (lib.mkIf config.boot.initrd.systemd.enable ({
-        boot.initrd.systemd.services."reset-root" = {
-            description = "Reset root filesystem to a clean state on boot";
-            wantedBy = [ "initrd-fs.target" ];
-            wants = [ "dev-root_vg-root.device" ];
-            after = [ "dev-root_vg-root.device" ];
-            unitConfig.DefaultDependencies = false;
-            serviceConfig = {
-                Type = "oneshot";
-                RemainAfterExit = true;
+lib.mkIf (config.opts.system.filesystem.type == "impermanent") (
+    lib.mkMerge [
+        (lib.mkIf config.boot.initrd.systemd.enable ({
+            boot.initrd.systemd.services."reset-root" = {
+                description = "Reset root filesystem to a clean state on boot";
+                wantedBy = [ "initrd-fs.target" ];
+                wants = [ "dev-root_vg-root.device" ];
+                after = [ "dev-root_vg-root.device" ];
+                unitConfig.DefaultDependencies = false;
+                serviceConfig = {
+                    Type = "oneshot";
+                    RemainAfterExit = true;
+                };
+                script = resetRootScript;
             };
-            script = resetRootScript;
-        };
-    }))
-    (lib.mkIf (!config.boot.initrd.systemd.enable) ({
-        boot.initrd.postDeviceCommands = lib.mkAfter resetRootScript;
-    }))
-]
+        }))
+        (lib.mkIf (!config.boot.initrd.systemd.enable) ({
+            boot.initrd.postDeviceCommands = lib.mkAfter resetRootScript;
+        }))
+    ]
+)
