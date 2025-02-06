@@ -35,6 +35,14 @@
       ];
     };
 
+    boot.kernelPatches = lib.singleton {
+      name = "disable-drm-fbdev-emulation";
+      patch = null;
+      extraConfig = ''
+        DRM_FBDEV_EMULATION n
+      '';
+    };
+
     environment.sessionVariables = {
       WAYLAND_DISPLAY = "wayland-1";
       DISPLAY = ":0";
@@ -45,21 +53,30 @@
       CLUTTER_BACKEND = "wayland";
     };
 
-    systemd.user.services.wayland-proxy = {
-      enable = true;
-      description = "Wayland Proxy";
-      serviceConfig = with pkgs; {
-        # Environment = "WAYLAND_DISPLAY=wayland-1";
-        ExecStart = "${sommelier}/bin/sommelier --virtgpu-channel --display=$XDG_RUNTIME_DIR/wayland-1";
-        Restart = "on-failure";
-        RestartSec = 5;
+    systemd.user.services = {
+      wayland-proxy = {
+        enable = true;
+        description = "wayland proxy";
+        serviceConfig = {
+          ExecStart = "${pkgs.wayland-proxy-virtwl}/bin/wayland-proxy-virtwl --virtio-gpu --x-display=0 --xwayland-binary=${pkgs.xwayland}/bin/Xwayland";
+          Restart = "on-failure";
+          RestartSec = 5;
+        };
+        wantedBy = [ "default.target" ];
       };
-      wantedBy = [ "default.target" ];
     };
 
-    environment.systemPackages = with pkgs; [
-      sommelier
-      neverball
+    environment.systemPackages =
+    let
+      runSommelierScriptText = ''
+        def --wrapped main [...args] {
+          ${pkgs.sommelier} --virtgpu-channel ...$args
+        }
+      '';
+    in
+    [
+      (pkgs.nu.writeScriptBin "run-sommelier" runSommelierScriptText)
+      (pkgs.nu.writeScriptBin "run-wl" runSommelierScriptText)
     ];
 
     opts = {
