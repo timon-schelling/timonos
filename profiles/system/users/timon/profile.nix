@@ -3,6 +3,7 @@
     system = {
       desktops.hyprland.enable = lib.mkDefault true;
       desktop.keyboard.remapping.enable = lib.mkDefault true;
+      virtualization.enable = lib.mkDefault true;
     };
     users = {
       timon = {
