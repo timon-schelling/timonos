@@ -21,5 +21,45 @@
     dnsovertls = "true";
   };
 
+  systemd.network = {
+    netdevs = {
+      "10-bond-main" = {
+        netdevConfig = {
+          Kind = "bond";
+          Name = "main";
+        };
+        bondConfig = {
+          Mode = "active-backup";
+          MIIMonitorSec="0.100s";
+          PrimaryReselectPolicy="better";
+        };
+      };
+    };
+    networks = {
+      "30-en-all" = {
+        matchConfig.Name = "en*";
+        networkConfig.Bond = "main";
+        networkConfig.PrimarySlave = true;
+      };
+
+      "30-eth-all" = {
+        matchConfig.Name = "eth*";
+        networkConfig.Bond = "main";
+        networkConfig.PrimarySlave = true;
+      };
+
+      "30-wl-all" = {
+        matchConfig.Name = "wl*";
+        networkConfig.Bond = "main";
+      };
+
+      "40-main" = {
+        matchConfig.Name = "main";
+        linkConfig.RequiredForOnline = "carrier";
+        networkConfig.DHCP = "yes";
+      };
+    };
+  };
+
   systemd.network.wait-online.enable = false;
 }
