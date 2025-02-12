@@ -9,16 +9,79 @@ in
     inputs.microvm.nixosModules.microvm
   ];
 
-  options.vm.run = lib.mkOption {
-    type = lib.types.package;
-    default = pkgs.writeScriptBin "run-vm" ''
-      #!${pkgs.bash}/bin/bash
+  options.vm = {
 
-      sudo ip tuntap add name ${netdevName} mode tap user $USER vnet_hdr multi_queue
-      sudo ip link set ${netdevName} up
-      (${pkgs.virtiofsd}/bin/virtiofsd --socket-path=dev-vm-virtiofs-ro-store.sock --shared-dir=/nix/store --tag ro-store) &
-      ${config.microvm.declaredRunner}/bin/microvm-run
-    '';
+    build = {
+      initrd = lib.mkOption {
+        type = lib.types.path;
+        default = "${config.system.build.initialRamdisk}/${config.system.boot.loader.initrdFile}";
+      };
+      kernel = lib.mkOption {
+        type = lib.types.path;
+        default = config.boot.kernelPackages.kernel;
+      };
+    };
+
+    run = lib.mkOption (
+
+      let
+        kernel = config.vm.build.kernel;
+        kernelPath = {
+          x86_64-linux = "${kernel.dev}/vmlinux";
+          aarch64-linux = "${kernel.out}/${pkgs.stdenv.hostPlatform.linux-kernel.target}";
+        }.${pkgs.stdenv.system};
+        intirdPath = config.vm.build.initrd;
+        command = pkgs.nu.writeScript "vm-main" ''
+              (
+              ${pkgs.cloud-hypervisor-graphics}/bin/cloud-hypervisor
+              --cpus "boot=16"
+              --watchdog
+              --console "off"
+              --serial "off"
+              --kernel ${kernelPath}
+              --initramfs ${intirdPath}
+              --cmdline "reboot=t panic=-1 root=fstab loglevel=4 init=${config.system.build.toplevel}/init regInfo=${pkgs.closureInfo {rootPaths = [ config.system.build.toplevel ];}}/registration"
+              --seccomp "true"
+              --memory "mergeable=on,shared=on,size=16384M"
+              --platform "oem_strings=[io.systemd.credential:vmm.notify_socket=vsock-stream:2:8888]"
+              --vsock "cid=3,socket=notify.vsock"
+              --gpu "socket=gpu.sock"
+              --disk "direct=off,num_queues=16,path=nix-store-rw-overlay.img,readonly=off"
+              --fs "socket=nix-store-ro.sock,tag=nix-store-ro"
+              --api-socket "api.sock"
+              --net "mac=00:00:00:00:00:01,num_queues=16,tap=vm-0"
+              )
+        '';
+      in
+      {
+        type = lib.types.package;
+        default = pkgs.writeScriptBin "vm-some" ''
+          #!${pkgs.bash}/bin/bash
+
+          sudo ip tuntap add name ${netdevName} mode tap user $USER vnet_hdr multi_queue
+          sudo ip link set ${netdevName} up
+
+          rm -f nix-store-ro.sock
+          ${pkgs.virtiofsd}/bin/virtiofsd --socket-path=nix-store-ro.sock --tag=nix-store-ro --shared-dir=/nix/store &
+
+          rm -f gpu.sock
+          ${pkgs.crosvm}/bin/crosvm device gpu --socket gpu.sock --wayland-sock $XDG_RUNTIME_DIR/$WAYLAND_DISPLAY --params '{"context-types":"virgl:virgl2:cross-domain","displays":[{"hidden":true}],"egl":true,"vulkan":true}' &
+          while ! [ -S gpu.sock ]; do
+            sleep .1
+          done
+
+          PATH=$PATH:${with pkgs.buildPackages; lib.makeBinPath [ coreutils util-linux e2fsprogs xfsprogs dosfstools btrfs-progs ]}
+          rm -f nix-store-rw-overlay.img
+          touch 'nix-store-rw-overlay.img'
+          chattr +C 'nix-store-rw-overlay.img' || true
+          truncate -s 2048M 'nix-store-rw-overlay.img'
+          mkfs.ext4   'nix-store-rw-overlay.img'
+
+          rm -f api.sock
+          ${command}
+        '';
+      }
+    );
   };
 
   config = {
@@ -26,17 +89,17 @@ in
       graphics.enable = true;
       hypervisor = "cloud-hypervisor";
       writableStoreOverlay = "/nix/.rw-store";
-      mem = 8048;
-      vcpu = 8;
+      mem = 16384;
+      vcpu = 28;
       volumes = [ {
-        image = "nix-store-overlay.img";
+        image = "nix-store-rw-overlay.img";
         mountPoint = "/nix/.rw-store";
         size = 2048;
       } ];
       shares = [
         {
           proto = "virtiofs";
-          tag = "ro-store";
+          tag = "nix-store-ro";
           source = "/nix/store";
           mountPoint = "/nix/.ro-store";
         }
@@ -49,6 +112,9 @@ in
         }
       ];
     };
+
+    systemd.services.logrotate-checkconf.enable = false;
+    users.users.root.password = "root";
 
     networking.firewall.enable = false;
 
@@ -94,7 +160,7 @@ in
           {
             ExecStart = "${pkgs.wayland-proxy-virtwl}/bin/wayland-proxy-virtwl --virtio-gpu --tag='[vm] - ' --wayland-display wayland-main-terminal -- ${pkgs.rio}/bin/rio -e ${runMainTerminalScript}";
             Restart = "always";
-            RestartSec = 2;
+            RestartSec = 1;
           };
         wantedBy = [ "default.target" ];
       };
