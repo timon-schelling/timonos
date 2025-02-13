@@ -79,9 +79,6 @@ in
         dynamic-workspaces = true;
         edge-tiling = true;
       };
-      "org/gtk/settings/file-chooser" = {
-        show-hidden = true;
-      };
       "org/gnome/desktop/background" = {
         picture-options = "zoom";
         picture-uri = "file:///run/current-system/sw/share/backgrounds/gnome/amber-l.jxl";
