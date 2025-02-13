@@ -3,11 +3,11 @@ lib: lib.mkOption {
     options = {
       folders = lib.mkOption {
         type = lib.types.listOf lib.types.anything;
-        default = [];
+        default = [ ];
       };
       files = lib.mkOption {
         type = lib.types.listOf lib.types.anything;
-        default = [];
+        default = [ ];
       };
     };
   };

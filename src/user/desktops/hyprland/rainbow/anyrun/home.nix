@@ -160,7 +160,7 @@ in {
       # unfortunately HM doesn't really export the type for files, but hopefully
       # hm will throw errors if the options are wrong here, so I'm being *very* loose
       type = attrs;
-      default = {};
+      default = { };
       description = ''
         Extra files to put in {file}`~/.config/anyrun`, a wrapper over {option}`xdg.configFile`.
       '';

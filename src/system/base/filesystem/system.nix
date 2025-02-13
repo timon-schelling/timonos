@@ -25,11 +25,11 @@
               };
             };
           };
-          default = {};
+          default = { };
         };
       };
     };
-    default = {};
+    default = { };
   };
 
   config = lib.mkIf (config.opts.system.filesystem.type != "none") {
