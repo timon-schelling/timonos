@@ -1,12 +1,16 @@
-{ lib, ... }:
+{ lib, config, ... }:
 
 {
-  security.sudo = {
-    configFile = lib.mkForce ''
-      root ALL=(ALL:ALL) SETENV: ALL
-      %admin ALL=(ALL:ALL) SETENV: ALL
+  options.opts.system.adminAllowNoPassword = lib.mkEnableOption "Allow admin users to sudo without a password";
 
-      Defaults lecture = never
-    '';
+  config = {
+    security.sudo = {
+      configFile = lib.mkForce ''
+        root ALL=(ALL:ALL) SETENV: ALL
+        %admin ALL=(ALL:ALL) SETENV${if config.opts.system.adminAllowNoPassword then ", NOPASSWD" else ""}: ALL
+
+        Defaults lecture = never
+      '';
+    };
   };
 }
