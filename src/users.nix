@@ -11,6 +11,7 @@
         options = {
           passwordHash = lib.mkOption {
             type = lib.types.str;
+            default = "";
           };
           admin = lib.mkOption {
             type = lib.types.bool;
@@ -22,6 +23,7 @@
           };
           home = lib.mkOption {
             type = lib.types.anything;
+            default = { };
           };
         };
       });
@@ -34,13 +36,17 @@
       groups.admin = {};
       users = lib.mkMerge (lib.mapAttrsToList
         (name: user: {
-          ${name} = {
-            isNormalUser = true;
-            home = "/home/${name}";
-            hashedPassword = user.passwordHash;
-            extraGroups = user.groups ++ (if user.admin then [ "admin" ] else [ ]);
-            shell = pkgs.nushell;
-          };
+          ${name} = lib.mkMerge [
+            {
+              isNormalUser = true;
+              home = "/home/${name}";
+              extraGroups = user.groups ++ (if user.admin then [ "admin" ] else [ ]);
+              shell = pkgs.nushell;
+            }
+            (lib.mkIf (user.passwordHash != "") {
+              hashedPassword = user.passwordHash;
+            })
+          ];
         })
         config.opts.users
       );
