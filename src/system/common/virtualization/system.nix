@@ -1,8 +1,8 @@
-{ config, lib, ... }:
+{ config, lib, pkgs, ... }:
 
 let
   cfg = config.opts.system.virtualization;
-  vmResourcePrefix = "vm";
+  vmResourcePrefix = "vm-";
   vmBridgeName = "bridge-vm";
 in
 {
@@ -48,7 +48,7 @@ in
           } ];
         };
         networks."11-${vmResourcePrefix}-all" = {
-          matchConfig.Name = "${vmResourcePrefix}-*";
+          matchConfig.Name = "${vmResourcePrefix}*";
           networkConfig.Bridge = vmBridgeName;
         };
       };
@@ -59,6 +59,19 @@ in
           enableIPv6 = true;
           externalInterface = "main";
           internalInterfaces = [ vmBridgeName ];
+        };
+      };
+      systemd.services."containd" = {
+        enable = true;
+        description = "Containd allows non root users to create tap devices for usage with vms.";
+        wantedBy = [ "multi-user.target" ];
+        path = [
+          pkgs.iproute2
+        ];
+        serviceConfig = {
+          Type = "simple";
+          ExecStart = "${pkgs.containd}/bin/daemon";
+          Restart = "always";
         };
       };
     }
