@@ -8,7 +8,7 @@ let
       icon-theme = "Material Icons";
     };
     editor = {
-      font-family = "FiraCode Nerd Bold Font, monospace";
+      font-family = "FiraCode Nerd Font Mono, monospace";
       font-size = 22;
       tab-width = 2;
       cursor-surrounding-lines = 4;
@@ -133,11 +133,8 @@ let
       "editor.foreground" = "#dedede";
       "editor.link" = "$cyan";
       "editor.selection" = "#222222";
-      "error_lens.error.background" = "#141414";
       "error_lens.error.foreground" = "#FA3232";
-      "error_lens.other.background" = "#141414";
       "error_lens.other.foreground" = "#b0b0b0";
-      "error_lens.warning.background" = "#141414";
       "error_lens.warning.foreground" = "$yellow";
       "hover.background" = "#595959";
       "inlay_hint.background" = "#221f22";
