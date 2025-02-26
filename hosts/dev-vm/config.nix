@@ -1,15 +1,6 @@
 { lib, pkgs, inputs, config, ... }:
 
-# let workspace_dir = $"(pwd)/workspace"
-# cd vm
-# try { rm -r ./* }
-# nix run $"($env.HOME)/tmp/timonos#nixosConfigurations.dev-vm.config.vm.run" $workspace_dir
-
-let
-  console = "none"; # "none", "tty", "serial"
-in
 {
-
   imports = [
     inputs.microvm.nixosModules.microvm
   ];
@@ -27,76 +18,67 @@ in
       };
     };
 
-    run = lib.mkOption (
+    contain = lib.mkOption {
+      type = lib.types.package;
+      default = (pkgs.runCommand "contain" {
+        buildInputs = [ pkgs.makeWrapper ];
+      } ''
+        makeWrapper ${pkgs.contain}/bin/contain $out/bin/contain --set PATH ${lib.makeBinPath (with pkgs; [ cloud-hypervisor-graphics virtiofsd crosvm ])}
+      '');
+    };
 
+    containConfig = lib.mkOption
+    (
       let
-        kernel = config.vm.build.kernel;
-        kernelPath = {
-          x86_64-linux = "${kernel.dev}/vmlinux";
-          aarch64-linux = "${kernel.out}/${pkgs.stdenv.hostPlatform.linux-kernel.target}";
-        }.${pkgs.stdenv.system};
-        intirdPath = config.vm.build.initrd;
-        kernelConsole = if console == "none" then "" else (
-          if console == "tty" then "console=ttyS0 "
-          else "earlyprintk=ttyS0 console=ttyS0 "
-        );
-        command = pkgs.nu.writeScript "vm-main" ''
-              (
-              ${pkgs.cloud-hypervisor-graphics}/bin/cloud-hypervisor
-              --cpus "boot=16"
-              --watchdog
-              ${if console == "tty" then "--console \"tty\"" else "--console \"off\""}
-              ${if console == "serial" then "--serial \"tty\"" else "--serial \"off\""}
-              --kernel ${kernelPath}
-              --initramfs ${intirdPath}
-              --cmdline "${kernelConsole}reboot=t panic=-1 root=fstab loglevel=4 init=${config.system.build.toplevel}/init regInfo=${pkgs.closureInfo {rootPaths = [ config.system.build.toplevel ];}}/registration"
-              --seccomp "true"
-              --memory "mergeable=on,shared=on,size=16384M"
-              --platform "oem_strings=[io.systemd.credential:vmm.notify_socket=vsock-stream:2:8888]"
-              --vsock "cid=3,socket=notify.vsock"
-              --gpu "socket=gpu.sock"
-              --disk "direct=off,num_queues=16,path=nix-store-rw-overlay.img,readonly=off"
-              --fs
-              "socket=nix-store-ro.sock,tag=nix-store-ro"
-              "socket=workspace-rw.sock,tag=workspace-rw"
-              --api-socket "api.sock"
-              --net $"num_queues=16,tap=(open ./tap)"
-              )
-        '';
+        json = pkgs.formats.json {};
+        conf = {
+          initrd_path = config.vm.build.initrd;
+          kernel_path = "${config.vm.build.kernel.dev}/vmlinux";
+          cmdline = "reboot=t panic=-1 root=fstab loglevel=4 init=${config.system.build.toplevel}/init regInfo=${pkgs.closureInfo {rootPaths = [ config.system.build.toplevel ];}}/registration";
+          cpu = {
+            cores = 16;
+          };
+          memory = {
+            size = 16384;
+          };
+          filesystem = {
+            shares = [
+              {
+                tag = "nix-store-ro";
+                source = "/nix/store";
+                write = false;
+              }
+              {
+                tag = "workspace-rw";
+                source = "$pwd";
+                write = true;
+              }
+            ];
+          };
+          network = {
+            assign_tap_device = true;
+          };
+          graphics = {
+            virtio_gpu = true;
+          };
+        };
       in
       {
+          type = lib.types.path;
+          default = json.generate "contain-dev-vm-config.json" conf;
+      }
+    );
+
+    run = lib.mkOption (
+      {
         type = lib.types.package;
-        default = pkgs.writeScriptBin "vm" ''
-          #!${pkgs.bash}/bin/bash
-
-          ${pkgs.nu.writeScript "vm-request-tap-device" ''
-            ${pkgs.containd}/bin/client create $env.USER | from json | get name | save -f ./tap
-          ''}
-
-          rm -f nix-store-ro.sock
-          ${pkgs.virtiofsd}/bin/virtiofsd --socket-path=nix-store-ro.sock --tag=nix-store-ro --shared-dir=/nix/store &
-
-          rm -f workspace-rw.sock
-          ${pkgs.virtiofsd}/bin/virtiofsd --socket-path=workspace-rw.sock --tag=workspace-rw --shared-dir=$1 &
-
-          rm -f gpu.sock
-          ${pkgs.crosvm}/bin/crosvm device gpu --socket gpu.sock --wayland-sock $XDG_RUNTIME_DIR/$WAYLAND_DISPLAY --params '{"context-types":"virgl:virgl2:cross-domain","displays":[{"hidden":true}],"egl":true,"vulkan":true}' &
-          while ! [ -S gpu.sock ]; do
-            sleep .1
-          done
-
-          PATH=$PATH:${with pkgs.buildPackages; lib.makeBinPath [ coreutils util-linux e2fsprogs xfsprogs dosfstools btrfs-progs ]}
-          rm -f nix-store-rw-overlay.img
-          touch 'nix-store-rw-overlay.img'
-          chattr +C 'nix-store-rw-overlay.img' || true
-          truncate -s 2048M 'nix-store-rw-overlay.img'
-          mkfs.ext4 'nix-store-rw-overlay.img'
-
-          rm -f api.sock
-          ${command}
-
-          ${pkgs.containd}/bin/client delete $(cat ./tap)
-          rm ./tap
+        default = pkgs.nu.writeScriptBin "vm" ''
+          let workspace_dir = $"(pwd)/workspace"
+          try { md vm }
+          cd vm
+          try { rm -r ./* }
+          open ${config.vm.containConfig} --raw | str replace "$pwd" $workspace_dir | save contain-config.json
+          ${config.vm.contain}/bin/contain start contain-config.json
         '';
       }
     );
@@ -109,11 +91,11 @@ in
       writableStoreOverlay = "/nix/.rw-store";
       mem = 16384;
       vcpu = 28;
-      volumes = [ {
-        image = "nix-store-rw-overlay.img";
-        mountPoint = "/nix/.rw-store";
-        size = 2048;
-      } ];
+      # volumes = [ {
+      #   image = "nix-store-rw-overlay.img";
+      #   mountPoint = "/nix/.rw-store";
+      #   size = 2048;
+      # } ];
       shares = [
         {
           proto = "virtiofs";
