@@ -63,14 +63,14 @@ in
       };
       systemd.services."containd" = {
         enable = true;
-        description = "Containd allows non root users to create tap devices for usage with vms.";
+        description = "contain daemon";
         wantedBy = [ "multi-user.target" ];
         path = [
           pkgs.iproute2
         ];
         serviceConfig = {
           Type = "simple";
-          ExecStart = "${pkgs.containd}/bin/daemon";
+          ExecStart = "${pkgs.contain}/bin/containd";
           Restart = "always";
         };
       };
