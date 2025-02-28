@@ -1,10 +1,6 @@
-{ lib, pkgs, inputs, config, ... }:
+{ lib, pkgs, config, ... }:
 
 {
-  imports = [
-    inputs.microvm.nixosModules.microvm
-  ];
-
   options.vm = {
 
     build = {
@@ -34,7 +30,7 @@
         conf = {
           initrd_path = config.vm.build.initrd;
           kernel_path = "${config.vm.build.kernel.dev}/vmlinux";
-          cmdline = "reboot=t panic=-1 root=fstab loglevel=4 init=${config.system.build.toplevel}/init regInfo=${pkgs.closureInfo {rootPaths = [ config.system.build.toplevel ];}}/registration";
+          cmdline = "console=ttyS0 reboot=t panic=-1 root=fstab loglevel=4 init=${config.system.build.toplevel}/init regInfo=${pkgs.closureInfo {rootPaths = [ config.system.build.toplevel ];}}/registration";
           cpu = {
             cores = 16;
           };
@@ -50,7 +46,7 @@
               }
               {
                 tag = "workspace-rw";
-                source = "$pwd";
+                source = ".";
                 write = true;
               }
             ];
@@ -60,6 +56,9 @@
           };
           graphics = {
             virtio_gpu = true;
+          };
+          console = {
+            mode = "serial";
           };
         };
       in
@@ -73,44 +72,137 @@
       {
         type = lib.types.package;
         default = pkgs.nu.writeScriptBin "vm" ''
-          let workspace_dir = $"(pwd)/workspace"
-          try { md vm }
-          cd vm
-          try { rm -r ./* }
-          open ${config.vm.containConfig} --raw | str replace "$pwd" $workspace_dir | save contain-config.json
-          ${config.vm.contain}/bin/contain start contain-config.json
+          ${config.vm.contain}/bin/contain start ${config.vm.containConfig}
         '';
       }
     );
   };
 
   config = {
-    microvm = {
-      graphics.enable = true;
-      hypervisor = "cloud-hypervisor";
-      writableStoreOverlay = "/nix/.rw-store";
-      mem = 16384;
-      vcpu = 28;
-      # volumes = [ {
-      #   image = "nix-store-rw-overlay.img";
-      #   mountPoint = "/nix/.rw-store";
-      #   size = 2048;
-      # } ];
-      shares = [
-        {
-          proto = "virtiofs";
-          tag = "nix-store-ro";
-          source = "/nix/store";
-          mountPoint = "/nix/.ro-store";
-        }
-        {
-          proto = "virtiofs";
-          tag = "workspace-rw";
-          source = "null";
-          mountPoint = "/home/timon/workspace";
-        }
-      ];
+
+    boot.postBootCommands = ''
+      if [[ "$(cat /proc/cmdline)" =~ regInfo=([^ ]*) ]]; then
+        ${config.nix.package.out}/bin/nix-store --load-db < ''${BASH_REMATCH[1]}
+      fi
+    '';
+
+    systemd.services.nix-daemon.enable = lib.mkDefault true;
+    systemd.sockets.nix-daemon.enable = lib.mkDefault true;
+
+    # consumes a lot of boot time
+    systemd.services.mount-pstore.enable = false;
+
+    # just fails in the usual usage of microvm.nix
+    systemd.generators = { systemd-gpt-auto-generator = "/dev/null"; };
+
+    fileSystems = {
+      "/" = {
+        device = "rootfs";
+        fsType = "tmpfs";
+        mountPoint = "/";
+        neededForBoot = true;
+        options = [
+          "x-initrd.mount"
+          "size=50%,mode=0755"
+        ];
+      };
+      "/home/timon/workspace" = {
+        device = "workspace-rw";
+        fsType = "virtiofs";
+        mountPoint = "/home/timon/workspace";
+        options = [
+          "defaults"
+          "x-systemd.requires=systemd-modules-load.service"
+        ];
+      };
+      "/nix/.ro-store" = {
+        device = lib.mkForce "nix-store-ro";
+        fsType = lib.mkForce "virtiofs";
+        mountPoint = lib.mkForce "/nix/.ro-store";
+        neededForBoot = lib.mkForce true;
+        options = lib.mkForce [
+          "x-initrd.mount"
+          "defaults"
+          "x-systemd.requires=systemd-modules-load.service"
+        ];
+      };
+      "/nix/store" = {
+        depends = [
+          "/nix/.ro-store"
+          "/nix/.rw-store"
+        ];
+        device = lib.mkForce "overlay";
+        fsType = lib.mkForce "overlay";
+        mountPoint = lib.mkForce "/nix/store";
+        neededForBoot = lib.mkForce true;
+        options = lib.mkForce [
+          "x-initrd.mount"
+          "x-systemd.requires-mounts-for=/sysroot/nix/.ro-store"
+          "x-systemd.requires-mounts-for=/sysroot/nix/.rw-store"
+          "lowerdir=/nix/.ro-store"
+          "upperdir=/nix/.rw-store/store"
+          "workdir=/nix/.rw-store/work"
+        ];
+      };
     };
+
+    boot.initrd.kernelModules = [
+      "virtio_pci"
+      "virtiofs"
+      "overlay"
+    ];
+
+    boot.blacklistedKernelModules = [
+      "rfkill" "intel_pstate"
+    ];
+
+    # boot.initrd.systemd patchups copied from <nixpkgs/nixos/modules/virtualisation/qemu-vm.nix>
+    boot.initrd.systemd =
+    let
+      writableStoreOverlay = "/nix/.rw-store";
+      roStore = "/nix/.ro-store";
+    in
+    {
+      emergencyAccess = true;
+      mounts = [ {
+        where = "/sysroot/nix/store";
+        what = "overlay";
+        type = "overlay";
+        options = builtins.concatStringsSep "," [
+          "lowerdir=/sysroot${roStore}"
+          "upperdir=/sysroot${writableStoreOverlay}/store"
+          "workdir=/sysroot${writableStoreOverlay}/work"
+        ];
+        wantedBy = [ "initrd-fs.target" ];
+        before = [ "initrd-fs.target" ];
+        requires = [ "rw-store.service" ];
+        after = [ "rw-store.service" ];
+        unitConfig.RequiresMountsFor = "/sysroot/${roStore}";
+      } ];
+      services.rw-store = {
+        unitConfig = {
+          DefaultDependencies = false;
+          RequiresMountsFor = "/sysroot${writableStoreOverlay}";
+        };
+        serviceConfig = {
+          Type = "oneshot";
+          ExecStart = "/bin/mkdir -p -m 0755 /sysroot${writableStoreOverlay}/store /sysroot${writableStoreOverlay}/work /sysroot/nix/store";
+        };
+      };
+    };
+
+    # # Fix for hanging shutdown
+    systemd.mounts = lib.mkIf config.boot.initrd.systemd.enable [ {
+      what = "store";
+      where = "/nix/store";
+      overrideStrategy = "asDropin";
+      unitConfig.DefaultDependencies = false;
+    } ];
+
+    # The docs are pretty chonky
+    documentation.enable = lib.mkDefault false;
+
+    systemd.network.wait-online.enable = lib.mkDefault false;
 
     systemd.services.logrotate-checkconf.enable = false;
     users.users.root.password = "root";
@@ -165,7 +257,14 @@
       };
     };
 
+    boot.kernelModules = [ "drm" "virtio_gpu" ];
+
     environment.systemPackages = [
+      (pkgs.nu.writeScriptBin "run-wayland-proxy" ''
+        def --wrapped main [...args] {
+          ${pkgs.wayland-proxy-virtwl}/bin/wayland-proxy-virtwl ---virtio-gpu -- ...$args
+        }
+      '')
       (pkgs.nu.writeScriptBin "run-sommelier" ''
         def --wrapped main [...args] {
           ${pkgs.sommelier}/bin/sommelier --virtgpu-channel ...$args
@@ -191,6 +290,10 @@
     ];
 
     nixpkgs.overlays = [
+      (final: prev: {
+        stratovirt = prev.stratovirt.override { gtk3 = null; };
+      })
+
       (self: super:
         let
           overlay = super.fetchFromGitHub {
