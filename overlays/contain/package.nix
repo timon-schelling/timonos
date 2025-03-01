@@ -10,8 +10,8 @@ rustPlatform.buildRustPackage {
   src = fetchFromGitHub {
     owner = "timon-schelling";
     repo = "contain";
-    rev = "7c0615bb297eef0dad8b44fcadfc45119478abbd";
-    hash = "sha256-YRDaGh2zLUt+CLwCKnFdZrinb7C39O2O6p2nK7j/2Ms=";
+    rev = "e496e4688603d4ed4b5d0f24f3de9f71068d9fbd";
+    hash = "sha256-VHLgD7zdVoL3vdxPbZ0366tA4DcmoLBiV3/9aatqx84=";
   };
 
   cargoHash = "sha256-37KDDjcIl0MN91IFJ8TRS4VPvAemdMFuQb+q5Fyxeno=";
