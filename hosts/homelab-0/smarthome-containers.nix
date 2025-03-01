@@ -48,7 +48,7 @@ let
         "--api.insecure=true"
         "--entrypoints.web.address=:80"
         "--entrypoints.websecure.address=:443"
-        "--certificatesresolvers.main.acme.email=mail@timokrates.de"
+        "--certificatesresolvers.main.acme.email=mail@timon.zip"
         "--certificatesresolvers.main.acme.storage=/data/acme.json"
         "--certificatesresolvers.main.acme.httpchallenge=true"
         "--certificatesresolvers.main.acme.httpchallenge.entrypoint=web"
