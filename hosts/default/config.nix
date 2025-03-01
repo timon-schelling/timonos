@@ -2,6 +2,7 @@
   opts = {
     system = {
       filesystem.drive = "/dev/<drive>"; !!! NEEDS TO BE SET MANUALLY !!!
+      network.wifi.enable = true;
     };
     users = {
       user = {

@@ -1,20 +1,26 @@
 { config, lib, pkgs, ... }:
 
+let
+  cfg = config.opts.system.network.wifi;
+in
 {
   options = {
-    opts.users = lib.mkOption {
-      type = lib.types.attrsOf (lib.types.submodule {
-        options = {
-          allowWifiSettings = lib.mkOption {
-            type = lib.types.bool;
-            default = true;
+    opts = {
+      system.network.wifi.enable = lib.mkEnableOption "Enable wifi";
+      users = lib.mkOption {
+        type = lib.types.attrsOf (lib.types.submodule {
+          options = {
+            allowWifiSettings = lib.mkOption {
+              type = lib.types.bool;
+              default = true;
+            };
           };
-        };
-      });
+        });
+      };
     };
   };
 
-  config = {
+  config = lib.mkIf cfg.enable {
     platform.system.persist.folders = [ "/var/lib/iwd" ];
     networking = {
       wireless.enable = false;

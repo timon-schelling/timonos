@@ -9,6 +9,7 @@
         enable = true;
         monitorDdcciFixEnable = true;
       };
+      network.wifi.enable = true;
     };
     users = {
       timon = {
