@@ -14,15 +14,6 @@
       };
     };
 
-    contain = lib.mkOption {
-      type = lib.types.package;
-      default = (pkgs.runCommand "contain" {
-        buildInputs = [ pkgs.makeWrapper ];
-      } ''
-        makeWrapper ${pkgs.contain}/bin/contain $out/bin/contain --set PATH ${lib.makeBinPath (with pkgs; [ cloud-hypervisor-graphics virtiofsd crosvm ])}
-      '');
-    };
-
     containConfig = lib.mkOption
     (
       let
@@ -30,7 +21,7 @@
         conf = {
           initrd_path = config.vm.build.initrd;
           kernel_path = "${config.vm.build.kernel.dev}/vmlinux";
-          cmdline = "console=ttyS0 reboot=t panic=-1 root=fstab loglevel=4 init=${config.system.build.toplevel}/init regInfo=${pkgs.closureInfo {rootPaths = [ config.system.build.toplevel ];}}/registration";
+          cmdline = "console=hvc0 loglevel=4 reboot=t panic=-1 root=fstab init=${config.system.build.toplevel}/init regInfo=${pkgs.closureInfo {rootPaths = [ config.system.build.toplevel ];}}/registration";
           cpu = {
             cores = 16;
           };
@@ -58,42 +49,31 @@
             virtio_gpu = true;
           };
           console = {
-            mode = "serial";
+            mode = "off";
           };
         };
       in
       {
-          type = lib.types.path;
-          default = json.generate "contain-dev-vm-config.json" conf;
-      }
-    );
-
-    run = lib.mkOption (
-      {
-        type = lib.types.package;
-        default = pkgs.nu.writeScriptBin "vm" ''
-          ${config.vm.contain}/bin/contain start ${config.vm.containConfig}
-        '';
+        type = lib.types.path;
+        default = json.generate "contain-dev-vm-config.json" conf;
       }
     );
   };
 
   config = {
-
     boot.postBootCommands = ''
       if [[ "$(cat /proc/cmdline)" =~ regInfo=([^ ]*) ]]; then
         ${config.nix.package.out}/bin/nix-store --load-db < ''${BASH_REMATCH[1]}
       fi
     '';
-
-    systemd.services.nix-daemon.enable = lib.mkDefault true;
     systemd.sockets.nix-daemon.enable = lib.mkDefault true;
+    systemd.services.nix-daemon.enable = lib.mkDefault true;
 
-    # consumes a lot of boot time
     systemd.services.mount-pstore.enable = false;
-
-    # just fails in the usual usage of microvm.nix
-    systemd.generators = { systemd-gpt-auto-generator = "/dev/null"; };
+    systemd.services.logrotate-checkconf.enable = false;
+    systemd.network.wait-online.enable = lib.mkDefault false;
+    networking.firewall.enable = false;
+    documentation.enable = lib.mkDefault false;
 
     fileSystems = {
       "/" = {
@@ -146,15 +126,28 @@
       };
     };
 
-    boot.initrd.kernelModules = [
-      "virtio_pci"
-      "virtiofs"
-      "overlay"
-    ];
-
-    boot.blacklistedKernelModules = [
-      "rfkill" "intel_pstate"
-    ];
+    boot = {
+      initrd.kernelModules = [
+        "virtio_pci"
+        "virtiofs"
+        "overlay"
+      ];
+      kernelModules = [
+        "drm"
+        "virtio_gpu"
+      ];
+      blacklistedKernelModules = [
+        "rfkill"
+        "intel_pstate"
+      ];
+      kernelPatches = lib.singleton {
+        name = "disable-drm-fbdev-emulation";
+        patch = null;
+        extraConfig = ''
+          DRM_FBDEV_EMULATION n
+        '';
+      };
+    };
 
     # boot.initrd.systemd patchups copied from <nixpkgs/nixos/modules/virtualisation/qemu-vm.nix>
     boot.initrd.systemd =
@@ -191,31 +184,13 @@
       };
     };
 
-    # # Fix for hanging shutdown
+    # Fix for hanging shutdown
     systemd.mounts = lib.mkIf config.boot.initrd.systemd.enable [ {
       what = "store";
       where = "/nix/store";
       overrideStrategy = "asDropin";
       unitConfig.DefaultDependencies = false;
     } ];
-
-    # The docs are pretty chonky
-    documentation.enable = lib.mkDefault false;
-
-    systemd.network.wait-online.enable = lib.mkDefault false;
-
-    systemd.services.logrotate-checkconf.enable = false;
-    users.users.root.password = "root";
-
-    networking.firewall.enable = false;
-
-    boot.kernelPatches = lib.singleton {
-      name = "disable-drm-fbdev-emulation";
-      patch = null;
-      extraConfig = ''
-        DRM_FBDEV_EMULATION n
-      '';
-    };
 
     environment.sessionVariables = {
       WAYLAND_DISPLAY = "wayland-1";
@@ -256,8 +231,6 @@
         wantedBy = [ "default.target" ];
       };
     };
-
-    boot.kernelModules = [ "drm" "virtio_gpu" ];
 
     environment.systemPackages = [
       (pkgs.nu.writeScriptBin "run-wayland-proxy" ''
@@ -311,7 +284,9 @@
 
     opts = {
       system = {
-        virtualization.enable = false;
+        virtualization.contain.enable = true;
+        virtualization.contain.guest.enable = true;
+        virtualization.contain.host.enable = true;
         filesystem.type = "none";
         adminAllowNoPassword = true;
         login.auto = {

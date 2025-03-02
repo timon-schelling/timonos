@@ -9,21 +9,21 @@ in
   options = {
     opts.system.virtualization.contain = {
       enable = lib.mkEnableOption "Enable contain virtualization";
-      host = lib.mkOption {
+      host.enable = lib.mkOption {
         type = lib.types.bool;
         default = (!cfg.guest);
       };
-      guest = lib.mkEnableOption "Enable contain guest";
+      guest.enable = lib.mkEnableOption "Enable contain guest";
     };
   };
 
   config = lib.mkMerge [
-    (lib.mkIf (cfg.enable && cfg.host) {
+    (lib.mkIf (cfg.enable && cfg.host.enable) {
       environment.systemPackages = [
         pkgs.contain
       ];
     })
-    (lib.mkIf (cfg.enable && cfg.host) (
+    (lib.mkIf (cfg.enable && cfg.host.enable) (
       let
         addColonsToIPv6 =
           string:
