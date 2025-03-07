@@ -1,5 +1,42 @@
 { lib, pkgs, config, ... }:
 
+let
+  json = pkgs.formats.json {};
+  conf = {
+    initrd_path = config.vm.build.initrd;
+    kernel_path = "${config.vm.build.kernel.dev}/vmlinux";
+    cmdline = "console=hvc0 loglevel=4 reboot=t panic=-1 root=fstab init=${config.system.build.toplevel}/init regInfo=${pkgs.closureInfo {rootPaths = [ config.system.build.toplevel ];}}/registration";
+    cpu = {
+      cores = 16;
+    };
+    memory = {
+      size = 16384;
+    };
+    filesystem = {
+      shares = [
+        {
+          tag = "nix-store-ro";
+          source = "/nix/store";
+          write = false;
+        }
+        {
+          tag = "workspace-rw";
+          source = ".";
+          write = true;
+        }
+      ];
+    };
+    network = {
+      assign_tap_device = true;
+    };
+    graphics = {
+      virtio_gpu = true;
+    };
+    console = {
+      mode = "on";
+    };
+  };
+in
 {
   options.vm = {
 
@@ -14,53 +51,36 @@
       };
     };
 
-    containConfig = lib.mkOption
-    (
+    config = lib.mkOption {
+      type = json.type;
+      default = conf;
+    };
+
+    containConfig = lib.mkOption (
       let
-        json = pkgs.formats.json {};
-        conf = {
-          initrd_path = config.vm.build.initrd;
-          kernel_path = "${config.vm.build.kernel.dev}/vmlinux";
-          cmdline = "console=hvc0 loglevel=4 reboot=t panic=-1 root=fstab init=${config.system.build.toplevel}/init regInfo=${pkgs.closureInfo {rootPaths = [ config.system.build.toplevel ];}}/registration";
-          cpu = {
-            cores = 16;
-          };
-          memory = {
-            size = 16384;
-          };
-          filesystem = {
-            shares = [
-              {
-                tag = "nix-store-ro";
-                source = "/nix/store";
-                write = false;
-              }
-              {
-                tag = "workspace-rw";
-                source = ".";
-                write = true;
-              }
-            ];
-          };
-          network = {
-            assign_tap_device = true;
-          };
-          graphics = {
-            virtio_gpu = true;
-          };
-          console = {
-            mode = "off";
-          };
-        };
+        recursiveMergeImpl = with lib; args:
+          zipAttrsWith (n: values:
+            if tail values == []
+              then head values
+            else if all isList values
+              then unique (concatLists values)
+            else if all isAttrs values
+              then recursiveMergeImpl (args ++ [n]) values
+            else last values
+          );
+        recursiveMerge = args: recursiveMergeImpl [] args;
       in
       {
         type = lib.types.path;
-        default = json.generate "contain-dev-vm-config.json" conf;
+        default = json.generate "contain-config.json" (recursiveMerge [conf config.vm.config]);
       }
     );
   };
 
   config = {
+
+    systemd.services."systemd-vconsole-setup".enable = false;
+
     boot.postBootCommands = ''
       if [[ "$(cat /proc/cmdline)" =~ regInfo=([^ ]*) ]]; then
         ${config.nix.package.out}/bin/nix-store --load-db < ''${BASH_REMATCH[1]}
@@ -130,6 +150,8 @@
       initrd.kernelModules = [
         "virtio_pci"
         "virtiofs"
+        "virtio_blk"
+        "virtio_console"
         "overlay"
       ];
       kernelModules = [
@@ -220,7 +242,7 @@
             runMainTerminalScript = pkgs.writeScript "run-main-terminal" ''
               . "/etc/profiles/per-user/$USER/etc/profile.d/hm-session-vars.sh"
               export PATH="/run/wrappers/bin:$HOME/.nix-profile/bin:/nix/profile/bin:$HOME/.local/state/nix/profile/bin:/etc/profiles/per-user/$USER/bin:/nix/var/nix/profiles/default/bin:/run/current-system/sw/bin"
-              ${pkgs.nushell}/bin/nu --login -e "cd ~/workspace"
+              ${pkgs.nushell}/bin/nu --login
             '';
           in
           {
@@ -244,49 +266,16 @@
         }
       '')
       (pkgs.nu.writeScriptBin "stop" ''poweroff'')
-
-      pkgs.gcc
-      (
-        let
-          rustConfig = {
-            extensions = [
-              "rust-src"
-              "rust-analyzer"
-            ];
-            targets = [
-              "x86_64-unknown-linux-gnu"
-            ];
-          };
-        in
-        pkgs.rust-bin.stable.latest.default.override rustConfig
-      )
     ];
 
-    nixpkgs.overlays = [
-      (final: prev: {
-        stratovirt = prev.stratovirt.override { gtk3 = null; };
-      })
-
-      (self: super:
-        let
-          overlay = super.fetchFromGitHub {
-            repo = "rust-overlay";
-            owner = "oxalica";
-            rev = "6e6ae2acf4221380140c22d65b6c41f4726f5932";
-            sha256 = "YIrVxD2SaUyaEdMry2nAd2qG1E0V38QIV6t6rpguFwk=";
-          };
-        in
-        {
-          inherit (import overlay self super) rust-bin;
-        }
-      )
-    ];
+    home-manager.users.timon.programs.nushell.extraConfig = lib.mkAfter ''
+      if not ("SUDO_COMMAND" in $env) {
+          cd ~/workspace
+      }
+    '';
 
     opts = {
       system = {
-        virtualization.contain.enable = true;
-        virtualization.contain.guest.enable = true;
-        virtualization.contain.host.enable = true;
         filesystem.type = "none";
         adminAllowNoPassword = true;
         login.auto = {
