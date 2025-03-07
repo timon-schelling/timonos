@@ -11,7 +11,7 @@ in
       enable = lib.mkEnableOption "Enable contain virtualization";
       host.enable = lib.mkOption {
         type = lib.types.bool;
-        default = (!cfg.guest);
+        default = (!cfg.guest.enable);
       };
       guest.enable = lib.mkEnableOption "Enable contain guest";
     };
