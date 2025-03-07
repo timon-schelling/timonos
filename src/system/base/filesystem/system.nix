@@ -5,7 +5,7 @@
     type = lib.types.submodule {
       options = {
         type = lib.mkOption {
-          type = lib.types.enum [ "impermanent" "none" ];
+          type = lib.types.enum [ "impermanent" "ephemeral" "none" ];
           default = "impermanent";
         };
         drive = lib.mkOption{
@@ -27,20 +27,59 @@
           };
           default = { };
         };
+        internal = lib.mkOption {
+          type = lib.types.submodule {
+            options = {
+              persist = lib.mkOption {
+                type = lib.types.submodule {
+                  options = {
+                    enable = lib.mkOption {
+                      type = lib.types.bool;
+                      default = (
+                        config.opts.system.filesystem.type == "impermanent" ||
+                        config.opts.system.filesystem.type == "ephemeral"
+                      );
+                      description = "persistence configuration with impermanece";
+                    };
+                  };
+                };
+                default = {};
+              };
+              drives = lib.mkOption {
+                type = lib.types.submodule {
+                  options = {
+                    enable = lib.mkOption {
+                      type = lib.types.bool;
+                      default = (
+                        config.opts.system.filesystem.type == "impermanent"
+                      );
+                      description = "drive configuration with disko";
+                    };
+                  };
+                };
+                default = {};
+              };
+              reset = lib.mkOption {
+                type = lib.types.submodule {
+                  options = {
+                    enable = lib.mkOption {
+                      type = lib.types.bool;
+                      default = (
+                        config.opts.system.filesystem.type == "impermanent"
+                      );
+                      description = "reset root filesystem with initrd service";
+                    };
+                  };
+                };
+                default = {};
+              };
+            };
+          };
+          internal = true;
+          default = {};
+        };
       };
     };
     default = { };
-  };
-
-  config = lib.mkIf (config.opts.system.filesystem.type != "none") {
-    assertions = [
-      {
-        assertion = !(config.opts.system.filesystem.drive == "");
-        message = ''
-          You must specify a drive for the root filesystem
-          when using the "${config.opts.system.filesystem.type}" filesystem type
-        '';
-      }
-    ];
   };
 }

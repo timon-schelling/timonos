@@ -1,6 +1,10 @@
-{ ... }:
+{ config, ... }:
 
 {
+  system.stateVersion = config.opts.system.stateVersion;
+  nixpkgs.hostPlatform = config.opts.system.platform;
+  nixpkgs.config.allowUnfree = true;
+
   # needed for uid/gid persistence in nixos
   platform.system.persist.folders = [ "/var/lib/nixos" ];
 

@@ -5,7 +5,7 @@
     inputs.impermanence.nixosModules.impermanence
   ];
 
-  config = lib.mkIf (config.opts.system.filesystem.type == "impermanent") {
+  config = lib.mkIf config.opts.system.filesystem.internal.persist.enable {
     fileSystems."/persist".neededForBoot = true;
     environment.persistence."/persist/system" = {
       hideMounts = true;

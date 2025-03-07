@@ -5,7 +5,7 @@
     inputs.disko.nixosModules.default
   ];
 
-  config = lib.mkIf (config.opts.system.filesystem.type == "impermanent") {
+  config = lib.mkIf config.opts.system.filesystem.internal.drives.enable {
     disko.devices = {
       disk.main = {
         device = config.opts.system.filesystem.drive;
@@ -77,5 +77,15 @@
         };
       };
     };
+
+    assertions = [
+      {
+        assertion = !(config.opts.system.filesystem.drive == "");
+        message = ''
+          You must specify a drive for the root filesystem
+          when using the "${config.opts.system.filesystem.type}" filesystem type
+        '';
+      }
+    ];
   };
 }
