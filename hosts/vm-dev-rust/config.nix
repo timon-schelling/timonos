@@ -40,5 +40,11 @@
         }
       )
     ];
+
+    home-manager.users.timon.programs.vscode.extensions = with pkgs.vscode-extensions; [
+      rust-lang.rust-analyzer
+      tamasfe.even-better-toml
+      fill-labs.dependi
+    ];
   };
 }

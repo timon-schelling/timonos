@@ -29,4 +29,13 @@
     pkgs.php84Packages.composer
     (pkgs.callPackage ./symfony-cli-package.nix {})
   ];
+
+  home-manager.users.timon.programs.vscode.extensions = pkgs.vscode-utils.extensionsFromVscodeMarketplace [
+    {
+      publisher = "zobo";
+      name = "php-intellisense";
+      version = "1.3.3";
+      sha256 = "sha256-VmcYEUsNfkYtFKoC4fOq4p6EZPxhCE8yHzqAT8Bityo=";
+    }
+  ];
 }

@@ -21,18 +21,12 @@
       ''
     );
     extensions = with pkgs.vscode-extensions; [
-      rust-lang.rust-analyzer
-      ms-vscode-remote.remote-ssh
-      ms-vscode-remote.remote-containers
-      nvarner.typst-lsp
       jnoortheen.nix-ide
       mhutchie.git-graph
       thenuprojectcontributors.vscode-nushell-lang
       ms-vscode.hexeditor
       streetsidesoftware.code-spell-checker
       pkief.material-icon-theme
-      tamasfe.even-better-toml
-      fill-labs.dependi
     ] ++ pkgs.vscode-utils.extensionsFromVscodeMarketplace [
       {
         publisher = "github";
