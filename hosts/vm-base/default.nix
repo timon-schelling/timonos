@@ -19,11 +19,6 @@ let
           source = "/nix/store";
           write = false;
         }
-        {
-          tag = "workspace-rw";
-          source = ".";
-          write = true;
-        }
       ];
     };
     network = {
@@ -104,15 +99,6 @@ in
         options = [
           "x-initrd.mount"
           "size=50%,mode=0755"
-        ];
-      };
-      "/home/timon/workspace" = {
-        device = "workspace-rw";
-        fsType = "virtiofs";
-        mountPoint = "/home/timon/workspace";
-        options = [
-          "defaults"
-          "x-systemd.requires=systemd-modules-load.service"
         ];
       };
       "/nix/.ro-store" = {
@@ -235,7 +221,7 @@ in
         wantedBy = [ "default.target" ];
       };
       main-terminal = {
-        enable = true;
+        enable = false;
         description = "main-terminal";
         serviceConfig =
           let
@@ -268,10 +254,9 @@ in
       (pkgs.nu.writeScriptBin "stop" ''poweroff'')
     ];
 
-    home-manager.users.timon.programs.nushell.extraConfig = lib.mkAfter ''
-      if not ("SUDO_COMMAND" in $env) {
-          cd ~/workspace
-      }
+    home-manager.users.timon.programs.starship.settings.format = lib.mkForce ''
+      vm $username $directory ($git_branch$git_status$git_state)
+      $character
     '';
 
     opts = {

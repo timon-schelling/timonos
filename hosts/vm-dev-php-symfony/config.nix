@@ -2,37 +2,18 @@
 
 {
   imports = [
-    ../vm-dev/config.nix
+    ../vm-base
+    ../vm-base-workspace
+    ../vm-base-persist
   ];
 
-  vm.config.filesystem.disks = [
-    {
-      source = ".vm/persist.disk.qcow2";
-      tag = "persist";
-      size = 30000;
-    }
-  ];
-
-  fileSystems."/persist" = {
-    device = "/dev/disk/by-id/virtio-persist";
-    fsType = "btrfs";
-    neededForBoot = true;
-    autoFormat = true;
-    options = [
-      "x-initrd.mount"
-      "defaults"
-      "x-systemd.requires=systemd-modules-load.service"
-    ];
-  };
-
-  opts.system.filesystem.type = lib.mkForce "ephemeral";
-
-  opts.users.timon.home.persist.state.folders = [ ".cache/composer" ];
   opts.system.persist.folders = [
     "/var/lib/docker"
   ];
   virtualisation.docker.enable = true;
   users.users.timon.extraGroups = [ "docker" ];
+
+  opts.users.timon.home.persist.state.folders = [ ".cache/composer" ];
   environment.systemPackages = [
     (pkgs.php84.buildEnv {
       extensions = { enabled, all }:

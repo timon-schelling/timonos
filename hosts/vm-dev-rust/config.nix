@@ -2,7 +2,8 @@
 
 {
   imports = [
-    ../vm-dev/config.nix
+    ../vm-base
+    ../vm-base-workspace
   ];
 
   config = {
