@@ -21,11 +21,11 @@
     [Browser]
     enableBrowserExtension=false
 
-    [%General]
+    [General]
     autorunAtSystemStartup6=false
     avoidSubscriptionDialog=true
     hideDockIconOnClose=false
-    useDarkTheme=truekd
+    useDarkTheme=true
   '';
 
   home.packages = [
