@@ -61,7 +61,7 @@
       anyrun-select
     '')
     (pkgs.nu.writeScriptBin "anyrun-select"''
-      ^anyrun --plugins "${pkgs.anyrun}/lib/libstdin.so" --hide-plugin-info true
+      ^anyrun --plugins "${pkgs.anyrun}/lib/libstdin.so" --show-results-immediately true --hide-plugin-info true
     '')
   ];
 
