@@ -26,7 +26,7 @@
         blue = "#0068d0";
         magenta = "#c40089";
         cyan = "#00bdc4";
-        white = "#727272";
+        white = "#969696";
 
         #https://coolors.co/272727-7e2514-00804f-945600-003c77-6e004d-006b6e-414141
         dim-black = "#272727";
