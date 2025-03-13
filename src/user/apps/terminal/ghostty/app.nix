@@ -11,9 +11,10 @@
       adjust-cursor-thickness = 2;
       cursor-style-blink = false;
       scrollback-limit = 10000;
-      window-padding-x = [5 5];
-      window-padding-y = [3 3];
+      window-padding-x = 5;
+      window-padding-y = 3;
       font-synthetic-style = "bold";
+      resize-overlay = "never";
     };
     themes."0x0" = {
         cursor-color = "aaaaaa";
