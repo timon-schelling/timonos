@@ -69,7 +69,7 @@ in
                 selection-background = "#888888";
                 selection-foreground = "#1c1c1c";
                 black = "#464646";
-                white = "#727272";
+                white = "#aaaaaa";
                 dim-black = "#272727";
               };
               fonts = {
