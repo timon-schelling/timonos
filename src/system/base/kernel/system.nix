@@ -1,7 +1,7 @@
 { pkgs, ... }:
 
 let
-  kernelPkgs = pkgs.linuxPackages_latest;
+  kernelPkgs = pkgs.linuxPackages_6_12;
 in
 {
   boot = {
