@@ -8,7 +8,7 @@
 
   config = {
     home-manager.users.timon.programs.vscode.extensions = with pkgs.vscode-extensions; [
-      nvarner.typst-lsp
+      myriad-dreamin.tinymist
     ];
   };
 }
