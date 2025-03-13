@@ -46,6 +46,7 @@
     "extensions.ignoreRecommendations": true,
     "workbench.activityBar.location": "top",
     "window.customTitleBarVisibility": "auto",
+    "window.titleBarStyle": "native",
     "window.menuBarVisibility": "toggle",
     "workbench.sideBar.location": "right",
     "editor.cursorBlinking": "solid",

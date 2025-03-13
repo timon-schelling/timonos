@@ -25,8 +25,8 @@ let
       args = [ "--lsp" ];
     };
     lapce-nix.lsp-path = "${pkgs.nil}/bin/nil";
-    lapce-rust.serverPath = "${pkgs.rust-analyzer}/bin/rust-analyzer";
-    typst-lsp.serverPath = "${pkgs.typst-lsp}/bin/typst-lsp";
+    # lapce-rust.serverPath = "${pkgs.rust-analyzer}/bin/rust-analyzer";
+    # typst-lsp.serverPath = "${pkgs.typst-lsp}/bin/typst-lsp";
     lapce-markdown.serverPath = "${pkgs.marksman}/bin/marksman";
   };
   plugins = [
@@ -42,18 +42,18 @@ let
       version = "0.0.1";
       hash = "sha256-n+j8p6sB/Bxdp0iY6Gty9Zkpv9Rg34HjKsT1gUuGDzQ=";
     }
-    {
-      author = "dzhou121";
-      name = "lapce-rust";
-      version = "0.3.1932";
-      hash = "sha256-LJ5tb37aIlTvbW5qCQBs9rOEV9M48BmzGsZD2J6WPw0=";
-    }
-    {
-      author = "nvarner";
-      name = "typst-lsp";
-      version = "0.13.0";
-      hash = "sha256-ibo6fbq7+WvWVZGp1UB8bf+AeXTn70b5fCIkvTmfivQ=";
-    }
+    # {
+    #   author = "dzhou121";
+    #   name = "lapce-rust";
+    #   version = "0.3.1932";
+    #   hash = "sha256-LJ5tb37aIlTvbW5qCQBs9rOEV9M48BmzGsZD2J6WPw0=";
+    # }
+    # {
+    #   author = "nvarner";
+    #   name = "typst-lsp";
+    #   version = "0.13.0";
+    #   hash = "sha256-ibo6fbq7+WvWVZGp1UB8bf+AeXTn70b5fCIkvTmfivQ=";
+    # }
     {
       author = "zarathir";
       name = "lapce-markdown";
