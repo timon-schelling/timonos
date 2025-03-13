@@ -18,7 +18,6 @@
       };
       browser = {
         chromium.enable = lib.mkDefault true;
-        zen-browser.enable = lib.mkDefault true;
         tor-browser.enable = lib.mkDefault true;
       };
       passwordmanager = {
