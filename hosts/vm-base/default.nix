@@ -279,6 +279,7 @@ in
             apps = {
               terminal = {
                 rio.enable = true;
+                ghostty.enable = true;
               };
               editor = {
                 vscode.enable = true;
