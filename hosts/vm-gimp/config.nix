@@ -16,7 +16,8 @@
 
     environment.systemPackages = [
       (pkgs.appimageTools.wrapType2 {
-        name = "gimp";
+        pname = "gimp";
+        version = "3.0.0-RC3";
         src = pkgs.fetchurl {
           url = "https://download.gimp.org/gimp/v3.0/linux/GIMP-3.0.0-RC3-x86_64.AppImage";
           hash = "sha256-OD9iXtN6LW0uXCK6rS8+O2xQ081RnrbgkGmQN4O8rHo=";
