@@ -1,5 +1,5 @@
-{ ... }:
+{ lib, ... }:
 
 {
-  services.speechd.enable = false;
+  services.speechd.enable = lib.mkForce false;
 }
