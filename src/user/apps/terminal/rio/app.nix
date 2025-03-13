@@ -8,7 +8,8 @@
         shape = "beam";
         blink = false;
       };
-      padding-x = 4;
+      padding-x = 7;
+      padding-y = [(-2) 14];
       navigation.mode = "Plain";
       colors = {
         background = "#1c1c1c";
