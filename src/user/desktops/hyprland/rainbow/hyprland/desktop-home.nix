@@ -191,12 +191,12 @@
 
       bind = ALT, space, exec, anyrun
 
-      bind = $mainMod, 1, exec, rio
+      bind = $mainMod, 1, exec, ghostty
       bind = $mainMod, 2, exec, code
       bind = $mainMod, 3, exec, firefox
       bind = $mainMod, 4, exec, nautilus --new-window
       bind = $mainMod, 5, exec, Enpass
-      bind = $mainMod, 6, exec, wezterm
+      bind = $mainMod, 6, exec, rio
       bind = $mainMod, 7, exec, spotify
       bind = $mainMod, 8, exec, beeper
       # bind = $mainMod, 9, exec,
