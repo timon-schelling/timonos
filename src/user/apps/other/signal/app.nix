@@ -14,7 +14,8 @@
         makeWrapper ${pkgs.signal-desktop}/bin/signal-desktop $out/bin/signal-desktop \
           --set NIXOS_OZONE_WL 1 \
           --add-flags "--enable-features=UseOzonePlatform --ozone-platform=wayland"
-        cp -r "${pkgs.signal-desktop}/share" "$out/"
+        mkdir -p $out/share/applications
+        cp "${pkgs.signal-desktop}/share/applications/signal-desktop-source.desktop" "$out/share/applications/signal-desktop.desktop"
         substituteInPlace $out/share/applications/signal-desktop.desktop \
           --replace "Exec=${pkgs.signal-desktop}/bin/signal-desktop" "Exec=signal-desktop"
       ''
