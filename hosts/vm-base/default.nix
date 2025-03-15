@@ -220,24 +220,6 @@ in
         };
         wantedBy = [ "default.target" ];
       };
-      main-terminal = {
-        enable = false;
-        description = "main-terminal";
-        serviceConfig =
-          let
-            runMainTerminalScript = pkgs.writeScript "run-main-terminal" ''
-              . "/etc/profiles/per-user/$USER/etc/profile.d/hm-session-vars.sh"
-              export PATH="/run/wrappers/bin:$HOME/.nix-profile/bin:/nix/profile/bin:$HOME/.local/state/nix/profile/bin:/etc/profiles/per-user/$USER/bin:/nix/var/nix/profiles/default/bin:/run/current-system/sw/bin"
-              ${pkgs.nushell}/bin/nu --login
-            '';
-          in
-          {
-            ExecStart = "${pkgs.wayland-proxy-virtwl}/bin/wayland-proxy-virtwl --virtio-gpu --tag='[vm] - ' --wayland-display wayland-main-terminal -- ${pkgs.rio}/bin/rio -e ${runMainTerminalScript}";
-            Restart = "always";
-            StartLimitInterval = 0;
-          };
-        wantedBy = [ "default.target" ];
-      };
     };
 
     environment.systemPackages = [
@@ -252,6 +234,7 @@ in
         }
       '')
       (pkgs.nu.writeScriptBin "stop" ''poweroff'')
+      pkgs.daemonize
     ];
 
     home-manager.users.timon.programs.starship.settings.format = lib.mkForce ''
