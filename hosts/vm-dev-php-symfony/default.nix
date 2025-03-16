@@ -30,7 +30,7 @@
     (pkgs.callPackage ./symfony-cli-package.nix {})
   ];
 
-  home-manager.users.timon.programs.vscode.extensions = pkgs.vscode-utils.extensionsFromVscodeMarketplace [
+  home-manager.users.timon.programs.vscode.profiles.default.extensions = pkgs.vscode-utils.extensionsFromVscodeMarketplace [
     {
       publisher = "zobo";
       name = "php-intellisense";

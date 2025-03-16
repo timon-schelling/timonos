@@ -89,6 +89,18 @@ in
     systemd.network.wait-online.enable = lib.mkDefault false;
     networking.firewall.enable = false;
     documentation.enable = lib.mkDefault false;
+    systemd.services.systemd-journald.enable = false;
+    systemd.services.systemd-journal-flush.enable = false;
+    systemd.services.kmod-static-nodes.enable = false;
+    systemd.services.systemd-journal-catalog-update.enable = false;
+    systemd.sockets.systemd-journald-audit.enable = false;
+    systemd.sockets.systemd-journald-dev-log.enable = false;
+    systemd.sockets.systemd-journald.enable = false;
+    systemd.services.systemd-logind.serviceConfig = {
+      StandardOutput = "null";
+      StandardError = "null";
+    };
+    console.earlySetup = false;
 
     fileSystems = {
       "/" = {
@@ -164,6 +176,11 @@ in
       roStore = "/nix/.ro-store";
     in
     {
+      services.systemd-vconsole-setup.enable = false;
+      services.systemd-journald.enable = false;
+      services.systemd-journal-flush.enable = false;
+      sockets.systemd-journald-audit.enable = false;
+
       emergencyAccess = true;
       mounts = [ {
         where = "/sysroot/nix/store";
@@ -233,7 +250,6 @@ in
           ${pkgs.sommelier}/bin/sommelier --virtgpu-channel ...$args
         }
       '')
-      (pkgs.nu.writeScriptBin "stop" ''poweroff'')
       (pkgs.nu.writeScriptBin "ip" ''
         def --wrapped main [...args] {
             if ($args | length) > 0 {
@@ -245,6 +261,28 @@ in
       '')
       pkgs.daemonize
     ];
+
+    home-manager.users.timon.programs.nushell.extraConfig = lib.mkAfter ''
+      alias stop = poweroff
+      alias s = stop
+
+      def --wrapped daemon [...args] {
+        let args_json = $args | to json;
+        ${pkgs.daemonize}/bin/daemonize -c $"(pwd)" ${pkgs.nu.writeScript "daemon-run" ''
+          def main [args_json] {
+            let args = $args_json | from json;
+            run-external ...$args
+          }
+        ''} $"($args_json)"
+      }
+      alias d = daemon
+
+      alias j = daemon ghostty --working-directory=$"\(pwd)"\""
+      alias n = daemon rio --working-dir $"\(pwd)"\""
+      alias h = daemon code .
+      alias k = daemon firefox
+      alias h = daemon nautilus .
+    '';
 
     home-manager.users.timon.programs.starship.settings.format = lib.mkForce ''
       vm $username $directory ($git_branch$git_status$git_state)

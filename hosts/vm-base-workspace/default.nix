@@ -25,8 +25,8 @@
     };
 
     home-manager.users.timon.programs.nushell.extraConfig = lib.mkAfter ''
-      if not ("SUDO_COMMAND" in $env) {
-          cd ~/workspace
+      if ((pwd) == $env.HOME) and not ("SUDO_COMMAND" in $env) {
+          e ~/workspace
       }
     '';
   };
