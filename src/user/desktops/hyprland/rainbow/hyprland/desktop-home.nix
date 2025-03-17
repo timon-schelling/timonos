@@ -1,10 +1,14 @@
-{ pkgs, config, ... }:
+{ pkgs, config, lib, ... }:
 
 {
   wayland.windowManager.hyprland = {
     enable = true;
     xwayland.enable = true;
-    systemd.enable = true;
+    systemd = {
+      enable = true;
+      variables = [ "--all" ];
+    };
+    settings.env = lib.attrsets.mapAttrsToList (name: value: "${name},${builtins.toString value}") config.home.sessionVariables;
     extraConfig = ''
 
       #TODO: monitors should be set per host
@@ -24,9 +28,6 @@
       env = XDG_SESSION_TYPE,wayland
       env = GBM_BACKEND,nvidia-drm
       env = __GLX_VENDOR_LIBRARY_NAME,nvidia
-
-      # fix GTK Theme
-      env = GTK_THEME, WhiteSur-Dark-solid
 
       cursor {
         inactive_timeout = 3
