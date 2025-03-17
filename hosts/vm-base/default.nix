@@ -89,13 +89,11 @@ in
     systemd.network.wait-online.enable = lib.mkDefault false;
     networking.firewall.enable = false;
     documentation.enable = lib.mkDefault false;
-    systemd.services.systemd-journald.enable = false;
     systemd.services.systemd-journal-flush.enable = false;
     systemd.services.kmod-static-nodes.enable = false;
     systemd.services.systemd-journal-catalog-update.enable = false;
     systemd.sockets.systemd-journald-audit.enable = false;
     systemd.sockets.systemd-journald-dev-log.enable = false;
-    systemd.sockets.systemd-journald.enable = false;
     systemd.services.systemd-logind.serviceConfig = {
       StandardOutput = "null";
       StandardError = "null";
