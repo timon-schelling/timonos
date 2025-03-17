@@ -101,6 +101,7 @@ in
       StandardError = "null";
     };
     console.earlySetup = false;
+    services.logrotate.enable = false;
 
     fileSystems = {
       "/" = {
@@ -281,7 +282,7 @@ in
       alias n = daemon rio --working-dir $"\(pwd)"\""
       alias h = daemon code .
       alias k = daemon firefox
-      alias h = daemon nautilus .
+      alias l = daemon nautilus .
     '';
 
     home-manager.users.timon.programs.starship.settings.format = lib.mkForce ''
@@ -325,6 +326,9 @@ in
               };
               utils = {
                 btop.enable = true;
+              };
+              passwordmanager = {
+                enpass.enable = true;
               };
             };
           };
