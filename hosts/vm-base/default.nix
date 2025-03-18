@@ -44,6 +44,14 @@ in
         type = lib.types.path;
         default = config.boot.kernelPackages.kernel;
       };
+      contain = lib.mkOption {
+        type = lib.types.package;
+        default = pkgs.contain;
+      };
+      crosvm = lib.mkOption {
+        type = lib.types.package;
+        default = pkgs.crosvm;
+      };
     };
 
     config = lib.mkOption {
