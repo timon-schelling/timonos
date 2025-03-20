@@ -289,6 +289,8 @@ in
       $character
     '';
 
+    home-manager.users.timon.programs.vscode.profiles.default.userSettings.security.workspace.trust.enabled = false;
+
     opts = {
       system = {
         filesystem.type = "none";
