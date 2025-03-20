@@ -151,6 +151,7 @@ in
         "virtio_console"
         "overlay"
       ];
+      kernel.sysctl."net.ipv4.ip_unprivileged_port_start" = lib.mkDefault 64;
       kernelModules = [
         "drm"
         "virtio_gpu"
