@@ -27,10 +27,19 @@
       )
     ];
 
-    home-manager.users.timon.programs.vscode.profiles.default.extensions = with pkgs.vscode-extensions; [
-      rust-lang.rust-analyzer
-      tamasfe.even-better-toml
-      fill-labs.dependi
-    ];
+    home-manager.users.timon = {
+      programs.vscode.profiles.default.extensions = with pkgs.vscode-extensions; [
+        rust-lang.rust-analyzer
+        tamasfe.even-better-toml
+      ] ++ pkgs.vscode-utils.extensionsFromVscodeMarketplace [
+        {
+          publisher = "washan";
+          name = "cargo-appraiser";
+          version = "0.0.7";
+          sha256 = "sha256-hQxgTNo2WRiTCy4IUGo/r3UdQDjcEJbiJc1+3rCWzXo=";
+        }
+      ];
+      home.sessionVariables."CARGO_APPRAISER_PATH" = "${(pkgs.callPackage ./cargo-appraiser-package.nix {})}/bin/cargo-appraiser";
+    };
   };
 }
