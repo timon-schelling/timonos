@@ -9,6 +9,7 @@
   config = {
     environment.systemPackages = [
       pkgs.gcc
+      pkgs.lldb
     ];
 
     nixpkgs.overlays = [
@@ -30,6 +31,7 @@
     home-manager.users.timon = {
       programs.vscode.profiles.default.extensions = with pkgs.vscode-extensions; [
         rust-lang.rust-analyzer
+        vadimcn.vscode-lldb
         tamasfe.even-better-toml
       ] ++ pkgs.vscode-utils.extensionsFromVscodeMarketplace [
         {
