@@ -16,18 +16,50 @@ def --env g [shell?: int] {
     }
 }
 
-def --env e [path?: path] {
-    if ($path == null) {
-        enter (tere)
+def --env goto-equivalent-shell [path: path]: nothing -> bool {
+    let equivalent_shells = goto
+        | enumerate
+        | insert id { $in.index }
+        | flatten item
+        | filter { $in.path == $path }
+    let shell = if ($equivalent_shells | length) > 0 {
+        ($equivalent_shells | first | get id)
     } else {
+        null
+    }
+    if ($shell != null) {
+        goto $shell
+        true
+    } else {
+        false
+    }
+}
+
+def --env e [path?: path] {
+    mut path = $path
+    if ($path == null) {
+        $path = ^tere
+    }
+    if not (goto-equivalent-shell $path) {
         enter $path
     }
 }
 
-def --env c [path?: path] {
-    if ($path == null) {
-        cd (tere)
+alias "input path" = ^tere
+def "path_exists" [path?: path] {
+    if ($path != null and ($path | path exists)) {
+        $path
     } else {
+        input path
+    }
+}
+
+def --env c [path?: path] {
+    mut path = $path
+    if ($path == null) {
+        $path = ^tere
+    }
+    if not (goto-equivalent-shell $path) {
         cd $path
     }
 }
