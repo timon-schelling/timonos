@@ -4,6 +4,7 @@
   imports = [
     ../vm-base-workspace
     ../vm-base-lang-rust
+    ../vm-base-podman
   ];
 
   config = {
