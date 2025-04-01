@@ -8,6 +8,7 @@
           tag = "workspace-rw";
           source = ".";
           write = true;
+          inode_file_handles = "never";
         }
       ];
     };
