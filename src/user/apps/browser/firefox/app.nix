@@ -202,9 +202,9 @@
       '';
       search = {
         force = true;
-        default = "Google";
+        default = "google";
         engines = {
-          "Nix Packages" = {
+          "nix-packages" = {
             urls = [
               {
                 template = "https://search.nixos.org/packages";
@@ -226,7 +226,7 @@
             ];
             definedAliases = ["@np"];
           };
-          "Nix Options" = {
+          "nix-options" = {
             urls = [
               {
                 template = "https://search.nixos.org/options";
@@ -248,7 +248,7 @@
             ];
             definedAliases = ["@no"];
           };
-          "Home Manager" = {
+          "home-manager" = {
             urls = [
               {
                 template = "https://home-manager-options.extranix.com/";
@@ -262,7 +262,7 @@
             ];
             definedAliases = ["@hm"];
           };
-          "GitHub" = {
+          "github" = {
             urls = [
               {
                 template = "https://github.com/search";
@@ -276,7 +276,7 @@
             ];
             definedAliases = ["@gh"];
           };
-          "GitLab" = {
+          "gitlab" = {
             urls = [
               {
                 template = "https://gitlab.com/search";
@@ -290,7 +290,7 @@
             ];
             definedAliases = ["@gl"];
           };
-          "YouTube" = {
+          "youtube" = {
             urls = [
               {
                 template = "https://www.youtube.com/results";
@@ -304,7 +304,7 @@
             ];
             definedAliases = ["@yt"];
           };
-          "DuckDuckGo" = {
+          "ddg" = {
             urls = [
               {
                 template = "https://duckduckgo.com/";
@@ -318,7 +318,7 @@
             ];
             definedAliases = ["@dg"];
           };
-          "Google" = {
+          "google" = {
             urls = [
               {
                 template = "https://www.google.com/search";
@@ -332,24 +332,9 @@
             ];
             definedAliases = ["@g"];
           };
-          "Wikipedia" = {
-            urls = [
-              {
-                template = "https://en.wikipedia.org/w/index.php";
-                params = [
-                  {
-                    name = "search";
-                    value = "{searchTerms}";
-                  }
-                ];
-              }
-            ];
-            definedAliases = ["@w"];
-          };
-          "Wikipedia (en)".metaData.hidden = true;
-          "Amazon.com".metaData.hidden = true;
-          "Bing".metaData.hidden = true;
-          "eBay".metaData.hidden = true;
+          "amazondotcom-us".metaData.hidden = true;
+          "bing".metaData.hidden = true;
+          "ebay".metaData.hidden = true;
         };
       };
     };
