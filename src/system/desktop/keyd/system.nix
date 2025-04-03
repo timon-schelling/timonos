@@ -134,7 +134,7 @@ in
         o = C-S-up
         l = C-S-down
 
-        y = C-k
+        y = C-l
 
 
         [app_nav]
