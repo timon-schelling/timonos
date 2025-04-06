@@ -21,7 +21,8 @@
       })
       pkgs.cargo-leptos
       pkgs.cargo-generate
-      pkgs.sass
+      pkgs.dart-sass
+      pkgs.binaryen
     ];
   };
 }
