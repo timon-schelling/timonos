@@ -10,10 +10,10 @@
   config = {
     vm.config = {
       cpu = {
-        cores = 30;
+        cores = 32;
       };
       memory = {
-        size = 28000;
+        size = 32000;
       };
     };
 
