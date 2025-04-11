@@ -128,6 +128,12 @@
         background_color = 0x161616
       }
 
+      render {
+        explicit_sync = 1
+        explicit_sync_kms = 1
+        direct_scanout = no
+      }
+
       $mainMod = SUPER
 
       bind = $mainMod, left, movefocus, l
