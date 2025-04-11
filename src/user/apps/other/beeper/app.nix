@@ -2,7 +2,7 @@
 
 {
   platform.user.persist.folders = [
-    ".config/Beeper"
+    ".config/BeeperTexts"
   ];
 
   home.packages = [
@@ -11,7 +11,7 @@
         buildInputs = [ pkgs.makeWrapper ];
       }
       ''
-        makeWrapper ${pkgs.beeper}/bin/beeper $out/bin/beeper --set NIXOS_OZONE_WL 1 --add-flags "--default-frame"
+        makeWrapper ${pkgs.beeper}/bin/beeper $out/bin/beeper --set NIXOS_OZONE_WL 1
         cp -r "${pkgs.beeper}/share" "$out/"
       ''
     )
