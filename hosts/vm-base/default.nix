@@ -4,8 +4,8 @@ let
   json = pkgs.formats.json {};
   conf = {
     initrd_path = config.vm.build.initrd;
-    kernel_path = "${config.vm.build.kernel.dev}/vmlinux";
-    cmdline = "console=hvc0 loglevel=4 reboot=t panic=-1 root=fstab init=${config.system.build.toplevel}/init regInfo=${pkgs.closureInfo {rootPaths = [ config.system.build.toplevel ];}}/registration";
+    kernel_path = "${pkgs.contain-default-kernel}";
+    cmdline = "console=hvc0 loglevel=4 reboot=t panic=-1 lsm=on root=fstab init=${config.system.build.toplevel}/init regInfo=${pkgs.closureInfo {rootPaths = [ config.system.build.toplevel ];}}/registration";
     cpu = {
       cores = 16;
     };
@@ -143,31 +143,18 @@ in
       };
     };
 
-    boot = {
-      initrd.kernelModules = [
-        "virtio_pci"
-        "virtiofs"
-        "virtio_blk"
-        "virtio_console"
-        "overlay"
-      ];
-      kernel.sysctl."net.ipv4.ip_unprivileged_port_start" = lib.mkDefault 64;
-      kernelModules = [
-        "drm"
-        "virtio_gpu"
-      ];
-      blacklistedKernelModules = [
-        "rfkill"
-        "intel_pstate"
-      ];
-      kernelPatches = lib.singleton {
-        name = "disable-drm-fbdev-emulation";
-        patch = null;
-        extraConfig = ''
-          DRM_FBDEV_EMULATION n
-        '';
-      };
-    };
+    boot.kernel.sysctl."net.ipv4.ip_unprivileged_port_start" = lib.mkDefault 64;
+
+    # needed to boot with contain default kernel
+    nixpkgs.overlays = [
+      (self: super: {
+        makeModulesClosure = {...}: (
+          super.runCommand "makeModulesClosureMock" {} ''
+            mkdir -p $out/lib
+          ''
+        );
+      })
+    ];
 
     # boot.initrd.systemd patchups copied from <nixpkgs/nixos/modules/virtualisation/qemu-vm.nix>
     boot.initrd.systemd =
@@ -207,6 +194,8 @@ in
           ExecStart = "/bin/mkdir -p -m 0755 /sysroot${writableStoreOverlay}/store /sysroot${writableStoreOverlay}/work /sysroot/nix/store";
         };
       };
+
+      tpm2.enable = false;
     };
 
     # Fix for hanging shutdown
@@ -243,11 +232,6 @@ in
       (pkgs.nu.writeScriptBin "run-wayland-proxy" ''
         def --wrapped main [...args] {
           ${pkgs.wayland-proxy-virtwl}/bin/wayland-proxy-virtwl ---virtio-gpu -- ...$args
-        }
-      '')
-      (pkgs.nu.writeScriptBin "run-sommelier" ''
-        def --wrapped main [...args] {
-          ${pkgs.sommelier}/bin/sommelier --virtgpu-channel ...$args
         }
       '')
       (pkgs.nu.writeScriptBin "ip" ''
