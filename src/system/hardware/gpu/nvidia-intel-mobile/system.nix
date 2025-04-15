@@ -30,7 +30,7 @@ in
             "iris"
             "zink"
           ];
-        }).drivers;
+        });
         extraPackages = with pkgs; [
           intel-media-driver
           intel-vaapi-driver
