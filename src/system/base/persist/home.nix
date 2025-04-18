@@ -6,9 +6,19 @@ in
 {
   options = {
     opts.user.persist = {
-      data = persist;
-      state = persist;
+      data = lib.mkOption {
+        type = persist;
+        default = {};
+      };
+      state = lib.mkOption {
+        type = persist;
+        default = {};
+      };
     };
-    platform.user.persist = persist;
+    platform.user.persist = lib.mkOption {
+      type = persist;
+      default = {};
+      internal = true;
+    };
   };
 }

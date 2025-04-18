@@ -66,6 +66,9 @@
               inherit username;
               user = user.home;
             };
+            platform = {
+              system = config.platform.system;
+            };
             modules = (lib.imports.type "home" ./.) ++ [ ../profiles/home/home.nix ];
           in
           {
@@ -78,10 +81,15 @@
                     type = lib.types.anything;
                   };
                 };
+                platform = {
+                  system = lib.mkOption {
+                    type = lib.types.anything;
+                  };
+                };
               };
 
               config = {
-                inherit opts;
+                inherit opts platform;
               };
             };
           }

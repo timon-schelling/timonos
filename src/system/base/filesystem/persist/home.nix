@@ -4,7 +4,7 @@
   imports = [
     inputs.impermanence.nixosModules.home-manager.impermanence
   ];
-  config = lib.mkIf config.opts.system.filesystem.internal.persist.enable {
+  config = lib.mkIf config.platform.system.filesystem.persist.enable {
     home.persistence."/persist/user/${config.opts.username}/data" = {
       directories = config.opts.user.persist.data.folders;
       files = config.opts.user.persist.data.files;

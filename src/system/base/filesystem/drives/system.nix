@@ -5,7 +5,7 @@
     inputs.disko.nixosModules.default
   ];
 
-  config = lib.mkIf config.opts.system.filesystem.internal.drives.enable {
+  config = lib.mkIf config.platform.system.filesystem.drives.enable {
     disko.devices = {
       disk.main = {
         device = config.opts.system.filesystem.drive;

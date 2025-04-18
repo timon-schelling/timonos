@@ -28,7 +28,7 @@ let
         umount /btrfs_tmp
     '';
 in
-lib.mkIf config.opts.system.filesystem.internal.reset.enable (
+lib.mkIf config.platform.system.filesystem.reset.enable (
     lib.mkMerge [
         (lib.mkIf config.boot.initrd.systemd.enable ({
             boot.initrd.systemd.services."reset-root" = {
