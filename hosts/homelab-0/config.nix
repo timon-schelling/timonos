@@ -5,6 +5,7 @@
         drive = "/dev/disk/by-id/ata-SAMSUNG_MZNLN256HMHQ-000H1_S2Y2NX0HC43252";
         swap.size = "16G";
       };
+      hardware.bluetooth.enable = true;
       network.wifi.enable = true;
       desktops.gnome.enable = true;
     };

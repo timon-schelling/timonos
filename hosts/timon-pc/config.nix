@@ -5,9 +5,12 @@
     system = {
       filesystem.drive = "/dev/nvme1n1";
       profile = "users.timon";
-      hardware.gpu.nvidia = {
-        enable = true;
-        monitorDdcciFixEnable = true;
+      hardware = {
+        gpu.nvidia = {
+          enable = true;
+          monitorDdcciFixEnable = true;
+        };
+        bluetooth.enable = true;
       };
       network.wifi.enable = true;
     };

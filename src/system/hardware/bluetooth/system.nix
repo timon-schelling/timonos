@@ -1,9 +1,20 @@
-{ ... }:
+{ lib, config, ... }:
 
+let
+  cfg = config.opts.system.hardware.bluetooth;
+in
 {
-  hardware.bluetooth = {
-    enable = true;
-    powerOnBoot = true;
+  options = {
+    opts.system.hardware.bluetooth.enable = lib.mkEnableOption "Bluetooth";
   };
-  services.blueman.enable = true;
+  config = lib.mkIf cfg.enable {
+
+    platform.system.persist.folders = [ "/var/lib/bluetooth" ];
+
+    hardware.bluetooth = {
+      enable = true;
+      powerOnBoot = true;
+    };
+    services.blueman.enable = true;
+  };
 }
