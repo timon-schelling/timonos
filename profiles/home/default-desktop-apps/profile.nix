@@ -2,7 +2,7 @@
   opts.user.apps = {
     terminal = {
       rio.enable = lib.mkDefault true;
-      ghostty.enable = true;
+      ghostty.enable = lib.mkDefault true;
     };
     settings = {
       wifi.enable = lib.mkDefault true;

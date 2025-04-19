@@ -36,6 +36,7 @@
         discord-webcord.enable = lib.mkDefault true;
       };
     };
-    podman.enable = true;
+    git.enable = lib.mkDefault true;
+    podman.enable = lib.mkDefault true;
   };
 }

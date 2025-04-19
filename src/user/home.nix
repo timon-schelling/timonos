@@ -6,10 +6,10 @@
       };
       user = {
         name = lib.mkOption {
-          type = lib.types.str;
+          type = lib.types.nullOr lib.types.str;
         };
         email = lib.mkOption {
-          type = lib.types.str;
+          type = lib.types.nullOr lib.types.str;
         };
       };
     };
