@@ -17,7 +17,7 @@
       };
     };
 
-    opts.users.timon.home.persist.state.folders = [
+    opts.users.user.home.persist.state.folders = [
       ".config/GIMP"
       ".local/share/GIMP"
       ".cache/GIMP"

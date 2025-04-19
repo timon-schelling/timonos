@@ -19,7 +19,7 @@
 
     environment.sessionVariables.MPLBACKEND = "qtagg";
 
-    home-manager.users.timon.programs.vscode.profiles.default.extensions = with pkgs.vscode-extensions; [
+    home-manager.users.user.programs.vscode.profiles.default.extensions = with pkgs.vscode-extensions; [
       ms-python.python
     ];
   };

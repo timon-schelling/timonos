@@ -5,5 +5,5 @@
     ../vm-base
   ];
 
-  opts.users.timon.home.podman.enable = true;
+  opts.users.user.home.podman.enable = true;
 }

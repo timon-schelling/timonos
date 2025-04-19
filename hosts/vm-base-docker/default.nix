@@ -26,5 +26,5 @@
       '';
     });
   };
-  users.users.timon.extraGroups = [ "docker" ];
+  users.users.user.extraGroups = [ "docker" ];
 }

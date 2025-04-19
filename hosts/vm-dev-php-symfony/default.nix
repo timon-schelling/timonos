@@ -8,7 +8,7 @@
     ../vm-base-docker
   ];
 
-  opts.users.timon.home.persist.state.folders = [ ".cache/composer" ];
+  opts.users.user.home.persist.state.folders = [ ".cache/composer" ];
   environment.systemPackages = [
     (pkgs.php84.buildEnv {
       extensions = { enabled, all }:
@@ -25,7 +25,7 @@
     (pkgs.callPackage ./symfony-cli-package.nix {})
   ];
 
-  home-manager.users.timon.programs.vscode.profiles.default.extensions = pkgs.vscode-utils.extensionsFromVscodeMarketplace [
+  home-manager.users.user.programs.vscode.profiles.default.extensions = pkgs.vscode-utils.extensionsFromVscodeMarketplace [
     {
       publisher = "zobo";
       name = "php-intellisense";

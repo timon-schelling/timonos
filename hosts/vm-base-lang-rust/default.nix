@@ -28,7 +28,7 @@
       )
     ];
 
-    home-manager.users.timon = {
+    home-manager.users.user = {
       programs.vscode.profiles.default.extensions = with pkgs.vscode-extensions; [
         rust-lang.rust-analyzer
         vadimcn.vscode-lldb

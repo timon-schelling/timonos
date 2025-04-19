@@ -246,7 +246,7 @@ in
       pkgs.daemonize
     ];
 
-    home-manager.users.timon.programs.nushell.extraConfig = lib.mkAfter ''
+    home-manager.users.user.programs.nushell.extraConfig = lib.mkAfter ''
       alias stop = poweroff
       alias s = stop
 
@@ -262,12 +262,12 @@ in
       alias l = daemon nautilus .
     '';
 
-    home-manager.users.timon.programs.starship.settings.format = lib.mkForce ''
+    home-manager.users.user.programs.starship.settings.format = lib.mkForce ''
       vm $username $directory ($git_branch$git_status$git_state)
       $character
     '';
 
-    home-manager.users.timon.programs.vscode.profiles.default.userSettings.security.workspace.trust.enabled = false;
+    home-manager.users.user.programs.vscode.profiles.default.userSettings.security.workspace.trust.enabled = false;
 
     opts = {
       system = {
@@ -275,16 +275,14 @@ in
         adminAllowNoPassword = true;
         login.auto = {
           enable = true;
-          user = "timon";
+          user = "user";
         };
         desktops.guest.enable = true;
       };
       users = {
-        timon = {
+        user = {
           admin = true;
           home = {
-            name = "Timon Schelling";
-            email = "me@timon.zip";
             desktops.guest.default.enable = true;
             apps = {
               terminal = {
@@ -310,6 +308,7 @@ in
                 enpass.enable = true;
               };
             };
+            git.enable = true;
           };
         };
       };
