@@ -251,13 +251,7 @@ in
       alias s = stop
 
       def --wrapped daemon [...args] {
-        let args_json = $args | to json;
-        ${pkgs.daemonize}/bin/daemonize -c $"(pwd)" ${pkgs.nu.writeScript "daemon-run" ''
-          def main [args_json] {
-            let args = $args_json | from json;
-            run-external ...$args
-          }
-        ''} $"($args_json)"
+        job spawn { run-external ...$args }
       }
       alias d = daemon
 
