@@ -29,6 +29,7 @@
       };
       utils = {
         btop.enable = lib.mkDefault true;
+        gitui.enable = lib.mkDefault true;
       };
       other = {
         beeper.enable = lib.mkDefault true;
