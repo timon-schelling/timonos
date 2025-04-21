@@ -23,6 +23,7 @@ in
       enable = true;
       userName = cfg.name;
       userEmail = cfg.email;
+      extraConfig.init.defaultBranch = "main";
     };
   };
 }
