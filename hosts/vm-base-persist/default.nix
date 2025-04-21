@@ -2,7 +2,7 @@
 
 {
   config = {
-    vm.config.filesystem.disks = [
+    contain.config.filesystem.disks = [
       {
         source = ".vm/persist.disk.qcow2";
         tag = "persist";

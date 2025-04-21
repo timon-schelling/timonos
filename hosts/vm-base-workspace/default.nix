@@ -2,7 +2,7 @@
 
 {
   config = {
-    vm.config = {
+    contain.config = {
       filesystem.shares = [
         {
           tag = "workspace-rw";

@@ -1,9 +1,8 @@
 { lib, pkgs, config, ... }:
 
 let
-  json = pkgs.formats.json {};
   conf = {
-    initrd_path = config.vm.build.initrd;
+    initrd_path = "${config.system.build.initialRamdisk}/${config.system.boot.loader.initrdFile}";
     kernel_path = "${pkgs.contain-default-kernel}";
     cmdline = "console=hvc0 loglevel=4 reboot=t panic=-1 lsm=on root=fstab init=${config.system.build.toplevel}/init regInfo=${pkgs.closureInfo {rootPaths = [ config.system.build.toplevel ];}}/registration";
     cpu = {
@@ -31,27 +30,17 @@ let
       mode = "on";
     };
   };
+  json = pkgs.formats.json {};
 in
 {
-  options.vm = {
-
-    build = {
-      initrd = lib.mkOption {
-        type = lib.types.path;
-        default = "${config.system.build.initialRamdisk}/${config.system.boot.loader.initrdFile}";
-      };
-      kernel = lib.mkOption {
-        type = lib.types.path;
-        default = config.boot.kernelPackages.kernel;
-      };
-    };
+  options.contain = {
 
     config = lib.mkOption {
       type = json.type;
       default = conf;
     };
 
-    containConfig = lib.mkOption (
+    configFile = lib.mkOption (
       let
         recursiveMergeImpl = with lib; args:
           zipAttrsWith (n: values:
@@ -67,7 +56,7 @@ in
       in
       {
         type = lib.types.path;
-        default = json.generate "contain-config.json" (recursiveMerge [conf config.vm.config]);
+        default = json.generate "contain-config.json" (recursiveMerge [conf config.contain.config]);
       }
     );
   };

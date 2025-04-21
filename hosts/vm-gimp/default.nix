@@ -8,7 +8,7 @@
   ];
 
   config = {
-    vm.config = {
+    contain.config = {
       cpu = {
         cores = 32;
       };
