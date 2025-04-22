@@ -9,32 +9,30 @@
 }:
 let
   pname = "beeper";
-  version = "4.0.604";
+  version = "4.0.623";
   src = fetchurl {
     url = "https://beeper-desktop.download.beeper.com/builds/Beeper-${version}.AppImage";
-    hash = "sha256-60PBTfbgYf73bCY2Qxqy8I2vMCziHf5Nuw78cpbVi/8=";
+    hash = "sha256-K043RQ5BoS1ysnmY+LpRixBmMx2XCbRzhWnWsxg26dg=";
   };
-  appimageContents = appimageTools.extractType2 {
+  appimageContents = appimageTools.extract {
     inherit version pname src;
-
-    postExtract = ''
-      # disable creating a desktop file and icon in the home folder during runtime
-      linuxConfigFilename=$out/resources/app/build/main/linux-*.mjs
-      echo "export function registerLinuxConfig() {}" > $linuxConfigFilename
-      substituteInPlace $out/beepertexts.desktop --replace-fail "AppRun" "beeper"
-    '';
   };
 in
-appimageTools.wrapAppImage {
-  inherit pname version;
-
-  src = appimageContents;
+appimageTools.wrapType2 {
+  inherit pname version src;
 
   extraPkgs = pkgs: [ pkgs.libsecret ];
+
+  postExtract = ''
+    # disable creating a desktop file and icon in the home folder during runtime
+    linuxConfigFilename=$out/resources/app/build/main/linux-*.mjs
+    echo "export function registerLinuxConfig() {}" > $linuxConfigFilename
+  '';
 
   extraInstallCommands = ''
     install -Dm 644 ${appimageContents}/beepertexts.png $out/share/icons/hicolor/512x512/apps/beepertexts.png
     install -Dm 644 ${appimageContents}/beepertexts.desktop -t $out/share/applications/
+    substituteInPlace $out/share/applications/beepertexts.desktop --replace-fail "AppRun" "beeper"
 
     . ${makeWrapper}/nix-support/setup-hook
     wrapProgram $out/bin/beeper \
@@ -53,7 +51,7 @@ appimageTools.wrapAppImage {
         set -o errexit
         latestLinux="$(curl --silent --output /dev/null --write-out "%{redirect_url}\n" https://api.beeper.com/desktop/download/linux/x64/stable/com.automattic.beeper.desktop)"
         version="$(echo "$latestLinux" |  grep --only-matching --extended-regexp '[0-9]+\.[0-9]+\.[0-9]+')"
-        update-source-version beeper "$version" "" "https://beeper-desktop.download.beeper.com/builds/Beeper-$version.AppImage" --source-key=src.src
+        update-source-version beeper "$version"
       '';
     });
   };

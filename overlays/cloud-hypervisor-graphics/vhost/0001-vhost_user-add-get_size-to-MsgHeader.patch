@@ -20,7 +20,7 @@ index 7aa1726..1ee25f4 100644
 @@ -135,11 +135,6 @@ impl<R: Req> VhostUserGpuMsgHeader<R> {
          }
      }
-
+ 
 -    /// Get message size.
 -    pub fn get_size(&self) -> u32 {
 -        self.size
@@ -38,21 +38,21 @@ index 7aa1726..1ee25f4 100644
 +        self.size
 +    }
  }
-
+ 
  // Bit mask for vhost-user-gpu protocol feature flags.
 diff --git a/vhost/src/vhost_user/message.rs b/vhost/src/vhost_user/message.rs
 index c66bd44..8359eb1 100644
 --- a/vhost/src/vhost_user/message.rs
 +++ b/vhost/src/vhost_user/message.rs
 @@ -70,6 +70,9 @@ pub(super) trait MsgHeader: ByteValued + Copy + Default + VhostUserMsgValidator
-
+ 
      /// The maximum size of a msg that can be encapsulated by this MsgHeader
      const MAX_MSG_SIZE: usize;
 +
 +    /// Get message size.
 +    fn get_size(&self) -> u32;
  }
-
+ 
  enum_value! {
 @@ -241,6 +244,10 @@ pub(super) struct VhostUserMsgHeader<R: Req> {
  impl<R: Req> MsgHeader for VhostUserMsgHeader<R> {
@@ -63,12 +63,12 @@ index c66bd44..8359eb1 100644
 +        self.size
 +    }
  }
-
+ 
  impl<R: Req> Debug for VhostUserMsgHeader<R> {
 @@ -336,11 +343,6 @@ impl<R: Req> VhostUserMsgHeader<R> {
          }
      }
-
+ 
 -    /// Get message size.
 -    pub fn get_size(&self) -> u32 {
 -        self.size
@@ -77,5 +77,6 @@ index c66bd44..8359eb1 100644
      /// Set message size.
      pub fn set_size(&mut self, size: u32) {
          self.size = size;
---
+-- 
 2.47.0
+

@@ -303,8 +303,6 @@ in
       mode = "0664";
     };
 
-    # TODO: make settings overriteable by user
-
     services.keyd = {
       enable = true;
       keyboards.default = {

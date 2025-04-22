@@ -6,6 +6,7 @@
   ];
 
   home.packages = [
+
     (pkgs.runCommand "signal-custom"
       {
         buildInputs = [ pkgs.makeWrapper ];
@@ -15,9 +16,7 @@
           --set NIXOS_OZONE_WL 1 \
           --add-flags "--enable-features=UseOzonePlatform --ozone-platform=wayland"
         mkdir -p $out/share/applications
-        cp "${pkgs.signal-desktop}/share/applications/signal-desktop-source.desktop" "$out/share/applications/signal-desktop.desktop"
-        substituteInPlace $out/share/applications/signal-desktop.desktop \
-          --replace "Exec=${pkgs.signal-desktop}/bin/signal-desktop" "Exec=signal-desktop"
+        cp "${pkgs.signal-desktop}/share/applications/signal-desktop.desktop" "$out/share/applications/signal-desktop.desktop"
       ''
     )
   ];
