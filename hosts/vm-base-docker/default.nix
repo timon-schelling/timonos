@@ -1,10 +1,6 @@
 { pkgs, lib, config, ... }:
 
 {
-  imports = [
-    ../vm-base
-  ];
-
   opts.system.persist.folders = [
     "/var/lib/docker"
   ];

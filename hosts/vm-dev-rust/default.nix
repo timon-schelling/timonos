@@ -2,6 +2,7 @@
 
 {
   imports = [
+    ../vm-base
     ../vm-base-workspace
     ../vm-base-lang-rust
   ];
