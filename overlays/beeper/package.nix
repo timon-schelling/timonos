@@ -9,16 +9,49 @@
 }:
 let
   pname = "beeper";
-  version = "4.0.623";
+  version = "4.0.640";
   src = fetchurl {
     url = "https://beeper-desktop.download.beeper.com/builds/Beeper-${version}.AppImage";
-    hash = "sha256-K043RQ5BoS1ysnmY+LpRixBmMx2XCbRzhWnWsxg26dg=";
+    hash = "sha256-hYbTYvfrTpRPRwXXgNCqKeEtiRpuLj6sYIYnfJ3aMv4=";
   };
   appimageContents = appimageTools.extract {
     inherit version pname src;
   };
+  wrapType2 =
+    args@{
+      src,
+      extraPkgs ? pkgs: [ ],
+      ...
+    }:
+    appimageTools.wrapAppImage (
+      args
+      // {
+        inherit extraPkgs;
+        src = appimageTools.extract (
+          lib.filterAttrs (
+            key: value:
+            builtins.elem key [
+              "pname"
+              "version"
+              "src"
+              "postExtract"
+            ]
+          ) args
+        );
+
+        # passthru src to make nix-update work
+        # hack to keep the origin position (unsafeGetAttrPos)
+        passthru =
+          lib.pipe args [
+            lib.attrNames
+            (lib.remove "src")
+            (removeAttrs args)
+          ]
+          // args.passthru or { };
+      }
+    );
 in
-appimageTools.wrapType2 {
+wrapType2 {
   inherit pname version src;
 
   extraPkgs = pkgs: [ pkgs.libsecret ];
