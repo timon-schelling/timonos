@@ -15,52 +15,27 @@ let
     hash = "sha256-hYbTYvfrTpRPRwXXgNCqKeEtiRpuLj6sYIYnfJ3aMv4=";
   };
   appimageContents = appimageTools.extract {
-    inherit version pname src;
-  };
-  wrapType2 =
-    args@{
-      src,
-      extraPkgs ? pkgs: [ ],
-      ...
-    }:
-    appimageTools.wrapAppImage (
-      args
-      // {
-        inherit extraPkgs;
-        src = appimageTools.extract (
-          lib.filterAttrs (
-            key: value:
-            builtins.elem key [
-              "pname"
-              "version"
-              "src"
-              "postExtract"
-            ]
-          ) args
-        );
+    inherit pname version src;
 
-        # passthru src to make nix-update work
-        # hack to keep the origin position (unsafeGetAttrPos)
-        passthru =
-          lib.pipe args [
-            lib.attrNames
-            (lib.remove "src")
-            (removeAttrs args)
-          ]
-          // args.passthru or { };
-      }
-    );
+    postExtract = ''
+      # disable creating a desktop file and icon in the home folder during runtime
+      linuxConfigFilename=$out/resources/app/build/main/linux-*.mjs
+      echo "export function registerLinuxConfig() {}" > $linuxConfigFilename
+
+      # disable auto update
+      sed -i 's/[^=]*\.auto_update_disabled/true/' $out/resources/app/build/main/main-entry-*.mjs
+
+      # prevent update check
+      sed -i -E 's/executeDownload\([^)]+\)\{/executeDownload(){return;/g' $out/resources/app/build/main/main-entry-*.mjs
+    '';
+  };
 in
-wrapType2 {
-  inherit pname version src;
+appimageTools.wrapAppImage {
+  inherit pname version;
+
+  src = appimageContents;
 
   extraPkgs = pkgs: [ pkgs.libsecret ];
-
-  postExtract = ''
-    # disable creating a desktop file and icon in the home folder during runtime
-    linuxConfigFilename=$out/resources/app/build/main/linux-*.mjs
-    echo "export function registerLinuxConfig() {}" > $linuxConfigFilename
-  '';
 
   extraInstallCommands = ''
     install -Dm 644 ${appimageContents}/beepertexts.png $out/share/icons/hicolor/512x512/apps/beepertexts.png
@@ -83,7 +58,7 @@ wrapType2 {
       text = ''
         set -o errexit
         latestLinux="$(curl --silent --output /dev/null --write-out "%{redirect_url}\n" https://api.beeper.com/desktop/download/linux/x64/stable/com.automattic.beeper.desktop)"
-        version="$(echo "$latestLinux" |  grep --only-matching --extended-regexp '[0-9]+\.[0-9]+\.[0-9]+')"
+        version="$(echo "$latestLinux" | grep --only-matching --extended-regexp '[0-9]+\.[0-9]+\.[0-9]+')"
         update-source-version beeper "$version"
       '';
     });
