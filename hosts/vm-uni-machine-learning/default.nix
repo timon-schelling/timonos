@@ -14,6 +14,7 @@
         matplotlib
         pyqt6
         torch
+        scikit-learn
       ]))
       kdePackages.qtwayland
     ];
