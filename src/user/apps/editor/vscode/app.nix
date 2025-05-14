@@ -29,25 +29,10 @@
         ms-vscode.hexeditor
         streetsidesoftware.code-spell-checker
         pkief.material-icon-theme
+        github.copilot
+        github.copilot-chat
+        streetsidesoftware.code-spell-checker-german
       ] ++ pkgs.vscode-utils.extensionsFromVscodeMarketplace [
-        {
-          publisher = "github";
-          name = "copilot";
-          version = "1.301.0";
-          sha256 = "sha256-+SOXalkLm89JZ0AtlevVxOxT8bbuTddt8BL5cVfG9qI=";
-        }
-        {
-          publisher = "github";
-          name = "copilot-chat";
-          version = "0.26.2025032805";
-          sha256 = "sha256-6hnp6U089f2yxsFzV0/Vkjsu4FinWIbfkTEIW+4dR3k=";
-        }
-        {
-          publisher = "streetsidesoftware";
-          name = "code-spell-checker-german";
-          version = "2.3.2";
-          sha256 = "sha256-40Oc6ycNog9cxG4G5gCps2ADrM/wLuKWFrD4lnd91Z4=";
-        }
         {
           publisher = "bierner";
           name = "color-info";
