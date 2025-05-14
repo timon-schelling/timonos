@@ -1,7 +1,7 @@
 { pkgs, ... }:
 
 let
-  audioSettingsDesktopEntry = pkgs.writeText "settings-audio-effects.desktop" ''
+  audioSettingsDesktopEntry = pkgs.writeText "settings-audio.desktop" ''
     [Desktop Entry]
     Type=Application
     Name=Audio Settings
