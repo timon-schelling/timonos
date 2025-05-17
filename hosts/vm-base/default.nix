@@ -9,7 +9,7 @@ let
       cores = 16;
     };
     memory = {
-      size = 16384;
+      size = 46384;
     };
     filesystem = {
       shares = [
@@ -233,6 +233,8 @@ in
         }
       '')
       pkgs.daemonize
+
+      pkgs.graphite
     ];
 
     home-manager.users.user.programs.nushell.extraConfig = lib.mkAfter ''

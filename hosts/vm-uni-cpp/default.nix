@@ -7,13 +7,19 @@
     ../vm-base-persist
   ];
 
-  config = {
+  config =
+  let
+    buildInputs = with pkgs; [
+      kdePackages.qtwayland
+      kdePackages.qt5compat
+      kdePackages.qtbase
+    ];
+  in
+  {
     environment.systemPackages = [
       pkgs.gcc
       pkgs.lldb
-
-      pkgs.qt6.qtwayland
-      pkgs.qt6.qt5compat
+      pkgs.gdb
 
       pkgs.qtcreator
 
@@ -21,10 +27,25 @@
 
       pkgs.gnumake
       pkgs.cmake
+      pkgs.kdePackages.full
 
       pkgs.eclipses.eclipse-cpp
-    ];
-    environment.extraOutputsToInstall = [ "dev" ];
-    environment.sessionVariables.CPP_DEPS = "${pkgs.qt6.full}/include";
+      pkgs.gsettings-desktop-schemas
+    ] ++ buildInputs;
+    home-manager.users.user.programs.nushell.extraConfig = lib.mkAfter ''
+      def --env load_cpp_deps [] {
+        $env.CPP_DEPS = $"(ls ${pkgs.kdePackages.full}/include/*/*.h | get name | str join ":")"
+      }
+    '';
+    environment.sessionVariables = {
+      C_INCLUDE_PATH = lib.makeIncludePath buildInputs;
+      CXX_INCLUDE_PATH = lib.makeIncludePath buildInputs;
+    };
+    programs.nix-ld = {
+      enable = true;
+      libraries = [
+        pkgs.kdePackages.full
+      ];
+    };
   };
 }

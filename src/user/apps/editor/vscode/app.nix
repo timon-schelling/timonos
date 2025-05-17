@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
 
 {
   platform.user.persist.folders = [
@@ -48,7 +48,12 @@
       ];
       enableUpdateCheck = false;
       enableExtensionUpdateCheck = false;
-      userSettings = (builtins.fromJSON (builtins.readFile ./settings.json));
+      userSettings = lib.mkMerge [
+        (builtins.fromJSON (builtins.readFile ./settings.json))
+        # {
+        #   editor.tokenColorCustomizations.textMateRules = (builtins.fromJSON (builtins.readFile ./token-colors.json));
+        # }
+      ];
       keybindings = (builtins.fromJSON (builtins.readFile ./keybindings.json));
     };
   };

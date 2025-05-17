@@ -22,5 +22,8 @@
     in
     {
       nixosConfigurations = systems;
+      packages.x86_64-linux = {
+        graphite = (pkgs.legacyPackages.x86_64-linux.callPackage ./overlays/graphite/package.nix { });
+      };
     };
 }
