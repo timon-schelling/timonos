@@ -16,7 +16,7 @@
           --set NIXOS_OZONE_WL 1 \
           --add-flags "--enable-features=UseOzonePlatform --ozone-platform=wayland"
         mkdir -p $out/share/applications
-        cp "${pkgs.signal-desktop}/share/applications/signal-desktop.desktop" "$out/share/applications/signal-desktop.desktop"
+        cp "${pkgs.signal-desktop}/share/applications/signal.desktop" "$out/share/applications/signal.desktop"
       ''
     )
   ];
