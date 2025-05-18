@@ -45,6 +45,11 @@
         sensitivity = 0 # -1.0 - 1.0, 0 means no modification
       }
 
+      ecosystem {
+        no_update_news = true
+        no_donation_nag = true
+      }
+
       general {
         gaps_in = 5
         gaps_out = 7
