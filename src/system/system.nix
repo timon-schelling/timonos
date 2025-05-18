@@ -12,7 +12,7 @@
       };
       stateVersion = lib.mkOption {
         type = lib.types.str;
-        default = "24.05";
+        default = "25.05";
       };
     };
   };

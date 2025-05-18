@@ -11,4 +11,5 @@
       allowUnfree = true;
     }
   '';
+  home.enableNixpkgsReleaseCheck = false;
 }
