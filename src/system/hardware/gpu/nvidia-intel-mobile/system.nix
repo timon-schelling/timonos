@@ -23,14 +23,6 @@ in
     {
       hardware.graphics = {
         enable = true;
-        package = lib.mkForce (pkgs.mesa.override {
-          galliumDrivers = [
-            "nouveau"
-            "swrast"
-            "iris"
-            "zink"
-          ];
-        });
         extraPackages = with pkgs; [
           intel-media-driver
           intel-vaapi-driver
