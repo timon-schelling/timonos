@@ -24,10 +24,7 @@
       # other monitors
       monitor = ,preferred, auto, auto
 
-      env = LIBVA_DRIVER_NAME,nvidia
       env = XDG_SESSION_TYPE,wayland
-      env = GBM_BACKEND,nvidia-drm
-      env = __GLX_VENDOR_LIBRARY_NAME,nvidia
 
       cursor {
         inactive_timeout = 3

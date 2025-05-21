@@ -49,11 +49,16 @@ in
               enable = true;
               enableOffloadCmd = lib.mkForce true;
             };
-            nvidiaBusId = cfg.nvidiaBusId; #"PCI:1:0:0";
-            intelBusId = cfg.intelBusId; #"PCI:0:2:0";
+            nvidiaBusId = cfg.nvidiaBusId;
+            intelBusId = cfg.intelBusId;
           };
           nvidiaSettings = false;
         };
+      };
+      environment.variables = {
+        "LIBVA_DRIVER_NAME" = "nvidia";
+        "GBM_BACKEND" = "nvidia-drm";
+        "__GLX_VENDOR_LIBRARY_NAME" = "nvidia";
       };
     })
   ]);
