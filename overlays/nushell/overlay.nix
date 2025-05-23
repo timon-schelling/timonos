@@ -46,10 +46,17 @@ let
         "XDG_CONFIG_DIRS"
       ] else []);
       ignore' = ignore ++ (if ignoreDefaults then [
+        "NIX_ENFORCE_PURITY"
+        "HOST"
+        "HOSTNAME"
         "HOME"
         "USER"
         "SHELL"
         "TERM"
+        "TMP"
+        "TEMP"
+        "TMPDIR"
+        "TEMPDIR"
       ] else []);
     in
     (self.writeScript name ''
