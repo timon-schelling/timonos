@@ -24,7 +24,16 @@
 
       pkgs.eclipses.eclipse-cpp
     ];
-    environment.extraOutputsToInstall = [ "dev" ];
-    environment.sessionVariables.CPP_DEPS = "${pkgs.qt6.full}/include";
+    home-manager.users.user.programs.nushell.extraConfig = lib.mkAfter ''
+      source ${pkgs.nu.envFromDrv (pkgs.mkShell {
+        buildInputs = [
+          pkgs.cmake
+          pkgs.qt6.qtbase
+          pkgs.qt6.qtwayland
+          pkgs.qt6.qt5compat
+          pkgs.qtcreator
+        ];
+      }) { }}
+    '';
   };
 }
