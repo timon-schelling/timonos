@@ -27,6 +27,3 @@ index a35bf6425..56c6b7282 100644
                                      add_item(
                                          &self.item_state,
                                          CrossDomainItem::WaylandWritePipe(WritePipe::new(
--- 
-GitLab
-

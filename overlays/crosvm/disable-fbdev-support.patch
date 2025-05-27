@@ -1,0 +1,10 @@
+--- a/devices/src/virtio/gpu/virtio_gpu.rs
++++ b/devices/src/virtio/gpu/virtio_gpu.rs
+@@ -274,6 +274,7 @@ impl VirtioGpuScanout {
+         new_parent_surface_id: Option<u32>,
+         new_scanout_rect: Option<virtio_gpu_rect>,
+     ) -> VirtioGpuResult {
++        return Ok(OkNoData);
+         let mut need_to_create = false;
+
+         if self.surface_id.is_none() {

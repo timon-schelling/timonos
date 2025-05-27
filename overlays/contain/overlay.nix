@@ -3,7 +3,7 @@ inputs: self: super: {
   contain = (self.runCommand "contain" {
         buildInputs = [ self.makeWrapper ];
   } ''
-    makeWrapper ${self.contain-unwrapped}/bin/contain $out/bin/contain --set PATH ${self.lib.makeBinPath (with self; [ cloud-hypervisor-graphics virtiofsd crosvm ])}
+    makeWrapper ${self.contain-unwrapped}/bin/contain $out/bin/contain --set PATH ${self.lib.makeBinPath (with self; [ cloud-hypervisor-graphics virtiofsd crosvm-gpu-only ])}
   '');
   containd = (self.runCommand "containd" {
         buildInputs = [ self.makeWrapper ];
