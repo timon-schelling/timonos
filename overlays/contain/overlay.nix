@@ -10,17 +10,18 @@ inputs: self: super: {
   } ''
     makeWrapper ${self.contain-unwrapped}/bin/containd $out/bin/containd --set PATH ${self.lib.makeBinPath (with self; [ iproute2 ])}
   '');
-  contain-default-kernel-unwrapped = (self.linuxManualConfig (
+
+  contain-optimized-kernel-unwrapped = (self.linuxManualConfig (
     let
       base = self.linuxPackages_6_12;
     in {
       version = base.kernel.version;
       src = base.kernel.src;
-      configfile = ./default-kernel-config;
+      configfile = ./optimized-kernel-config;
     }
     )
   );
-  contain-default-kernel = (self.runCommand "contain-default-kernel-image" {} ''
-    ln -s ${self.contain-default-kernel-unwrapped}/bzImage $out
+  contain-optimized-kernel = (self.runCommand "contain-optimized-kernel-image" {} ''
+    ln -s ${self.contain-optimized-kernel-unwrapped}/bzImage $out
   '');
 }

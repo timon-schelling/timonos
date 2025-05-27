@@ -22,7 +22,6 @@ in
       environment.systemPackages = [
         pkgs.contain
       ];
-      environment.variables.CONTAIN_DEFAULT_KERNEL = "${pkgs.contain-default-kernel}";
     })
     (lib.mkIf (cfg.enable && cfg.host.enable) (
       let

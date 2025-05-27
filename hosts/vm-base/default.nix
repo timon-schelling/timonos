@@ -3,7 +3,11 @@
 let
   conf = {
     initrd_path = "${config.system.build.initialRamdisk}/${config.system.boot.loader.initrdFile}";
-    kernel_path = "${pkgs.contain-default-kernel}";
+    kernel_path = (
+      if config.contain.enableOptimizedKernel
+      then "${pkgs.contain-optimized-kernel}"
+      else "${config.system.build.kernel}/bzImage"
+    );
     cmdline = "console=hvc0 loglevel=4 reboot=t panic=-1 lsm=on root=fstab init=${config.system.build.toplevel}/init regInfo=${pkgs.closureInfo {rootPaths = [ config.system.build.toplevel ];}}/registration";
     cpu = {
       cores = 16;
@@ -59,9 +63,47 @@ in
         default = json.generate "contain-config.json" (recursiveMerge [conf config.contain.config]);
       }
     );
+
+    enableOptimizedKernel = lib.mkEnableOption "vm optimized kernel";
+
+    run = lib.mkOption {
+      type = lib.types.package;
+      default = pkgs.nu.writeScriptBin "run-contain" ''
+        exec ${pkgs.contain}/bin/contain start ${config.contain.configFile}
+      '';
+    };
   };
 
-  config = {
+  config = (if config.contain.enableOptimizedKernel then {
+    # needed to boot with contain optimized kernel
+    nixpkgs.overlays = [
+      (self: super: {
+        makeModulesClosure = {...}: (
+          super.runCommand "makeModulesClosureMock" {} ''
+            mkdir -p $out/lib
+          ''
+        );
+      })
+    ];
+  } else {
+    boot = {
+      initrd.kernelModules = [
+        "virtio_pci"
+        "virtiofs"
+        "virtio_blk"
+        "virtio_console"
+        "overlay"
+      ];
+      kernelModules = [
+        "drm"
+        "virtio_gpu"
+      ];
+      blacklistedKernelModules = [
+        "rfkill"
+        "intel_pstate"
+      ];
+    };
+  }) // {
 
     systemd.services."systemd-vconsole-setup".enable = false;
 
@@ -133,17 +175,6 @@ in
     };
 
     boot.kernel.sysctl."net.ipv4.ip_unprivileged_port_start" = lib.mkDefault 64;
-
-    # needed to boot with contain default kernel
-    nixpkgs.overlays = [
-      (self: super: {
-        makeModulesClosure = {...}: (
-          super.runCommand "makeModulesClosureMock" {} ''
-            mkdir -p $out/lib
-          ''
-        );
-      })
-    ];
 
     # boot.initrd.systemd patchups copied from <nixpkgs/nixos/modules/virtualisation/qemu-vm.nix>
     boot.initrd.systemd =
