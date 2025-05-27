@@ -11,6 +11,7 @@
     environment.systemPackages = [
       pkgs.gcc
       pkgs.lldb
+      pkgs.gdb
 
       pkgs.qt6.qtwayland
       pkgs.qt6.qt5compat
