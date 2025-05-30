@@ -1,4 +1,4 @@
-{ host, lib, pkgs, inputs, ... }:
+{ host, lib, inputs, ... }:
 
 lib.nixosSystem {
   specialArgs = {

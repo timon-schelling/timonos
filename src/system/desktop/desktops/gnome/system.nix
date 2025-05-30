@@ -1,4 +1,4 @@
-{ lib, config, pkgs, inputs, ... }@args:
+{ lib, config, pkgs, ... }:
 
 let
   cfg = config.opts.system.desktops.gnome;

@@ -1,4 +1,4 @@
-{ lib, config, pkgs, inputs, ... }@args:
+{ lib, config, ... }:
 
 let
   cfg = config.opts.system.desktops.guest;
