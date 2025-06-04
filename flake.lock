@@ -7,11 +7,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1748623406,
-        "narHash": "sha256-2X2kZbHli/8PDnXc8VBxhQFiUhPvptSN0B0mBv7jIGQ=",
+        "lastModified": 1749059354,
+        "narHash": "sha256-bIwddqvVDTiAw8mk7338PzQ9asIGNEAEml6jFEWMHfQ=",
         "owner": "timon-schelling",
         "repo": "contain",
-        "rev": "076d857797fa95cfe4f409e87770b23d900ba064",
+        "rev": "e4bea5a4de0cb9dbb4cd8cfccaea26e65f25cb63",
         "type": "github"
       },
       "original": {

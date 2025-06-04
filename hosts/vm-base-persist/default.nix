@@ -3,7 +3,6 @@
 {
   contain.config.filesystem.disks = [
     {
-      source = ".vm/persist.disk.qcow2";
       tag = "persist";
       size = 30000;
     }
@@ -11,7 +10,7 @@
 
   fileSystems."/persist" = {
     device = "/dev/disk/by-id/virtio-persist";
-    fsType = "btrfs";
+    fsType = "ext4";
     neededForBoot = true;
     autoFormat = true;
     options = [
