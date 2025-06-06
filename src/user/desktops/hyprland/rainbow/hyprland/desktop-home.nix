@@ -191,6 +191,8 @@
 
       bind = $mainMod, B, exec, waybar-toggle
 
+      bind = SUPER, SUPER_L, exec, control-panel-toggle
+
       binde = , XF86MonBrightnessUp, exec, monitor-set-brightness +10%
       binde = , XF86MonBrightnessDown, exec, monitor-set-brightness 10-%
       binde = , XF86AudioRaiseVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+ -l 2.0
@@ -218,6 +220,7 @@
       }
 
       exec-once = waybar
+      exec-once = eww daemon
       ${
         if config.opts.system.hardware.gpu.nvidia.monitorDdcciFixEnable then ''
           exec-once = ${pkgs.nu.writeScript "hyprland-monitor-fix-ddcci-nvidia" ''sleep 5sec; monitor-fix-ddcci-nvidia''}

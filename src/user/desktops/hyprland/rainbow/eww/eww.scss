@@ -1,0 +1,164 @@
+$primary-color: #3d3d3d;
+$disabled-color: #292929;
+$foreground-color: #878787;
+$background-color: #1e1e1e;
+$base-size: 45px;
+$spacing: 12px;
+$window-boarder-radius: $base-size/2 + $spacing;
+$base-border-radius: $window-boarder-radius - $spacing;
+
+window {
+    background: transparent;
+}
+
+.control-panel-main {
+    background: $background-color;
+    margin: 50px;
+    padding: $spacing;
+    border-radius: $window-boarder-radius;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+}
+
+.power {
+    button {
+        all: unset;
+        font-size: $base-size/1.4;
+        background-color: $primary-color;
+        color: $foreground-color;
+        min-width: $base-size;
+        min-height: $base-size;
+        border-radius: $base-border-radius;
+        margin-left: $spacing;
+    }
+    :first-child {
+        margin-left: 0;
+    }
+}
+
+.sliders {
+    $height: $base-size;
+    $width: 350px;
+    $border-radius: $base-border-radius;
+    $font-size: $height/1.7;
+    $highlight-color: $primary-color;
+    $icon-color: $foreground-color;
+    $background-color: $disabled-color;
+    .slider {
+        margin-top: $spacing;
+        label {
+            all: unset;
+            font-size: $font-size;
+            background: $highlight-color;
+            border-radius: $border-radius;
+            min-width: $height;
+            border: none;
+            color: $icon-color;
+        }
+        scale {
+            all: unset;
+            trough {
+                all: unset;
+                border-top-right-radius: $border-radius;
+                border-bottom-right-radius: $border-radius;
+                background-color: $background-color;
+                border: none;
+                min-height: $height;
+                min-width: $width;
+                margin-left: $border-radius;
+                & highlight {
+                    all: unset;
+                    background: $highlight-color;
+                    border-top-right-radius: $border-radius;
+                    border-bottom-right-radius: $border-radius;
+                }
+                & slider {
+                    all: unset;
+                }
+            }
+        }
+    }
+    .slider-brightness {
+        label {
+            font-size: $font-size*1.4;
+        }
+    }
+}
+
+.gauge {
+    padding: $spacing;
+    background-color: $disabled-color;
+    border-radius: $base-border-radius;
+    margin-left: $spacing;
+    margin-top: $spacing;
+    circular-progress {
+        min-height: $base-size*20;
+        min-width: $base-size*20;
+        color: $primary-color;
+        font-size: $base-size*2;
+        background-color: transparent;
+        margin-bottom: -20px;
+    }
+    .background {
+        color: $primary-color;
+    }
+    .cutout {
+        $radius: 65px;
+        min-width: $radius*2;
+        min-height: $radius*2;
+        border-radius: $radius;
+        background-color: $disabled-color;
+    }
+    .label {
+        font-size: $base-size/2;
+        color: $foreground-color;
+        margin-right: -4px;
+    }
+    .inner {
+        margin-bottom: -40px;
+    }
+    &:first-child {
+        margin-left: 0;
+    }
+}
+
+$gauge-icon-size: $base-size*2.2;
+$gauge-color: #6f6f6f;
+
+.gauge-cpu {
+    // $color: #9b003e;
+    $color: $gauge-color;
+    .progress {
+        color: $color;
+    }
+    .icon {
+        color: $color;
+        margin: -8px -3px 0px 0px;
+        font-size: $gauge-icon-size;
+    }
+}
+
+.gauge-ram {
+    // $color: #ad6500;
+    $color: $gauge-color;
+    .progress {
+        color: $color;
+    }
+    .icon {
+        color: $color;
+        font-size: $gauge-icon-size/1.8;
+        margin: -10px 0px 0px -19px;
+    }
+}
+
+.gauge-disk {
+    // $color: #006e33;
+    $color: $gauge-color;
+    .progress {
+        color: $color;
+    }
+    .icon {
+        color: $color;
+        margin: -6px -3px 0px 0px;
+        font-size: $gauge-icon-size;
+    }
+}

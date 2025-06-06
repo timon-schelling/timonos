@@ -1,0 +1,239 @@
+(defwidget chart [label value icon icon-class]
+  (box :class "chart-container"
+       :orientation "v"
+       :space-evenly false
+    (box :class "header"
+         :space-evenly true
+         :orientation "v"
+      (label :text "${label}" :class "label" :halign "start")
+    )
+    (box :class "body"
+         :space-evenly true
+         :orientation "h"
+      (box :class "container"
+           :space-evenly true
+           :halign "center"
+           :hexpand true
+           :orientation "h"
+        (box :class "chart-container" :space-evenly false
+          (overlay
+            (circular-progress :value value
+                               :thickness 50
+                               :class "chart"
+                               :start-at 75
+              (label :text "L")
+            )
+            (label :text "${icon}" :class "chart-icon ${icon-class}")
+          )
+        )
+      )
+    )
+  )
+)
+
+(defwidget power []
+  (centerbox
+    :class "power"
+    :orientation "h"
+    (box
+      :orientation "h"
+      :space-evenly false
+      :halign "start"
+      (button
+        :onclick "eww close control-panel && hyprctl keyword exec settings-wifi"
+        (label
+          :text "󰈀"
+          :justify "center"
+        )
+      )
+      (button
+        :onclick "eww close control-panel && hyprctl keyword exec screenshot"
+        (label
+          :text "󰹑"
+          :justify "center"
+        )
+      )
+    )
+    (box)
+    (box
+      :orientation "h"
+      :space-evenly false
+      :halign "end"
+      (button
+        :onclick "hyprctl dispatch exit"
+        (label
+          :text "󰍃"
+          :style "margin: 0px -4px 0px 0px"
+          :justify "center"
+        )
+      )
+      (button
+        :onclick "systemctl reboot"
+        (label
+          :text ""
+          :justify "center"
+        )
+      )
+      (button
+        :onclick "systemctl poweroff"
+        (label
+          :text ""
+          :justify "center"
+        )
+      )
+    )
+  )
+)
+
+(defpoll volume_out :interval "1s" "nu -c \"(wpctl get-volume @DEFAULT_AUDIO_SINK@ | parse 'Volume: {volume}' | get volume.0 | into float) * 100 | into int\"")
+(defpoll volume_in :interval "1s" "nu -c \"(wpctl get-volume @DEFAULT_AUDIO_SOURCE@ | parse 'Volume: {volume}' | get volume.0 | into float) * 100 | into int\"")
+(defpoll brightness :interval "1s" "nu -c \"ls /sys/class/backlight | get name | path basename | par-each { brightnessctl get $in | into int } | math avg\"")
+
+(defwidget slider [name value icon ?onchange]
+  (box
+    :class "slider slider-${name}"
+    (overlay
+      (scale
+        :value value
+        :onchange onchange
+        :min 0
+        :max 101
+      )
+      (box
+        :space-evenly false
+        (label
+          :text icon
+          :justify "center"
+        )
+      )
+    )
+  )
+)
+(defwidget sliders []
+  (box
+    :class "sliders"
+    :orientation "v"
+    :space-evenly false
+    (slider
+      :name "brightness"
+      :value brightness
+      :icon "󰖨"
+      :onchange "monitor-set-brightness {}%"
+    )
+    (slider
+      :name "volume-out"
+      :value volume_out
+      :icon "󰓃"
+      :onchange "wpctl set-volume @DEFAULT_AUDIO_SINK@ {}%"
+    )
+    (slider
+      :name "volume-in"
+      :value volume_in
+      :icon ""
+      :onchange "wpctl set-volume @DEFAULT_AUDIO_SOURCE@ {}%"
+    )
+  )
+)
+
+(defwidget gauge [name value icon label]
+  (box
+    :class "gauge gauge-${name}"
+    :orientation "v"
+    :space-evenly false
+    (box
+      :class "inner"
+      (overlay
+        (circular-progress
+          :class "background"
+          :value {100*0.66}
+          :min 0
+          :max 100
+          :thickness 80
+          :start-at 42
+          :clockwise true
+        )
+        (circular-progress
+          :class "progress"
+          :value {value*0.66}
+          :min 0
+          :max 100
+          :thickness 80
+          :start-at 42
+          :clockwise true
+        )
+        (box
+          :space-evenly false
+          :halign "center"
+          (label
+            :class "cutout"
+            :valign "center"
+          )
+        )
+        (box
+          :space-evenly false
+          :halign "center"
+          (label
+            :class "icon"
+            :valign "center"
+            :text icon
+          )
+        )
+      )
+    )
+    (label
+      :class "label"
+      :halign "center"
+      :text "${round(value, 2)}"
+    )
+  )
+)
+
+(defwindow control-panel
+  :geometry (geometry
+    :width "100%"
+    :height "100%"
+  )
+  :stacking "overlay"
+  :windowtype "dock"
+  (overlay
+    (button
+      :style "all: unset"
+      :width "100%"
+      :height "100%"
+      :onclick "eww close control-panel"
+    )
+    (box
+      :halign "end"
+      :space-evenly false
+      (box
+        :class "control-panel-main"
+        :valign "start"
+        :space-evenly false
+        :orientation "v"
+        (power)
+        (sliders)
+        (box
+        :space-evenly false
+          (gauge
+            :name "cpu"
+            :value {EWW_CPU.avg}
+            :icon ""
+            :label "CPU"
+          )
+          (gauge
+            :name "ram"
+            :value {EWW_RAM.used_mem_perc}
+            :icon ""
+            :label "RAM"
+          )
+          (gauge
+            :name "disk"
+            :value {EWW_DISK["/"].used_perc}
+            :icon ""
+            :label "DISK"
+          )
+        )
+      )
+    )
+  )
+)
