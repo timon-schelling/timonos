@@ -10,7 +10,7 @@ let
     spacing = 0;
     modules-center = [ "clock" ];
     modules-left = [ "hyprland/workspaces" ];
-    modules-right = [ "battery" "network" "group/system-monitor" "custom/control-panel" ]; #"group/power-menu" ];
+    modules-right = [ "battery" "custom/control-panel" ]; #"network" "group/system-monitor" "group/power-menu" ];
 
     "hyprland/workspaces" = {
       active-only = false;

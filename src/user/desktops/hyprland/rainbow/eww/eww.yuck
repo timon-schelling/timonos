@@ -1,3 +1,11 @@
+(deflisten volume_out :initial "0" "listen-output-volume")
+(deflisten volume_in :initial "0" "listen-input-volume")
+(deflisten brightness :initial "0" "listen-brightness")
+(deflisten cpu_usage :initial "0" "listen-cpu-usage")
+(deflisten mem_usage :initial "0" "listen-mem-usage")
+(deflisten disk_usage :initial "0" "listen-disk-usage")
+(deflisten network_connection :initial "down" "listen-network-connection")
+
 (defwidget chart [label value icon icon-class]
   (box :class "chart-container"
        :orientation "v"
@@ -42,7 +50,7 @@
       (button
         :onclick "eww close control-panel && hyprctl keyword exec settings-wifi"
         (label
-          :text "󰈀"
+          :text {network_connection == "lan" ? "󰈀" : (network_connection == "wlan" ? "" : "󰍸")}
           :justify "center"
         )
       )
@@ -84,10 +92,6 @@
     )
   )
 )
-
-(defpoll volume_out :interval "1s" "nu -c \"(wpctl get-volume @DEFAULT_AUDIO_SINK@ | parse 'Volume: {volume}' | get volume.0 | into float) * 100 | into int\"")
-(defpoll volume_in :interval "1s" "nu -c \"(wpctl get-volume @DEFAULT_AUDIO_SOURCE@ | parse 'Volume: {volume}' | get volume.0 | into float) * 100 | into int\"")
-(defpoll brightness :interval "1s" "nu -c \"ls /sys/class/backlight | get name | path basename | par-each { brightnessctl get $in | into int } | math avg\"")
 
 (defwidget slider [name value icon ?onchange]
   (box
@@ -212,25 +216,33 @@
         :orientation "v"
         (power)
         (sliders)
-        (box
-        :space-evenly false
-          (gauge
-            :name "cpu"
-            :value {EWW_CPU.avg}
-            :icon ""
-            :label "CPU"
+        (overlay
+          (box
+          :space-evenly false
+            (gauge
+              :name "cpu"
+              :value cpu_usage
+              :icon ""
+              :label "CPU"
+            )
+            (gauge
+              :name "mem"
+              :value mem_usage
+              :icon ""
+              :label "RAM"
+            )
+            (gauge
+              :name "disk"
+              :value disk_usage
+              :icon ""
+              :label "DISK"
+            )
           )
-          (gauge
-            :name "ram"
-            :value {EWW_RAM.used_mem_perc}
-            :icon ""
-            :label "RAM"
-          )
-          (gauge
-            :name "disk"
-            :value {EWW_DISK["/"].used_perc}
-            :icon ""
-            :label "DISK"
+          (button
+            :style "all: unset"
+            :width "100%"
+            :height "100%"
+            :onclick "eww close control-panel && system-monitor"
           )
         )
       )
