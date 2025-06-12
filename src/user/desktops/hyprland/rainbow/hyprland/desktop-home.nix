@@ -80,16 +80,11 @@
 
         layout = dwindle
 
-        # resize_on_border = true
+        resize_on_border = true
       }
 
       decoration {
         rounding = 10
-        blur {
-          enabled = true
-          size = 3
-          passes = 1
-        }
         shadow {
           enabled = false
         }
