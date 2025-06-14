@@ -57,7 +57,6 @@
               enpass.enable = true;
             };
           };
-          git.enable = true;
         };
       };
     };

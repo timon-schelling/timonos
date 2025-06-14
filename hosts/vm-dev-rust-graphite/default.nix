@@ -46,6 +46,7 @@ in
   imports = [
     ../vm-base
     ../vm-base-workspace
+    ../vm-base-git
     ../vm-base-persist
     ../vm-base-lang-rust
   ];
