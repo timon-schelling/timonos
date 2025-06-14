@@ -10,10 +10,10 @@
     optimizations = true;
     config = {
       cpu = {
-        cores = 16;
+        cores = lib.mkDefault 16;
       };
       memory = {
-        size = 16384;
+        size = lib.mkDefault 16384;
       };
     };
   };

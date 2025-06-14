@@ -5,8 +5,6 @@
     ../vm-base
     ../vm-base-workspace
     ../vm-base-git
-    ../vm-base-persist
-    ../vm-base-lang-rust
   ];
 
   config = {
@@ -19,16 +17,6 @@
         size = 28000;
       };
     };
-
-    opts.users.user.home.persist.data.folders = [
-      "workspace"
-    ];
-
-    home-manager.users.user.programs.nushell.extraConfig = lib.mkAfter ''
-      if ((pwd) == $env.HOME) and not ("SUDO_COMMAND" in $env) {
-        e ~/workspace
-      }
-    '';
 
     environment.systemPackages = [
       pkgs.nixpkgs-review
