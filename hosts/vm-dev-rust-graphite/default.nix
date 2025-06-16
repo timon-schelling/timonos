@@ -4,8 +4,8 @@ let
   graphiteSrc = pkgs.fetchFromGitHub {
     owner = "GraphiteEditor";
     repo = "Graphite";
-    rev = "80f38d91c0c8f280d2559cc43c99e38f58c8e1ff";
-    hash = "sha256-o2arVCZtH0yv58KRhaO/WQCXED65vGX+jR7CK1u26Ik=";
+    rev = "10907707c2cf462db52b6414fda98ed23effcf85";
+    hash = "sha256-y+ArPV9dtoi3c4J9cwFpDy6665VcLyzKC9GDvTqdUNo=";
   };
   graphiteFlakeSrc = pkgs.stdenv.mkDerivation {
     src = graphiteSrc;
@@ -47,25 +47,12 @@ in
     ../vm-base
     ../vm-base-workspace
     ../vm-base-git
-    ../vm-base-persist
     ../vm-base-lang-rust
   ];
 
   config = {
-
-    opts.users.user.home.persist.state.folders = [
-      "target"
-      ".cargo"
-    ];
-
     home-manager.users.user.programs.nushell.extraConfig = lib.mkAfter ''
       source ${nuEnv}
-
-      $env.CARGO_TARGET_DIR = $"($env.HOME)/target"
     '';
-
-    environment.systemPackages = [
-      pkgs.cargo-about
-    ];
   };
 }
