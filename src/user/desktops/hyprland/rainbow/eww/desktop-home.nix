@@ -34,21 +34,21 @@
       loop {
         try {
           wpexec ${mkListenVolumeScript class}
-            | lines| into float
-            | reduce --fold null { |$it, $last|
-              if $last != null {
-                if $last == 0 and $it != 0 {
-                  ${unmuteCmd}
-                }
-                if $last != 0 and $it == 0 {
-                  ${muteCmd}
-                }
+          | lines| into float
+          | reduce --fold null { |$it, $last|
+            if $last != null {
+              if $last == 0 and $it != 0 {
+                ${unmuteCmd}
               }
-              print (($it * 100) | into int)
-              $it
+              if $last != 0 and $it == 0 {
+                ${muteCmd}
+              }
             }
+            print (($it * 100) | into int)
+            $it
           }
         }
+      }
     '';
   in [
     (mkListenVolumePkg {
@@ -64,16 +64,19 @@
       unmuteCmd = "wpctl set-mute @DEFAULT_AUDIO_SOURCE@ 0";
     })
     (pkgs.nu.writeScriptBin "listen-brightness" ''
-      mut brightness = 0
-      loop {
-        let new_brightness = try {
-          ls /sys/class/backlight/*/brightness | each { open $in.name | into int } | math avg | into int
-        } catch { 0 }
-        if $new_brightness != $brightness {
-          $brightness = $new_brightness
-          print $brightness
+      def read_brightness [] {
+        ls /sys/class/backlight/*/ | each {
+          let brightness = open ($in.name | path join brightness) | into int
+          let max_brightness = open ($in.name | path join max_brightness) | into int
+          $brightness / $max_brightness * 100
+        } | math avg | into int
+      }
+      print (read_brightness)
+      let backlights = ls /sys/class/backlight/*/ | each { $in.name }
+      $backlights | par-each -t ($backlights | length) {
+        watch -q $"($in | path join brightness)" {
+          print (read_brightness)
         }
-        sleep 100ms
       }
     '')
     (pkgs.nu.writeScriptBin "listen-cpu-usage" ''
@@ -120,7 +123,7 @@
       loop {
           print (
               sys disks | where mount == "/" | get 0
-                  | (($in.total - $in.free) / $in.total) * 100 | math round -p 2
+              | (($in.total - $in.free) / $in.total) * 100 | math round -p 2
           )
           sleep 500ms
       }
@@ -130,10 +133,10 @@
       loop {
         let new_network_connection = try {
           ip -j link show type "" | from json | compact -e
-            | where operstate == "UP" | select ifname
-            | insert type { if ($in.ifname =~ "wlan.*") { "wlan" } else { "lan" } }
-            | group-by type
-            | if "lan" in $in { "lan" } else if "wlan" in $in { "wlan" } else { "down" }
+          | where operstate == "UP" | select ifname
+          | insert type { if ($in.ifname =~ "wlan.*") { "wlan" } else { "lan" } }
+          | group-by type
+          | if "lan" in $in { "lan" } else if "wlan" in $in { "wlan" } else { "down" }
         } catch { "down" }
         if $new_network_connection != $network_connection {
           $network_connection = $new_network_connection
