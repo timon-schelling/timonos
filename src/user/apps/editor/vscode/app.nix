@@ -32,6 +32,8 @@
         github.copilot
         github.copilot-chat
         streetsidesoftware.code-spell-checker-german
+
+        pkgs.vscode-extension-jjk
       ] ++ pkgs.vscode-utils.extensionsFromVscodeMarketplace [
         {
           publisher = "bierner";
