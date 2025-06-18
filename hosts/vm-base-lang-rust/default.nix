@@ -27,14 +27,10 @@
       rust-lang.rust-analyzer
       vadimcn.vscode-lldb
       tamasfe.even-better-toml
-    ] ++ pkgs.vscode-utils.extensionsFromVscodeMarketplace [
-      {
-        publisher = "washan";
-        name = "cargo-appraiser";
-        version = "0.0.7";
-        sha256 = "sha256-hQxgTNo2WRiTCy4IUGo/r3UdQDjcEJbiJc1+3rCWzXo=";
-      }
+
+      pkgs.vscode-extension-cargo-appraiser
     ];
-    home.sessionVariables."CARGO_APPRAISER_PATH" = "${(pkgs.callPackage ./cargo-appraiser-package.nix {})}/bin/cargo-appraiser";
+
+    home.sessionVariables."CARGO_APPRAISER_PATH" = "${lib.getExe pkgs.cargo-appraiser}";
   };
 }
