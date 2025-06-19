@@ -30,7 +30,5 @@
 
       pkgs.vscode-extension-cargo-appraiser
     ];
-
-    home.sessionVariables."CARGO_APPRAISER_PATH" = "${lib.getExe pkgs.cargo-appraiser}";
   };
 }

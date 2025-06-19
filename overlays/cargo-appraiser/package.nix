@@ -5,20 +5,19 @@
   pkg-config,
   openssl,
 }:
-
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "cargo-appraiser";
-  version = "0.2.4";
+  version = "0.2.5";
 
   src = fetchFromGitHub {
     owner = "washanhanzi";
     repo = "cargo-appraiser";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-5n/HN9vrEqQcvTa19KhoF8EvS7HhO9Q3smMUcauI+n4=";
+    hash = "sha256-YbrswdLNrd+p4NHLyt1OKfAO270N+Wi3ANiAZHg2zjE=";
   };
 
   useFetchCargoVendor = true;
-  cargoHash = "sha256-+Mb1sSxaSoF/LNJo/Myb+ZYgpzhe8ltKMJ41KTlXLuQ=";
+  cargoHash = "sha256-hmgpI1kGi6E7Lka3puTnhyMdXY4FR152M2lnyVyBtMU=";
 
   nativeBuildInputs = [ pkg-config ];
   buildInputs = [ openssl ];

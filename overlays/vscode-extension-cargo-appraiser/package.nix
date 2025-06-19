@@ -15,7 +15,7 @@ let
   name = "cargo-appraiser";
   publisher = "washan";
   owner = "washanhanzi";
-  version = "0.2.4";
+  version = "0.2.5";
   releaseTag = "v${version}";
   extId = "${publisher}.${name}";
 in
@@ -27,7 +27,7 @@ stdenv.mkDerivation (finalAttrs: {
     inherit owner;
     repo = name;
     tag = releaseTag;
-    hash = "sha256-5n/HN9vrEqQcvTa19KhoF8EvS7HhO9Q3smMUcauI+n4=";
+    hash = "sha256-YbrswdLNrd+p4NHLyt1OKfAO270N+Wi3ANiAZHg2zjE=";
   };
 
   extSubDir = "editor/code";
