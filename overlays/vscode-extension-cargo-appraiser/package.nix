@@ -11,12 +11,13 @@
   cargo-appraiser,
   setDefaultServerPath ? true,
 }:
+
 let
   name = "cargo-appraiser";
   publisher = "washan";
   owner = "washanhanzi";
-  version = "0.2.5";
-  releaseTag = "v${version}";
+  version = "0.2.1";
+  releaseTag = "vscode/v${version}";
   extId = "${publisher}.${name}";
 in
 stdenv.mkDerivation (finalAttrs: {
@@ -54,26 +55,19 @@ stdenv.mkDerivation (finalAttrs: {
 
   postPatch = lib.optionalString setDefaultServerPath ''
     pushd ${finalAttrs.extSubDir}
-
     jq '(.contributes.configuration[] | select(.title == "cargo-appraiser") | .properties."cargo-appraiser.serverPath".default) = $s' \
       --arg s "${lib.getExe cargo-appraiser}" \
       package.json | sponge package.json
-
     popd
   '';
 
   buildPhase = ''
     runHook preBuild
-
     pushd ${finalAttrs.extSubDir}
-
     pnpm run build
-
     mkdir -p dist
     unzip ./*.vsix 'extension/*' -d ./dist
-
     popd
-
     runHook postBuild
   '';
 
@@ -81,10 +75,8 @@ stdenv.mkDerivation (finalAttrs: {
 
   installPhase = ''
     runHook preInstall
-
     mkdir -p $out/$installPrefix
     mv ${finalAttrs.extSubDir}/dist/extension/* $out/$installPrefix
-
     runHook postInstall
   '';
 
