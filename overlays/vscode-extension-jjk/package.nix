@@ -11,6 +11,7 @@
   unzip,
   moreutils,
 }:
+
 let
   name = "jjk";
   publisher = "jjk";
@@ -57,9 +58,8 @@ stdenv.mkDerivation (finalAttrs: {
   postPatch = ''
     sed 's/&& npm run build-fakeeditor[^"]*//g' package.json | sponge package.json
     substituteInPlace src/repository.ts \
-      --replace-fail \
-        'fakeEditorExecutables[process.platform]?.[process.arch];' \
-        'null; console.log(fakeEditorExecutables); fakeEditorPath = "${fakeeditorPkg}/bin/fakeeditor";'
+      --replace-fail 'const fakeEditorExecutables' 'const _fakeEditorExecutables' \
+      --replace-fail 'fakeEditorExecutables[process.platform]?.[process.arch];' 'null; fakeEditorPath = "${fakeeditorPkg}/bin/fakeeditor";'
   '';
 
   buildPhase = ''
@@ -99,7 +99,7 @@ stdenv.mkDerivation (finalAttrs: {
   };
 
   meta = {
-    description = "VS Code Extension for Jujutsu (jj) VCS support in VS Code";
+    description = "VS Code Extension for Jujutsu (jj) VCS support";
     downloadPage = "https://marketplace.visualstudio.com/items?itemName=${extId}";
     homepage = "https://github.com/${owner}/${name}";
     changelog = "https://github.com/${owner}/${name}/releases/tag/${releaseTag}";
