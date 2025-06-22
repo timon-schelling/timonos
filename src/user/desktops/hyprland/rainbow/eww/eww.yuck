@@ -199,50 +199,53 @@
   )
   :stacking "overlay"
   :windowtype "dock"
-  (overlay
-    (button
-      :style "all: unset"
-      :width "100%"
-      :height "100%"
-      :onclick "eww close control-panel"
-    )
-    (box
-      :halign "end"
-      :space-evenly false
+  (eventbox
+    :onhoverlost "eww close control-panel"
+    (overlay
+      (button
+        :style "all: unset"
+        :width "100%"
+        :height "100%"
+        :onclick "eww close control-panel"
+      )
       (box
-        :class "control-panel-main"
-        :valign "start"
+        :halign "end"
         :space-evenly false
-        :orientation "v"
-        (power)
-        (sliders)
-        (overlay
-          (box
+        (box
+          :class "control-panel-main"
+          :valign "start"
           :space-evenly false
-            (gauge
-              :name "cpu"
-              :value cpu_usage
-              :icon ""
-              :label "CPU"
+          :orientation "v"
+          (power)
+          (sliders)
+          (overlay
+            (box
+            :space-evenly false
+              (gauge
+                :name "cpu"
+                :value cpu_usage
+                :icon ""
+                :label "CPU"
+              )
+              (gauge
+                :name "mem"
+                :value mem_usage
+                :icon ""
+                :label "RAM"
+              )
+              (gauge
+                :name "disk"
+                :value disk_usage
+                :icon ""
+                :label "DISK"
+              )
             )
-            (gauge
-              :name "mem"
-              :value mem_usage
-              :icon ""
-              :label "RAM"
+            (button
+              :style "all: unset"
+              :width "100%"
+              :height "100%"
+              :onclick "eww close control-panel && system-monitor"
             )
-            (gauge
-              :name "disk"
-              :value disk_usage
-              :icon ""
-              :label "DISK"
-            )
-          )
-          (button
-            :style "all: unset"
-            :width "100%"
-            :height "100%"
-            :onclick "eww close control-panel && system-monitor"
           )
         )
       )
