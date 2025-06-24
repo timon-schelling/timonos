@@ -4,7 +4,7 @@
   imports = [
     ../vm-base
     ../vm-base-workspace
-    ../vm-base-git
+    ../vm-base-vcs
     ../vm-base-lang-go
   ];
 

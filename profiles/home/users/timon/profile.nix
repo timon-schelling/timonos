@@ -38,6 +38,7 @@
       };
     };
     git.enable = lib.mkDefault true;
+    jujutsu.enable = lib.mkDefault true;
     podman.enable = lib.mkDefault true;
   };
 }
