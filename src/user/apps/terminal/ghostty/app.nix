@@ -10,7 +10,7 @@
       cursor-style = "bar";
       adjust-cursor-thickness = 2;
       cursor-style-blink = false;
-      scrollback-limit = 10000;
+      scrollback-limit = 134217728; # 128MB
       window-padding-x = 5;
       window-padding-y = 3;
       font-synthetic-style = "bold";
