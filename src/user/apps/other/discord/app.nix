@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
 
 {
   platform.user.persist.folders = [
@@ -11,7 +11,7 @@
         buildInputs = [ pkgs.makeWrapper ];
       }
       ''
-        makeWrapper ${pkgs.discord}/bin/Discord $out/bin/Discord --add-flags "--enable-features=UseOzonePlatform --ozone-platform=wayland"
+        makeWrapper ${lib.getExe pkgs.discord} $out/bin/discord --add-flags "--enable-features=UseOzonePlatform --ozone-platform=wayland"
         cp -r "${pkgs.discord}/share" "$out/"
       ''
     )

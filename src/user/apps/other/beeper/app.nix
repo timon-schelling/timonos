@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
 
 {
   platform.user.persist.folders = [
@@ -11,7 +11,7 @@
         buildInputs = [ pkgs.makeWrapper ];
       }
       ''
-        makeWrapper ${pkgs.beeper}/bin/beeper $out/bin/beeper --set NIXOS_OZONE_WL 1
+        makeWrapper ${lib.getExe pkgs.beeper} $out/bin/beeper --set NIXOS_OZONE_WL 1
         cp -r "${pkgs.beeper}/share" "$out/"
       ''
     )

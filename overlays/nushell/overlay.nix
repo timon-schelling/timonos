@@ -2,7 +2,7 @@ inputs: self: super:
 let
   writeNu = name: script: f:
     f "${name}" ''
-      #!${self.nushell}/bin/nu --stdin
+      #!${self.lib.getExe self.nushell} --stdin
 
       ${script}
     '';
@@ -98,7 +98,7 @@ let
         env = envFromDrv drv args;
       in
       writeScriptBin env.name ''
-        exec ${self.nushell}/bin/nu -e "source ${env}"
+        exec ${self.lib.getExe self.nushell} -e "source ${env}"
       '');
 
   nu = {

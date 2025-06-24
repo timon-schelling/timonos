@@ -34,7 +34,7 @@ let
       zig.hook
     ];
     sourceRoot = "${src.name}/src/fakeeditor";
-    passthru.mainProgram = "fakeeditor";
+    meta.mainProgram = "fakeeditor";
   };
 in
 stdenv.mkDerivation (finalAttrs: {
@@ -59,7 +59,7 @@ stdenv.mkDerivation (finalAttrs: {
     sed 's/&& npm run build-fakeeditor[^"]*//g' package.json | sponge package.json
     substituteInPlace src/repository.ts \
       --replace-fail 'const fakeEditorExecutables' 'const _fakeEditorExecutables' \
-      --replace-fail 'fakeEditorExecutables[process.platform]?.[process.arch];' 'null; fakeEditorPath = "${fakeeditorPkg}/bin/fakeeditor";'
+      --replace-fail 'fakeEditorExecutables[process.platform]?.[process.arch];' 'null; fakeEditorPath = "${lib.getExe fakeeditorPkg}";'
   '';
 
   buildPhase = ''

@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
 
 {
   platform.user.persist.folders = [
@@ -15,7 +15,7 @@
         pname = pkgs.vscode.pname;
       }
       ''
-        makeWrapper ${pkgs.vscode}/bin/code $out/bin/code --set NIXOS_OZONE_WL 1
+        makeWrapper ${lib.getExe pkgs.vscode} $out/bin/code --set NIXOS_OZONE_WL 1
         mkdir -p "$out/share/applications/"
         cp "${pkgs.vscode}/share/applications/code.desktop" "$out/share/applications/"
       ''

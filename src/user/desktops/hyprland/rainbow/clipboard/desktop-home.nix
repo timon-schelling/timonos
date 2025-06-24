@@ -9,13 +9,13 @@
     pkgs.wl-clipboard
     pkgs.cliphist
     (pkgs.nu.writeScriptBin "clipboard-history" ''
-      alias clip = ${pkgs.cliphist}/bin/cliphist
+      alias clip = ${lib.getExe pkgs.cliphist}
       clip list | select-ui | clip decode | ${pkgs.wl-clipboard}/bin/wl-copy
     '')
   ];
 
   wayland.windowManager.hyprland.extraConfig = lib.mkAfter ''
-    exec-once = ${pkgs.wl-clipboard}/bin/wl-paste --watch ${pkgs.cliphist}/bin/cliphist store
+    exec-once = ${pkgs.wl-clipboard}/bin/wl-paste --watch ${lib.getExe pkgs.cliphist} store
   '';
 
   # platform.user.persist.folders = [
@@ -42,7 +42,7 @@
   #   Service = {
   #     ExecStart = "${(pkgs.nu.writeScript "clipcatd-start" ''
   #       mkdir ~/.config/clipcat
-  #       ${pkgs.clipcat}/bin/clipcatd default-config
+  #       ${lib.getExe pkgs.clipcat} default-config
   #         | from toml
   #         | update max_history 10000
   #         | update desktop_notification.enable false
@@ -50,7 +50,7 @@
   #         | update grpc.enable_http false
   #         | to toml
   #         | save -f ~/.config/clipcat/clipcatd.toml
-  #       ${pkgs.clipcat}/bin/clipcatd --no-daemon --replace
+  #       ${lib.getExe pkgs.clipcat} --no-daemon --replace
   #     '')}";
   #     Restart = "on-failure";
   #     Type = "simple";

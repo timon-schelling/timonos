@@ -4,7 +4,7 @@
   home.packages = [
     (pkgs.nu.writeScriptBin "system-monitor" ''
       def --wrapped main [...args] {
-          ${pkgs.foot}/bin/foot -o font=monospace:size=14 -o colors.background=151515 ${pkgs.btop}/bin/btop
+          ${lib.getExe pkgs.foot} -o font=monospace:size=14 -o colors.background=151515 ${lib.getExe pkgs.btop}
       }
     '')
   ];

@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
 
 let
   settings = {
@@ -21,13 +21,11 @@ let
       open-editors-visible = false;
     };
     nushell-lsp = {
-      path = "${pkgs.nushell}/bin/nu";
+      path = "${lib.getExe pkgs.nushell}";
       args = [ "--lsp" ];
     };
-    lapce-nix.lsp-path = "${pkgs.nil}/bin/nil";
-    # lapce-rust.serverPath = "${pkgs.rust-analyzer}/bin/rust-analyzer";
-    # typst-lsp.serverPath = "${pkgs.typst-lsp}/bin/typst-lsp";
-    lapce-markdown.serverPath = "${pkgs.marksman}/bin/marksman";
+    lapce-nix.lsp-path = "${lib.getExe pkgs.nil}";
+    lapce-markdown.serverPath = "${lib.getExe pkgs.marksman}";
   };
   plugins = [
     {

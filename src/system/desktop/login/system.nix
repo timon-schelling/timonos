@@ -89,7 +89,7 @@ in
               sleep 10ms
 
               (
-                ${pkgs.greetd.tuigreet}/bin/tuigreet
+                ${lib.getExe pkgs.greetd.tuigreet}
                   --time --time-format "%Y-%m-%d %H:%M:%S"
                   --remember --remember-user-session
                   --asterisks --asterisks-char "•"
@@ -109,7 +109,7 @@ in
             mkdir .config/nushell
             try { touch .config/nushell/env.nu }
             try { ln -s ${nushellConfigFile} .config/nushell/config.nu }
-            ${pkgs.cage-no-cursor}/bin/cage -m last -- ${pkgs.rio}/bin/rio --command nu --login
+            ${lib.getExe pkgs.cage-no-cursor} -m last -- ${lib.getExe pkgs.rio} --command nu --login
           '');
           user = "greeter";
         };
@@ -153,7 +153,7 @@ in
         enable = true;
         vt = 7;
         settings.default_session = {
-          command = "${pkgs.greetd.tuigreet}/bin/tuigreet -g '' --time --remember --remember-user-session --asterisks";
+          command = "${lib.getExe pkgs.greetd.tuigreet} -g '' --time --remember --remember-user-session --asterisks";
           user = "greeter";
         };
       };

@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
 
 let
   audioSettingsDesktopEntry = pkgs.writeText "settings-audio.desktop" ''
@@ -38,18 +38,18 @@ in
   ];
   home.packages = [
     (pkgs.runCommand "settings-audio" { buildInputs = [ pkgs.makeWrapper ]; } ''
-      makeWrapper ${pkgs.pavucontrol}/bin/pavucontrol $out/bin/settings-audio
+      makeWrapper ${lib.getExe pkgs.pavucontrol} $out/bin/settings-audio
       mkdir -p "$out/share/applications/"
       cp "${audioSettingsDesktopEntry}" "$out/share/applications/settings-audio.desktop"
     '')
     (pkgs.runCommand "settings-audio-effects" { buildInputs = [ pkgs.makeWrapper ]; } ''
-      makeWrapper ${pkgs.easyeffects}/bin/easyeffects $out/bin/settings-audio-effects
+      makeWrapper ${lib.getExe pkgs.easyeffects} $out/bin/settings-audio-effects
       mkdir -p "$out/share/applications/"
       cp "${audioSettingsEffectsDesktopEntry}" "$out/share/applications/settings-audio-effects.desktop"
       cp -r ${pkgs.easyeffects}/share/icons $out/share/
     '')
     (pkgs.runCommand "settings-audio-graph" { buildInputs = [ pkgs.makeWrapper ]; } ''
-      makeWrapper ${pkgs.coppwr}/bin/coppwr $out/bin/settings-audio-graph
+      makeWrapper ${lib.getExe pkgs.coppwr} $out/bin/settings-audio-graph
       mkdir -p "$out/share/applications/"
       cp "${audioSettingsGraphDesktopEntry}" "$out/share/applications/settings-audio-graph.desktop"
       cp -r ${pkgs.coppwr}/share/icons $out/share/

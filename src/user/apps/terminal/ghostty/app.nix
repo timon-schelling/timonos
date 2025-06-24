@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
 
 {
   programs.ghostty = {
@@ -60,7 +60,7 @@
         meta.mainProgram = pkgs.ghostty.meta.mainProgram;
       }
       ''
-        makeWrapper ${pkgs.ghostty}/bin/ghostty $out/bin/ghostty --unset GTK_THEME
+        makeWrapper ${lib.getExe pkgs.ghostty} $out/bin/ghostty --unset GTK_THEME
         cp -r "${pkgs.ghostty}/share" "$out/"
       ''
     );

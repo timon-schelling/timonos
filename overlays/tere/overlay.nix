@@ -4,7 +4,7 @@ inputs: self: super: {
       buildInputs = [ self.makeWrapper ];
     }
     ''
-      makeWrapper ${super.tere}/bin/tere $out/bin/tere --add-flags "--skip-first-run-prompt"
+      makeWrapper ${self.lib.getExe super.tere} $out/bin/tere --add-flags "--skip-first-run-prompt"
     ''
   );
 }

@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
 
 {
   platform.user.persist.folders = [
@@ -12,7 +12,7 @@
         buildInputs = [ pkgs.makeWrapper ];
       }
       ''
-        makeWrapper ${pkgs.signal-desktop}/bin/signal-desktop $out/bin/signal-desktop \
+        makeWrapper ${lib.getExe pkgs.signal-desktop} $out/bin/signal-desktop \
           --set NIXOS_OZONE_WL 1 \
           --add-flags "--enable-features=UseOzonePlatform --ozone-platform=wayland"
         mkdir -p $out/share/applications
