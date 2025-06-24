@@ -8,7 +8,7 @@ let
   systemdUnitName = "${systemdServiceName}.service";
   serviceStartPkg = pkgs.nu.writeScript systemdServiceName ''
     $env.DBUS_SYSTEM_BUS_ADDRESS = "unix:path=/run/dbus/system_bus_socket"
-    ${pkgs.dbus-listen}/bin/dbus-listen --system --interface ${serviceName} --member ${methodName} ${scriptPkg}
+    exec ${lib.getExe pkgs.dbus-listen} --system --interface ${serviceName} --member ${methodName} ${scriptPkg}
   '';
   scriptPkg = pkgs.nu.writeScript "ddcci-load-i2c-devices" ''
     let lock_file = '/var/lock/ddcci-load-i2c-devices'
@@ -27,7 +27,7 @@ let
     }
 
     def get_device_names [] {
-        let ddcutil_output = ${pkgs.ddcutil}/bin/ddcutil detect -t
+        let ddcutil_output = ${lib.getExe pkgs.ddcutil} detect -t
         print $ddcutil_output
 
         $ddcutil_output | lines | where { str contains "/dev/" } | parse --regex ".*/dev/(?P<dev>i2c-.*)" | get dev

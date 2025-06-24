@@ -49,7 +49,7 @@
       Type = "simple";
       ExecStart = "${pkgs.nu.writeScript "atuin-daemon" ''
         try { rm ~/.local/share/atuin/atuin.sock }
-        ${pkgs.atuin}/bin/atuin daemon
+        exec ${lib.getExe pkgs.atuin} daemon
       ''}";
     };
   };
