@@ -26,5 +26,19 @@
     in
     {
       nixosConfigurations = systems;
+      packagesMeta = lib.mergeAttrsList (lib.flatten (lib.mapAttrsToList (name: system: (
+        if name == "default" then
+          []
+        else
+          builtins.map
+            (x: { ${x.name} = x.meta or []; })
+            (
+              system.config.environment.systemPackages ++
+              (system.config.home-manager.users.timon.home.packages or []) ++
+              # (system.config.home-manager.users.timon.programs.vscode.profiles.default.extensions or []) ++
+              (system.config.home-manager.users.user.home.packages or []) #++
+              # (system.config.home-manager.users.user.programs.vscode.profiles.default.extensions or [])
+            )
+      )) systems));
     };
 }

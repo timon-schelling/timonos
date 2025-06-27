@@ -21,7 +21,7 @@ def --env goto-equivalent-shell [path: path]: nothing -> bool {
         | enumerate
         | insert id { $in.index }
         | flatten item
-        | filter { $in.path == $path }
+        | where { $in.path == $path }
     let shell = if ($equivalent_shells | length) > 0 {
         ($equivalent_shells | first | get id)
     } else {
