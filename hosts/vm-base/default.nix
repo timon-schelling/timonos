@@ -76,7 +76,7 @@
           if ($args | length) > 0 {
               ${pkgs.iproute2}/bin/ip ...$args
           } else {
-              ${pkgs.iproute2}/bin/ip --json addr show dev main | from json | get addr_info.0 | filter { $in.family == "inet6" } | get local.0 | echo $"[($in)]" | wl-copy
+              ${pkgs.iproute2}/bin/ip --json addr show dev main | from json | get addr_info.0 | where { $in.family == "inet6" } | get local.0 | echo $"[($in)]" | wl-copy
           }
       }
     '')

@@ -186,7 +186,7 @@ in
   home.packages = [
     (pkgs.waybar)
     (pkgs.nu.writeScriptBin "waybar-toggle" ''
-      let waybar_processes = (ps | filter {
+      let waybar_processes = (ps | where {
           ($in.name | str contains -i waybar) and not ($in.name | str contains -i waybar-toggle)
       })
       if ($waybar_processes | is-empty) {
