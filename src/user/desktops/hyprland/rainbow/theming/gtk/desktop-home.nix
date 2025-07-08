@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ lib, config, pkgs, ... }:
 
 let
   themePkg = pkgs.whitesur-gtk-theme;
@@ -11,6 +11,9 @@ in
   systemd.user.sessionVariables = {
     GTK_THEME = themeName;
   };
+  home.activation.addGtkSettingSchemas = ''
+    export XDG_DATA_DIRS=''${XDG_DATA_DIRS:+:}${pkgs.gtk3}/share/gsettings-schemas/${pkgs.gtk3}
+  '';
   gtk = {
     enable = true;
     theme = {
