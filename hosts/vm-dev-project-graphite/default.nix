@@ -47,6 +47,7 @@ in
     ../vm-base
     ../vm-base-workspace
     ../vm-base-vcs
+    ../vm-base-persist
     ../vm-base-lang-rust
   ];
 
@@ -67,6 +68,8 @@ in
           cp -r Release/* $out
           cp -r Resources/* $out
           rsync ./* $out --exclude Release --exclude Resources
+
+          strip $out/libcef.so
 
           runHook postInstall
         '';
