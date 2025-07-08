@@ -16,6 +16,7 @@
         pyqt6
         torch
         scikit-learn
+        gym
       ]))
       kdePackages.qtwayland
     ];
