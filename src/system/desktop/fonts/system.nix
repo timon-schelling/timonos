@@ -6,6 +6,7 @@
     packages = with pkgs; [
       cascadia-code
       dejavu_fonts
+      font-metropolis
 
       nerd-fonts."fira-code"
       nerd-fonts."fira-mono"
