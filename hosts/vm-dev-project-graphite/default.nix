@@ -177,5 +177,6 @@ in
       home-manager.users.user.programs.nushell.extraConfig = lib.mkAfter ''
         alias cargo = mold --run cargo
       '';
+      home-manager.users.user.programs.vscode.profiles.default.extensions = [ pkgs.vscode-extension-wgsl-analyzer ];
     };
 }
