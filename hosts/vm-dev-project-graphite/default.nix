@@ -145,6 +145,7 @@ in
         gobject-introspection
         cargo-tauri
         cargo-about
+        cargo-deny
 
         cmake
         python3
