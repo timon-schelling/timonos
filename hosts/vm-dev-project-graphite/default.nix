@@ -1,47 +1,5 @@
 { lib, pkgs, config, ... }:
 
-let
-  graphiteSrc = pkgs.fetchFromGitHub {
-    owner = "GraphiteEditor";
-    repo = "Graphite";
-    rev = "10907707c2cf462db52b6414fda98ed23effcf85";
-    hash = "sha256-y+ArPV9dtoi3c4J9cwFpDy6665VcLyzKC9GDvTqdUNo=";
-  };
-  graphiteFlakeSrc = pkgs.stdenv.mkDerivation {
-    src = graphiteSrc;
-    name = "graphite-flake";
-    nativeBuildInputs = [ pkgs.jq ];
-    phases = [ "unpackPhase" "buildPhase" "installPhase" ];
-    buildPhase = ''
-      cp ".nix/flake.nix" flake.nix
-      jq 'del(.. | .lastModified?)' ".nix/flake.lock" > flake.lock
-    '';
-    installPhase = ''
-      mkdir -p $out
-      cp flake.nix $out/flake.nix
-      cp flake.lock $out/flake.lock
-    '';
-  };
-
-  flakeCompat = pkgs.fetchFromGitHub {
-    owner = "edolstra";
-    repo = "flake-compat";
-    rev = "9100a0f413b0c601e0533d1d94ffd501ce2e7885";
-    hash = "sha256-CIVLLkVgvHYbgI2UpXvIIBJ12HWgX+fjA8Xf8PUmqCY=";
-  };
-
-  getFlake = src: import flakeCompat { inherit src; };
-
-  bashShell = (getFlake graphiteFlakeSrc).outputs.devShells.${pkgs.system}.default;
-
-  nuEnv = pkgs.nu.envFromDrv bashShell {
-    postEnvLoadCommands = ''
-      $env.WEBKIT_DISABLE_DMABUF_RENDERER = 1
-
-      alias cargo = mold --run cargo
-    '';
-  };
-in
 {
   imports = [
     ../vm-base
@@ -54,26 +12,33 @@ in
   config =
 
     let
-      custom-cef = pkgs.cef-binary.overrideAttrs (finalAttrs: previousAttrs: {
-        version = "138.0.15";
-        gitRevision = "d0f1f64";
-        chromiumVersion = "138.0.7204.50";
-        srcHash = "sha256-9MeJCV0Q2dnOeQ+C5QWBxD6PVzZh9wnhICGI8ak3SAM=";
-        nativeBuildInputs = previousAttrs.nativeBuildInputs ++ [ pkgs.rsync ];
-        installPhase = ''
-          runHook preInstall
+      libcef = pkgs.libcef.overrideAttrs (finalAttrs: previousAttrs: {
+        version = "138.0.26";
+        gitRevision = "84f2d27";
+        chromiumVersion = "138.0.7204.158";
+        srcHash = "sha256-d9jQJX7rgdoHfROD3zmOdMSesRdKE3slB5ZV+U2wlbQ=";
 
-          cd ..
-          mkdir -p $out
-          cp -r Release/* $out
-          cp -r Resources/* $out
-          rsync ./* $out --exclude Release --exclude Resources
+        __intentionallyOverridingVersion = true;
 
-          strip $out/libcef.so
-
-          runHook postInstall
+        postInstall = ''
+          strip $out/lib/*
         '';
       });
+
+      libcefPath = pkgs.runCommand "libcef-path" {} ''
+        mkdir -p $out
+
+        ln -s ${libcef}/include $out/include
+        find ${libcef}/lib -type f -name "*" -exec ln -s {} $out/ \;
+        find ${libcef}/libexec -type f -name "*" -exec ln -s {} $out/ \;
+        cp -r ${libcef}/share/cef/* $out/
+
+        echo '${builtins.toJSON {
+          type = "minimal";
+          name = builtins.baseNameOf libcef.src.url;
+          sha1 = "";
+        }}' > $out/archive.json
+      '';
 
       rustc-wasm = pkgs.rust-bin.nightly.latest.default.override {
         targets = [ "wasm32-unknown-unknown" ];
@@ -87,19 +52,6 @@ in
         vulkan-loader
         mesa
         libraw
-
-        # Tauri dependencies: keep in sync with https://v2.tauri.app/start/prerequisites/
-        at-spi2-atk
-        atkmm
-        cairo
-        gdk-pixbuf
-        glib
-        gtk3
-        harfbuzz
-        librsvg
-        libsoup_3
-        pango
-        webkitgtk_4_1
 
         # cef-rs deps
         wayland
@@ -131,7 +83,6 @@ in
         systemd
         udev
         udev.dev
-        custom-cef
       ];
       buildTools = with pkgs; [
         rustc-wasm
@@ -168,9 +119,9 @@ in
     {
       environment.systemPackages = buildInputs ++ buildTools ++ devTools;
       environment.sessionVariables = {
-        LD_LIBRARY_PATH = lib.mkForce ("${pkgs.lib.makeLibraryPath buildInputs}:${custom-cef}");
+        LD_LIBRARY_PATH = lib.mkForce ("${pkgs.lib.makeLibraryPath buildInputs}:${libcefPath}");
         PKG_CONFIG_PATH = pkgs.lib.makeSearchPath "lib/pkgconfig" buildInputs;
-        CEF_PATH = custom-cef;
+        CEF_PATH = libcefPath;
         CEF_PATH_NO_CHECK = 1;
         GIO_MODULE_DIR = "${pkgs.glib-networking}/lib/gio/modules/";
         XDG_DATA_DIRS = "${pkgs.gsettings-desktop-schemas}/share/gsettings-schemas/${pkgs.gsettings-desktop-schemas.name}:${pkgs.gtk3}/share/gsettings-schemas/${pkgs.gtk3.name}:$XDG_DATA_DIRS";
