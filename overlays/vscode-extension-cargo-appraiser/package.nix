@@ -35,6 +35,7 @@ stdenv.mkDerivation (finalAttrs: {
 
   pnpmDeps = pnpm.fetchDeps {
     inherit (finalAttrs) pname version src;
+    fetcherVersion = 1;
     sourceRoot = "${finalAttrs.src.name}/${finalAttrs.extSubDir}";
     hash = "sha256-Uw0CQv/qiGEId3gAU+Fpmhb68h8zkYTKRk4XzgtRJ3w=";
   };
