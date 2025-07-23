@@ -12,8 +12,8 @@
         overlay = super.fetchFromGitHub {
           repo = "rust-overlay";
           owner = "oxalica";
-          rev = "6e6ae2acf4221380140c22d65b6c41f4726f5932";
-          sha256 = "YIrVxD2SaUyaEdMry2nAd2qG1E0V38QIV6t6rpguFwk=";
+          rev = "0ad7ab4ca8e83febf147197e65c006dff60623ab";
+          hash = "sha256-jmQeEpgX+++MEgrcikcwoSiI7vDZWLP0gci7XiWb9uQ=";
         };
       in
       {
@@ -23,12 +23,15 @@
   ];
 
   home-manager.users.user = {
-    programs.vscode.profiles.default.extensions = with pkgs.vscode-extensions; [
-      rust-lang.rust-analyzer
-      vadimcn.vscode-lldb
-      tamasfe.even-better-toml
+    programs.vscode.profiles.default = {
+      extensions = with pkgs.vscode-extensions; [
+        rust-lang.rust-analyzer
+        vadimcn.vscode-lldb
+        tamasfe.even-better-toml
 
-      pkgs.vscode-extension-cargo-appraiser
-    ];
+        pkgs.vscode-extension-cargo-appraiser
+      ];
+      userSettings."rust-analyzer.check.command" = "clippy";
+    };
   };
 }
