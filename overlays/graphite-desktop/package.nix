@@ -1,60 +1,80 @@
 {
+  lib,
   rustPlatform,
   fetchFromGitHub,
   fetchNpmDeps,
-
+  runCommand,
+  makeWrapper,
   npmHooks,
   lld,
   llvm,
   binaryen,
   wasm-pack,
-  cargo-tauri,
   cargo-about,
   nodejs,
   pkg-config,
-  wrapGAppsHook,
   wasm-bindgen-cli,
-
+  libcef,
+  wayland,
   openssl,
   vulkan-loader,
   mesa,
   libraw,
-
-  glib,
-  glib-networking,
-  gtk3,
-  webkitgtk_4_1,
-  atkmm,
-  gdk-pixbuf,
-  cairo,
-  at-spi2-atk,
-  harfbuzz,
-  librsvg,
-  libsoup_3,
-  pango,
+  libGL,
 }:
 
-rustPlatform.buildRustPackage rec {
+let
+  cef = libcef.overrideAttrs (finalAttrs: previousAttrs: {
+    # Version needs to match the version used by cef crate
+    version = "138.0.26";
+    gitRevision = "84f2d27";
+    chromiumVersion = "138.0.7204.158";
+    srcHash = "sha256-d9jQJX7rgdoHfROD3zmOdMSesRdKE3slB5ZV+U2wlbQ=";
+
+    # libcef uses finalAttrs.version while fetching src therefore we don't need to override src
+    __intentionallyOverridingVersion = true;
+
+    # strip debug symbols to reduce size
+    postInstall = ''
+      strip $out/lib/*
+    '';
+  });
+
+  cefRsCompatibleLibCef = runCommand "cef-rs-compatible-libcef" {} ''
+    mkdir -p $out/lib
+
+    ln -s ${cef}/include $out/lib/include
+    find ${cef}/lib -type f -name "*" -exec ln -s {} $out/lib/ \;
+    find ${cef}/libexec -type f -name "*" -exec ln -s {} $out/lib/ \;
+    cp -r ${cef}/share/cef/* $out/lib/
+
+    echo '${builtins.toJSON {
+      type = "minimal";
+      name = builtins.baseNameOf cef.src.url;
+      sha1 = "";
+    }}' > $out/lib/archive.json
+  '';
+in
+rustPlatform.buildRustPackage (finalAttrs: {
   pname = "graphite-desktop";
-  version = "unstable";
+  version = "unstable-2025-07-23";
 
   src = fetchFromGitHub {
     owner = "GraphiteEditor";
     repo = "graphite";
-    rev = "2cee9e24cd43b2fadefbcfccf03f91417a665dd2";
-    hash = "sha256-LoApRismYYabWx2e1L1VapfmE99OCxW7IbgXJk7+gcw=";
+    rev = "30abc92900cac68b32bce411604c124ebce4aa38";
+    hash = "sha256-XQf/DBlCAVxjE2hhAMgHgGWA9NbuheE+Lc6lmXxEZKs=";
   };
 
-  useFetchCargoVendor = true;
-  cargoHash = "sha256-ni2cHhGv5CVIP+mB56bZFWAA1qUjb8G7pd0+9FcujeA=";
+  cargoHash = "sha256-vo0WJjZ8qsR38umUtCiSDIYOenqzbtk/fTDpJcjA3bM=";
 
   npmDeps = fetchNpmDeps {
-    inherit pname version;
-    src = "${src}/frontend";
+    inherit (finalAttrs) pname version;
+    src = "${finalAttrs.src}/frontend";
     hash = "sha256-XXD04aIPasjHtdOE/mcQ7TocRlSfzHGLiYNFWOPHVrM=";
   };
 
-  buildAndTestSubdir = "frontend";
+  buildAndTestSubdir = "desktop";
   npmRoot = "frontend";
   npmConfigScript = "setup";
 
@@ -64,12 +84,11 @@ rustPlatform.buildRustPackage rec {
     llvm
     binaryen
     wasm-pack
-    cargo-tauri.hook
-    cargo-about
     nodejs
     pkg-config
-    wrapGAppsHook
     wasm-bindgen-cli
+    cargo-about
+    makeWrapper
   ];
 
   buildInputs = [
@@ -77,43 +96,36 @@ rustPlatform.buildRustPackage rec {
     vulkan-loader
     mesa
     libraw
-
-    # Tauri dependencies: keep in sync with https://v2.tauri.app/start/prerequisites/
-    glib
-    glib-networking
-    gtk3
-    webkitgtk_4_1
-    atkmm
-    gdk-pixbuf
-    cairo
-    at-spi2-atk
-    harfbuzz
-    librsvg
-    libsoup_3
-    pango
+    wayland
+    libGL
+    cefRsCompatibleLibCef
   ];
 
-  buildPhase = ''
-    runHook preBuild
-
+  preBuild = ''
     pushd frontend
 
     npm run build
-    cargo tauri build --no-bundle
 
     popd
-
-    runHook postBuild
   '';
 
-  installPhase = ''
-    runHook preInstall
+  env.CEF_PATH = "${cefRsCompatibleLibCef}/lib";
+  cargoBuildFlags = [ "-p" "graphite-desktop" ];
 
-    mkdir -p $out/bin
-    mv target/release/Graphite $out/bin/graphite-desktop
-
-    runHook postInstall
+  postFixup = ''
+    wrapProgram "$out/bin/graphite-desktop" \
+      --prefix LD_LIBRARY_PATH : "${lib.makeLibraryPath finalAttrs.buildInputs}" \
+      --set CEF_PATH "${cefRsCompatibleLibCef}/lib"
   '';
 
+  # There are currently no tests for the desktop application
   doCheck = false;
-}
+
+  meta = {
+    description = "2D vector & raster editor that melds traditional layers & tools with a modern node-based, non-destructive, procedural workflow";
+    homepage = "https://github.com/GraphiteEditor/Graphite";
+    license = lib.licenses.asl20;
+    maintainers = with lib.maintainers; [ timon ];
+    mainProgram = "graphite-desktop";
+  };
+})
