@@ -119,9 +119,7 @@
         LD_LIBRARY_PATH = lib.mkForce ("${pkgs.lib.makeLibraryPath buildInputs}:${libcefPath}");
         PKG_CONFIG_PATH = pkgs.lib.makeSearchPath "lib/pkgconfig" buildInputs;
         CEF_PATH = libcefPath;
-        CEF_PATH_NO_CHECK = 1;
-        GIO_MODULE_DIR = "${pkgs.glib-networking}/lib/gio/modules/";
-        XDG_DATA_DIRS = "${pkgs.gsettings-desktop-schemas}/share/gsettings-schemas/${pkgs.gsettings-desktop-schemas.name}:${pkgs.gtk3}/share/gsettings-schemas/${pkgs.gtk3.name}:$XDG_DATA_DIRS";
+        XDG_DATA_DIRS = "${pkgs.gtk3}/share/gsettings-schemas/${pkgs.gtk3.name}:$XDG_DATA_DIRS";
       };
       home-manager.users.user.programs.nushell.extraConfig = lib.mkAfter ''
         alias cargo = mold --run cargo
