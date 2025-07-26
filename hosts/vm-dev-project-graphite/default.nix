@@ -92,9 +92,6 @@
         wasm-bindgen-cli
         wasm-pack
         pkg-config
-        git
-        gobject-introspection
-        cargo-tauri
         cargo-about
         cargo-deny
 
