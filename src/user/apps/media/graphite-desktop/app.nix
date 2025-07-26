@@ -2,7 +2,7 @@
 
 {
   platform.user.persist.folders = [
-    "src/user/apps/media/music-player"
+    ".local/share/graphite-desktop"
   ];
 
   home.packages = [
