@@ -7,4 +7,6 @@
     git.enable = lib.mkDefault true;
     jujutsu.enable = lib.mkDefault true;
   };
+
+  home-manager.users.user.programs.jujutsu.settings.ui.editor = "code -w";
 }
