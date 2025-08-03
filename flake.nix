@@ -18,27 +18,26 @@
   outputs = inputs:
     let
       pkgs = inputs.nixpkgs;
-      lib = pkgs.lib.extend (_: _: import ./lib { lib = pkgs.lib; inherit pkgs; });
+      systems = [
+        "x86_64-linux"
+        "aarch64-linux"
+      ];
+      forAllSystems = f: pkgs.lib.genAttrs systems (system: f system);
+
+      lib = pkgs.lib.extend (_: _: import ./lib { lib = pkgs.lib;});
+      overlays = (map (e: import e inputs) (lib.imports.type "overlay" ./overlays));
       hostDirs = (lib.attrsets.filterAttrs (file: kind: kind == "directory" ) (builtins.readDir ./hosts));
-      hosts = builtins.attrNames hostDirs;
-      system = host: inputs: import ./src/main.nix { inherit host lib pkgs inputs; };
-      systems = builtins.foldl' (acc: host: acc // { "${host}" = (system host inputs); }) {} hosts;
+      hostNames = builtins.attrNames hostDirs;
+      mkHost = host: inputs: import ./src/main.nix { inherit host lib overlays inputs; };
+      hosts = builtins.foldl' (acc: host: acc // { "${host}" = (mkHost host inputs); }) {} hostNames;
     in
     {
-      nixosConfigurations = systems;
-      packagesMeta = lib.mergeAttrsList (lib.flatten (lib.mapAttrsToList (name: system: (
-        if name == "default" then
-          []
-        else
-          builtins.map
-            (x: { ${x.name} = x.meta or []; })
-            (
-              system.config.environment.systemPackages ++
-              (system.config.home-manager.users.timon.home.packages or []) ++
-              # (system.config.home-manager.users.timon.programs.vscode.profiles.default.extensions or []) ++
-              (system.config.home-manager.users.user.home.packages or []) #++
-              # (system.config.home-manager.users.user.programs.vscode.profiles.default.extensions or [])
-            )
-      )) systems));
+      nixosConfigurations = hosts;
+      legacyPackages = forAllSystems (system: (
+        import pkgs {
+          inherit system;
+          overlays = overlays;
+        }
+      ));
     };
 }

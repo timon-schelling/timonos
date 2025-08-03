@@ -1,4 +1,4 @@
-{ host, lib, inputs, ... }:
+{ host, lib, overlays, inputs, ... }:
 
 lib.nixosSystem {
   specialArgs = {
@@ -19,7 +19,7 @@ lib.nixosSystem {
     ./users.nix
 
     {
-      nixpkgs.overlays = (map (e: import e inputs) (lib.imports.type "overlay" ../overlays));
+      nixpkgs.overlays = overlays;
     }
   ];
 }
