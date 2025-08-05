@@ -56,17 +56,17 @@ let
   '';
 in
 rustPlatform.buildRustPackage (finalAttrs: {
-  pname = "graphite-desktop";
+  pname = "graphite-editor";
   version = "unstable-2025-07-23";
 
   src = fetchFromGitHub {
     owner = "GraphiteEditor";
-    repo = "graphite";
-    rev = "a1796dbc08c98c0cbebb654e9418cf3b2e857132";
-    hash = "sha256-+HapHFeIIhdWfsF74lJHL09ckFkNHNe5qgF4Zdhlm80=";
+    repo = "Graphite";
+    rev = "6dd17f76c1b168eccd01646ac07571d102b91681";
+    hash = "sha256-RqxZoDDpdul0jNl+Xb1qXMoEgs/+VojSWLK3dmdOacs=";
   };
 
-  cargoHash = "sha256-x66YAPNLiSBwvMHRGpuwIKCs1PPNo5ZgLS8T/dEEMT4=";
+  cargoHash = "sha256-5V/Gpv3k21bACXYaGi2lzgtf3f1C6/IuLNueIUkTgJA=";
 
   npmDeps = fetchNpmDeps {
     inherit (finalAttrs) pname version;
@@ -104,7 +104,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
   preBuild = ''
     pushd frontend
 
-    npm run build
+    npm run build-native
 
     popd
   '';
@@ -113,7 +113,8 @@ rustPlatform.buildRustPackage (finalAttrs: {
   cargoBuildFlags = [ "-p" "graphite-desktop" ];
 
   postFixup = ''
-    wrapProgram "$out/bin/graphite-desktop" \
+    mv $out/bin/graphite-desktop $out/bin/graphite-editor
+    wrapProgram "$out/bin/graphite-editor" \
       --prefix LD_LIBRARY_PATH : "${lib.makeLibraryPath finalAttrs.buildInputs}" \
       --set CEF_PATH "${cefRsCompatibleLibCef}/lib"
   '';
@@ -126,6 +127,6 @@ rustPlatform.buildRustPackage (finalAttrs: {
     homepage = "https://github.com/GraphiteEditor/Graphite";
     license = lib.licenses.asl20;
     maintainers = with lib.maintainers; [ timon ];
-    mainProgram = "graphite-desktop";
+    mainProgram = "graphite-editor";
   };
 })

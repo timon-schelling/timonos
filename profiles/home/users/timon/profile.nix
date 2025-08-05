@@ -24,7 +24,7 @@
         enpass.enable = lib.mkDefault true;
       };
       media = {
-        graphite-desktop.enable = lib.mkDefault true;
+        graphite-editor.enable = lib.mkDefault true;
         spotify.enable = lib.mkDefault true;
         music-player.enable = lib.mkDefault true;
       };

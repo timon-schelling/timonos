@@ -6,6 +6,6 @@
   ];
 
   home.packages = [
-    pkgs.graphite-desktop
+    pkgs.graphite-editor
   ];
 }
