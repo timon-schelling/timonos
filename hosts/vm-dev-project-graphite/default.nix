@@ -128,6 +128,7 @@
         pkgs.vscode-extension-wgsl-analyzer
         pkgs.vscode-extensions.svelte.svelte-vscode
         pkgs.vscode-extensions.dbaeumer.vscode-eslint
+        pkgs.vscode-extensions.esbenp.prettier-vscode
         pkgs.vscode-extensions.vitaliymaz.vscode-svg-previewer
         pkgs.vscode-extensions.jgclark.vscode-todo-highlight
       ];
