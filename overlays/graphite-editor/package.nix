@@ -57,16 +57,16 @@ let
 in
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "graphite-editor";
-  version = "unstable-2025-07-23";
+  version = "0-unstable-2025-08-06";
 
   src = fetchFromGitHub {
     owner = "GraphiteEditor";
     repo = "Graphite";
-    rev = "6dd17f76c1b168eccd01646ac07571d102b91681";
-    hash = "sha256-RqxZoDDpdul0jNl+Xb1qXMoEgs/+VojSWLK3dmdOacs=";
+    rev = "a6451cf6697e1bf0a4fd7cd5a9ff881699a95b2b";
+    hash = "sha256-xOFj9X7ncdvfO9LcfcSXhg6zJGHyho1ZhPeUr44C6YY=";
   };
 
-  cargoHash = "sha256-5V/Gpv3k21bACXYaGi2lzgtf3f1C6/IuLNueIUkTgJA=";
+  cargoHash = "sha256-gpdnU8jY5n9GY7FpMX5FR1hzyv8YXcj8BhnrTeVOoZM=";
 
   npmDeps = fetchNpmDeps {
     inherit (finalAttrs) pname version;
@@ -111,6 +111,14 @@ rustPlatform.buildRustPackage (finalAttrs: {
 
   env.CEF_PATH = "${cefRsCompatibleLibCef}/lib";
   cargoBuildFlags = [ "-p" "graphite-desktop" ];
+
+  postInstall = ''
+    mkdir -p $out/share/applications
+    cp $src/desktop/assets/*.desktop $out/share/applications/
+
+    mkdir -p $out/share/icons/hicolor/scalable/apps
+    cp $src/desktop/assets/graphite-icon-color.svg $out/share/icons/hicolor/scalable/apps/
+  '';
 
   postFixup = ''
     mv $out/bin/graphite-desktop $out/bin/graphite-editor
