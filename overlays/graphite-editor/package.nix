@@ -1,5 +1,6 @@
 {
   lib,
+  stdenv,
   rustPlatform,
   fetchFromGitHub,
   fetchNpmDeps,
@@ -13,7 +14,7 @@
   cargo-about,
   nodejs,
   pkg-config,
-  wasm-bindgen-cli,
+  wasm-bindgen-cli_0_2_100,
   libcef,
   wayland,
   openssl,
@@ -24,23 +25,31 @@
 }:
 
 let
-  cef = libcef.overrideAttrs (finalAttrs: previousAttrs: {
-    # Version needs to match the version used by cef crate
-    version = "138.0.26";
-    gitRevision = "84f2d27";
-    chromiumVersion = "138.0.7204.158";
-    srcHash = "sha256-d9jQJX7rgdoHfROD3zmOdMSesRdKE3slB5ZV+U2wlbQ=";
+  cef = libcef.overrideAttrs (
+    finalAttrs: previousAttrs: {
+      # Version needs to match the version used by cef crate
+      version = "138.0.26";
+      gitRevision = "84f2d27";
+      chromiumVersion = "138.0.7204.158";
+      srcHash = (
+        {
+          x86_64-linux = "sha256-d9jQJX7rgdoHfROD3zmOdMSesRdKE3slB5ZV+U2wlbQ=";
+          aarch64-linux = "sha256-V4O7FrT5pm7mnnLktgExZGiLS9CfkFXlRoByjINRyAE=";
+        }
+        .${stdenv.hostPlatform.system} or (throw "Unsupported system ${stdenv.hostPlatform.system}")
+      );
 
-    # libcef uses finalAttrs.version while fetching src therefore we don't need to override src
-    __intentionallyOverridingVersion = true;
+      # libcef uses finalAttrs.version while fetching src therefore we don't need to override src
+      __intentionallyOverridingVersion = true;
 
-    # strip debug symbols to reduce size
-    postInstall = ''
-      strip $out/lib/*
-    '';
-  });
+      # strip debug symbols to reduce size
+      postInstall = ''
+        strip $out/lib/*
+      '';
+    }
+  );
 
-  cefRsCompatibleLibCef = runCommand "cef-rs-compatible-libcef" {} ''
+  cefRsCompatibleLibCef = runCommand "cef-rs-compatible-libcef" { } ''
     mkdir -p $out/lib
 
     ln -s ${cef}/include $out/lib/include
@@ -48,25 +57,27 @@ let
     find ${cef}/libexec -type f -name "*" -exec ln -s {} $out/lib/ \;
     cp -r ${cef}/share/cef/* $out/lib/
 
-    echo '${builtins.toJSON {
-      type = "minimal";
-      name = builtins.baseNameOf cef.src.url;
-      sha1 = "";
-    }}' > $out/lib/archive.json
+    echo '${
+      builtins.toJSON {
+        type = "minimal";
+        name = builtins.baseNameOf cef.src.url;
+        sha1 = "";
+      }
+    }' > $out/lib/archive.json
   '';
 in
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "graphite-editor";
-  version = "0-unstable-2025-08-07";
+  version = "0-unstable-2025-08-10";
 
   src = fetchFromGitHub {
     owner = "GraphiteEditor";
     repo = "Graphite";
-    rev = "81abfe147a0237ae7d6661e0eecf550a02bbc2e8";
-    hash = "sha256-TCrT+RwMXmRci0B1oQkVYcFipDVF14eoiikDuVL4/Rs=";
+    rev = "ddeb7eadfae6cf5f04a074639d7451a46707385f";
+    hash = "sha256-51E20WkdC1vwpsXJHSLXscy1HJk3R84GtZhFf7NG9F4=";
   };
 
-  cargoHash = "sha256-xVZuY+ik8LhnL0HZEkb6g8o5mqrzkOz8QnUif16AF4k=";
+  cargoHash = "sha256-hata1SrmV0oQGRqTMfprltTKysxMx5t7pC25x7BJyqU=";
 
   npmDeps = fetchNpmDeps {
     inherit (finalAttrs) pname version;
@@ -86,7 +97,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
     wasm-pack
     nodejs
     pkg-config
-    wasm-bindgen-cli
+    wasm-bindgen-cli_0_2_100
     cargo-about
     makeWrapper
   ];
@@ -110,7 +121,10 @@ rustPlatform.buildRustPackage (finalAttrs: {
   '';
 
   env.CEF_PATH = "${cefRsCompatibleLibCef}/lib";
-  cargoBuildFlags = [ "-p" "graphite-desktop" ];
+  cargoBuildFlags = [
+    "-p"
+    "graphite-desktop"
+  ];
 
   postInstall = ''
     mkdir -p $out/share/applications
