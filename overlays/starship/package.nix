@@ -52,7 +52,6 @@ rustPlatform.buildRustPackage (finalAttrs: {
       ''
     );
 
-  useFetchCargoVendor = true;
   cargoHash = "sha256-B2CCrSH2aTcGEX96oBxl/27hNMdDpdd2vxdt0/nlN6I=";
 
   nativeCheckInputs = [ git ];

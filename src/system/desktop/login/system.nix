@@ -89,7 +89,7 @@ in
               sleep 10ms
 
               (
-                ${lib.getExe pkgs.greetd.tuigreet}
+                ${lib.getExe pkgs.tuigreet}
                   --time --time-format "%Y-%m-%d %H:%M:%S"
                   --remember --remember-user-session
                   --asterisks --asterisks-char "•"
@@ -153,7 +153,7 @@ in
         enable = true;
         vt = 7;
         settings.default_session = {
-          command = "${lib.getExe pkgs.greetd.tuigreet} -g '' --time --remember --remember-user-session --asterisks";
+          command = "${lib.getExe pkgs.tuigreet} -g '' --time --remember --remember-user-session --asterisks";
           user = "greeter";
         };
       };

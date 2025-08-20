@@ -8,7 +8,7 @@ if ((not ('DISABLE_PROMPT' in $env)) or $env.DISABLE_PROMPT != "TRUE") {
         starship prompt $"--cmd-duration=($env.CMD_DURATION_MS)" $"--status=($env.LAST_EXIT_CODE)" $"--terminal-width=($width)"
     }
 
-    let has_config_items = (not ($env | get -i config | is-empty))
+    let has_config_items = (not ($env | get -o config | is-empty))
 
     $env.config = if $has_config_items {
         $env.config | upsert render_right_prompt_on_last_line true
