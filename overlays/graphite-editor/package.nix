@@ -28,13 +28,13 @@ let
   cef = libcef.overrideAttrs (
     finalAttrs: previousAttrs: {
       # Version needs to match the version used by cef crate
-      version = "138.0.26";
-      gitRevision = "84f2d27";
-      chromiumVersion = "138.0.7204.158";
+      version = "139.0.17";
+      gitRevision = "6c347eb";
+      chromiumVersion = "139.0.7258.31";
       srcHash = (
         {
-          x86_64-linux = "sha256-d9jQJX7rgdoHfROD3zmOdMSesRdKE3slB5ZV+U2wlbQ=";
-          aarch64-linux = "sha256-V4O7FrT5pm7mnnLktgExZGiLS9CfkFXlRoByjINRyAE=";
+          x86_64-linux = "sha256-kRMO8DP4El1qytDsAZBdHvR9AAHXce90nPdyfJailBg=";
+          aarch64-linux = "sha256-wTBPGunl1j4PlB5K6jzGtRusLIgOLlKtcQxaZmVr1zc=";
         }
         .${stdenv.hostPlatform.system} or (throw "Unsupported system ${stdenv.hostPlatform.system}")
       );
@@ -68,16 +68,16 @@ let
 in
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "graphite-editor";
-  version = "0-unstable-2025-08-10";
+  version = "0-unstable-2025-08-20";
 
   src = fetchFromGitHub {
     owner = "GraphiteEditor";
     repo = "Graphite";
-    rev = "ddeb7eadfae6cf5f04a074639d7451a46707385f";
-    hash = "sha256-51E20WkdC1vwpsXJHSLXscy1HJk3R84GtZhFf7NG9F4=";
+    rev = "2c8913416d3e274bb134f9aecb8e931145819db1";
+    hash = "sha256-WprUidvJNWctlE8LJTGOYTZtJXCkEg60gokhWSKXhiI=";
   };
 
-  cargoHash = "sha256-hata1SrmV0oQGRqTMfprltTKysxMx5t7pC25x7BJyqU=";
+  cargoHash = "sha256-x/doKAvmmuo3MQyI791CooaZcHqZnstQo7l9mWFbFFo=";
 
   npmDeps = fetchNpmDeps {
     inherit (finalAttrs) pname version;
