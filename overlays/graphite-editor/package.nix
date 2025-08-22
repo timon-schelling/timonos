@@ -68,26 +68,27 @@ let
 in
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "graphite-editor";
-  version = "0-unstable-2025-08-20";
+  version = "0-unstable-2025-08-23";
 
   src = fetchFromGitHub {
     owner = "GraphiteEditor";
     repo = "Graphite";
-    rev = "2c8913416d3e274bb134f9aecb8e931145819db1";
-    hash = "sha256-WprUidvJNWctlE8LJTGOYTZtJXCkEg60gokhWSKXhiI=";
+    rev = "d49840b573cc76ad84bf814e97ea020890e0e1df";
+    hash = "sha256-ff8SSr0zK/zmlyPlAKzV903gMcNYCRoOLV6iq0zGbH0=";
   };
 
-  cargoHash = "sha256-x/doKAvmmuo3MQyI791CooaZcHqZnstQo7l9mWFbFFo=";
+  cargoHash = "sha256-hEu9IR5NYIkIzGmbcA8lQ1bHtD99QHAGrAcapYo8nTc=";
 
   npmDeps = fetchNpmDeps {
     inherit (finalAttrs) pname version;
     src = "${finalAttrs.src}/frontend";
-    hash = "sha256-XXD04aIPasjHtdOE/mcQ7TocRlSfzHGLiYNFWOPHVrM=";
+    hash = "sha256-RGcSQgUEtUK1ATKMVUqcuhsYgMJDtYyAoEHBvPVQlCo=";
   };
 
   buildAndTestSubdir = "desktop";
   npmRoot = "frontend";
   npmConfigScript = "setup";
+  makeCacheWritable = true;
 
   nativeBuildInputs = [
     npmHooks.npmConfigHook
