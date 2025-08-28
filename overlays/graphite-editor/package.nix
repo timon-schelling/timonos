@@ -4,7 +4,6 @@
   rustPlatform,
   fetchFromGitHub,
   fetchNpmDeps,
-  runCommand,
   makeWrapper,
   npmHooks,
   lld,
@@ -25,46 +24,23 @@
 }:
 
 let
-  cef = libcef.overrideAttrs (
-    finalAttrs: previousAttrs: {
-      # Version needs to match the version used by cef crate
-      version = "139.0.17";
-      gitRevision = "6c347eb";
-      chromiumVersion = "139.0.7258.31";
-      srcHash = (
-        {
-          x86_64-linux = "sha256-kRMO8DP4El1qytDsAZBdHvR9AAHXce90nPdyfJailBg=";
-          aarch64-linux = "sha256-wTBPGunl1j4PlB5K6jzGtRusLIgOLlKtcQxaZmVr1zc=";
-        }
-        .${stdenv.hostPlatform.system} or (throw "Unsupported system ${stdenv.hostPlatform.system}")
-      );
+  cef-path = stdenv.mkDerivation {
+    pname = "cef-path";
+    version = libcef.version;
+    dontUnpack = true;
+    installPhase = ''
+      mkdir -p "$out"
+      find ${libcef}/lib -type f -name "*" -exec cp {} $out/ \;
+      find ${libcef}/libexec -type f -name "*" -exec cp {} $out/ \;
+      cp -r ${libcef}/share/cef/* $out/
 
-      # libcef uses finalAttrs.version while fetching src therefore we don't need to override src
-      __intentionallyOverridingVersion = true;
-
-      # strip debug symbols to reduce size
-      postInstall = ''
-        strip $out/lib/*
-      '';
-    }
-  );
-
-  cefRsCompatibleLibCef = runCommand "cef-rs-compatible-libcef" { } ''
-    mkdir -p $out/lib
-
-    ln -s ${cef}/include $out/lib/include
-    find ${cef}/lib -type f -name "*" -exec ln -s {} $out/lib/ \;
-    find ${cef}/libexec -type f -name "*" -exec ln -s {} $out/lib/ \;
-    cp -r ${cef}/share/cef/* $out/lib/
-
-    echo '${
-      builtins.toJSON {
-        type = "minimal";
-        name = builtins.baseNameOf cef.src.url;
-        sha1 = "";
-      }
-    }' > $out/lib/archive.json
-  '';
+      mkdir -p "$out/include"
+      cp -r ${libcef}/include/* "$out/include/"
+    '';
+    postFixup = ''
+      strip $out/*.so*
+    '';
+  };
 in
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "graphite-editor";
@@ -110,8 +86,12 @@ rustPlatform.buildRustPackage (finalAttrs: {
     libraw
     wayland
     libGL
-    cefRsCompatibleLibCef
   ];
+
+  postPatch = ''
+    substituteInPlace $cargoDepsCopy/cef-dll-sys-*/build.rs \
+      --replace-fail 'download_cef::check_archive_json(&env::var("CARGO_PKG_VERSION")?, &cef_path)?;' '''
+  '';
 
   preBuild = ''
     pushd frontend
@@ -121,7 +101,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
     popd
   '';
 
-  env.CEF_PATH = "${cefRsCompatibleLibCef}/lib";
+  env.CEF_PATH = cef-path;
   cargoBuildFlags = [
     "-p"
     "graphite-desktop"
@@ -138,8 +118,8 @@ rustPlatform.buildRustPackage (finalAttrs: {
   postFixup = ''
     mv $out/bin/graphite-desktop $out/bin/graphite-editor
     wrapProgram "$out/bin/graphite-editor" \
-      --prefix LD_LIBRARY_PATH : "${lib.makeLibraryPath finalAttrs.buildInputs}" \
-      --set CEF_PATH "${cefRsCompatibleLibCef}/lib"
+      --prefix LD_LIBRARY_PATH : "${lib.makeLibraryPath finalAttrs.buildInputs}:${cef-path}" \
+      --set CEF_PATH "${cef-path}"
   '';
 
   # There are currently no tests for the desktop application
