@@ -49,11 +49,11 @@ rustPlatform.buildRustPackage (finalAttrs: {
   src = fetchFromGitHub {
     owner = "GraphiteEditor";
     repo = "Graphite";
-    rev = "d49840b573cc76ad84bf814e97ea020890e0e1df";
-    hash = "sha256-ff8SSr0zK/zmlyPlAKzV903gMcNYCRoOLV6iq0zGbH0=";
+    rev = "6d640d2c5cc8d0b4e6d23798d46e787bbb84012a";
+    hash = "sha256-9n6hKBKNTwCohb/tX1MpnB54T9zZTfy4P0zgC2JieW8=";
   };
 
-  cargoHash = "sha256-hEu9IR5NYIkIzGmbcA8lQ1bHtD99QHAGrAcapYo8nTc=";
+  cargoHash = "sha256-r8L39GflLsSWsJfPvCrF1FiB/fogr6Km3cYdVAjHwI8=";
 
   npmDeps = fetchNpmDeps {
     inherit (finalAttrs) pname version;
