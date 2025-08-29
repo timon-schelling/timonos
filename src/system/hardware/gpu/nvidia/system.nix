@@ -2,7 +2,7 @@
 
 let
   cfg = config.opts.system.hardware.gpu.nvidia;
-  driverPkg = config.boot.kernelPackages.nvidiaPackages.beta;
+  driverPkg = config.boot.kernelPackages.nvidiaPackages.stable;
 in
 {
   options = {
