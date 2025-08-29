@@ -44,16 +44,16 @@ let
 in
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "graphite-editor";
-  version = "0-unstable-2025-08-23";
+  version = "0-unstable-2025-08-28";
 
   src = fetchFromGitHub {
     owner = "GraphiteEditor";
     repo = "Graphite";
-    rev = "6d640d2c5cc8d0b4e6d23798d46e787bbb84012a";
-    hash = "sha256-9n6hKBKNTwCohb/tX1MpnB54T9zZTfy4P0zgC2JieW8=";
+    rev = "c14e67ec28bf2c4d3c9ae2a0d264cef524205955";
+    hash = "sha256-T3yyWeRhtR2ynjaFnqzcjAJ7jfNsuhqvIStZcN3mqIk=";
   };
 
-  cargoHash = "sha256-r8L39GflLsSWsJfPvCrF1FiB/fogr6Km3cYdVAjHwI8=";
+  cargoHash = "sha256-48HlO1CYt0A0yU8VXi7k8SQrMdx9BJzEDgS4srMyOV8=";
 
   npmDeps = fetchNpmDeps {
     inherit (finalAttrs) pname version;
