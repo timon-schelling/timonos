@@ -58,9 +58,6 @@
 
   home.packages = [
     (pkgs.nu.writeScriptBin "select-ui" ''
-      anyrun-select
-    '')
-    (pkgs.nu.writeScriptBin "anyrun-select"''
       ^anyrun --plugins "${pkgs.anyrun}/lib/libstdin.so" --show-results-immediately true --hide-plugin-info true
     '')
   ];
