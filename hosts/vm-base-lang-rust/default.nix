@@ -32,6 +32,8 @@
         pkgs.vscode-extension-cargo-appraiser
       ];
       userSettings."rust-analyzer.check.command" = "clippy";
+      userSettings."rust-analyzer.check.extraArgs" = ["--target-dir" "/home/user/.clippy" "--no-deps"];
+      userSettings."rust-analyzer.check.workspace" = false;
     };
   };
 }

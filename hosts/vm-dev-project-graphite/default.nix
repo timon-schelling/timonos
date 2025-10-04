@@ -154,7 +154,7 @@
         LD_LIBRARY_PATH = lib.mkForce ("${pkgs.lib.makeLibraryPath buildInputs}:${libcefPath}");
         PKG_CONFIG_PATH = pkgs.lib.makeSearchPath "lib/pkgconfig" buildInputs;
         CEF_PATH = libcefPath;
-        XDG_DATA_DIRS = "${pkgs.gtk3}/share/gsettings-schemas/${pkgs.gtk3.name}:$XDG_DATA_DIRS";
+        XDG_DATA_DIRS = lib.mkForce "${pkgs.gtk3}/share/gsettings-schemas/${pkgs.gtk3.name}:$XDG_DATA_DIRS";
 
         # For rust-gpu
         RUST_GPU_PATH_OVERRIDE = rustGpuPathOverride;
@@ -171,5 +171,7 @@
         pkgs.vscode-extensions.vitaliymaz.vscode-svg-previewer
         pkgs.vscode-extensions.jgclark.vscode-todo-highlight
       ];
+
+      services.desktopManager.plasma6.enable = true;
     };
 }
