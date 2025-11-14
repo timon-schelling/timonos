@@ -12,8 +12,8 @@
         overlay = super.fetchFromGitHub {
           repo = "rust-overlay";
           owner = "oxalica";
-          rev = "0ad7ab4ca8e83febf147197e65c006dff60623ab";
-          hash = "sha256-jmQeEpgX+++MEgrcikcwoSiI7vDZWLP0gci7XiWb9uQ=";
+          rev = "a35a6144b976f70827c2fe2f5c89d16d8f9179d8";
+          hash = "sha256-vINZAJpXQTZd5cfh06Rcw7hesH7sGSvi+Tn+HUieJn8=";
         };
       in
       {
@@ -32,6 +32,8 @@
         pkgs.vscode-extension-cargo-appraiser
       ];
       userSettings."rust-analyzer.check.command" = "clippy";
+      userSettings."rust-analyzer.check.extraArgs" = ["--target-dir" "/home/user/.clippy" "--no-deps"];
+      userSettings."rust-analyzer.check.workspace" = false;
     };
   };
 }

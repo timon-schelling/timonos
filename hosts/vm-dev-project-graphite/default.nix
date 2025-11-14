@@ -53,13 +53,6 @@
       rustGpuPathOverride = "${rustGpuCargo}/bin:${rustGpuToolchainPkg}/bin";
 
       libcef = pkgs.libcef.overrideAttrs (finalAttrs: previousAttrs: {
-        version = "139.0.17";
-        gitRevision = "6c347eb";
-        chromiumVersion = "139.0.7258.31";
-        srcHash = "sha256-kRMO8DP4El1qytDsAZBdHvR9AAHXce90nPdyfJailBg=";
-
-        __intentionallyOverridingVersion = true;
-
         postInstall = ''
           strip $out/lib/*
         '';
@@ -154,7 +147,7 @@
         LD_LIBRARY_PATH = lib.mkForce ("${pkgs.lib.makeLibraryPath buildInputs}:${libcefPath}");
         PKG_CONFIG_PATH = pkgs.lib.makeSearchPath "lib/pkgconfig" buildInputs;
         CEF_PATH = libcefPath;
-        XDG_DATA_DIRS = "${pkgs.gtk3}/share/gsettings-schemas/${pkgs.gtk3.name}:$XDG_DATA_DIRS";
+        XDG_DATA_DIRS = lib.mkForce "${pkgs.gtk3}/share/gsettings-schemas/${pkgs.gtk3.name}:$XDG_DATA_DIRS";
 
         # For rust-gpu
         RUST_GPU_PATH_OVERRIDE = rustGpuPathOverride;
@@ -171,5 +164,7 @@
         pkgs.vscode-extensions.vitaliymaz.vscode-svg-previewer
         pkgs.vscode-extensions.jgclark.vscode-todo-highlight
       ];
+
+      services.desktopManager.plasma6.enable = true;
     };
 }
