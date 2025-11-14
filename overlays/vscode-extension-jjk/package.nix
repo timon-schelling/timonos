@@ -16,15 +16,15 @@ let
   name = "jjk";
   publisher = "jjk";
   owner = "keanemind";
-  version = "0.8.1";
-  releaseTag = "v${version}";
+  version = "unstable-2025-11-14";
+  rev = "2aee72564a4b138232f13b009744100913a0384a";
   extId = "${publisher}.${name}";
 
   src = fetchFromGitHub {
     inherit owner;
     repo = name;
-    tag = releaseTag;
-    hash = "sha256-zB3CflSUNmNfTijl37AXsGww2LuFEONQQA43bfku3f8=";
+    inherit rev;
+    hash = "sha256-6Xl/OPSpeOdDTYaVvE/ESLZucwqqVqkLiXku/N8rSmQ=";
   };
 
   fakeeditorPkg = stdenv.mkDerivation {
@@ -102,7 +102,7 @@ stdenv.mkDerivation (finalAttrs: {
     description = "VS Code Extension for Jujutsu (jj) VCS support";
     downloadPage = "https://marketplace.visualstudio.com/items?itemName=${extId}";
     homepage = "https://github.com/${owner}/${name}";
-    changelog = "https://github.com/${owner}/${name}/releases/tag/${releaseTag}";
+    changelog = "https://github.com/${owner}/${name}/releases/tag/${rev}";
     license = lib.licenses.mit;
     maintainers = with lib.maintainers; [ timon ];
   };
