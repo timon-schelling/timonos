@@ -113,11 +113,7 @@
         preserve_split = yes
       }
 
-      gestures {
-        workspace_swipe = on
-        workspace_swipe_fingers = 4
-        workspace_swipe_forever = true
-      }
+      gesture = 4, horizontal, workspace
 
       misc {
         disable_hyprland_logo = true
