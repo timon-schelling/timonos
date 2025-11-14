@@ -12,7 +12,7 @@
         buildInputs = [ pkgs.makeWrapper ];
       }
       ''
-        makeWrapper ${lib.getExe pkgs.ungoogled-chromium} $out/bin/chromium --set NIXOS_OZONE_WL 1 --add-flags "--ozone-platform=wayland"
+        makeWrapper ${lib.getExe pkgs.ungoogled-chromium} $out/bin/chromium --set NIXOS_OZONE_WL 1 --add-flags "--ozone-platform=wayland --disable-features=WaylandWpColorManagerV1"
         cp -r "${pkgs.ungoogled-chromium}/share" "$out/"
       ''
     );
