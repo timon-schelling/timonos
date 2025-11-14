@@ -58,6 +58,7 @@
         "browser.urlbar.showSearchSuggestionsFirst" = false;
         "browser.urlbar.suggest.searches" = false;
         "dom.security.https_only_mode" = true;
+        "dom.webgpu.enabled" = true;
         "experiments.activeExperiment" = false;
         "experiments.enabled" = false;
         "experiments.supported" = false;
