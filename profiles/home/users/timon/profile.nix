@@ -25,6 +25,9 @@
       };
       media = {
         graphite-editor.enable = lib.mkDefault true;
+        gimp.enable = lib.mkDefault true;
+        kdenlive.enable = lib.mkDefault true;
+        obs-studio.enable = lib.mkDefault true;
         spotify.enable = lib.mkDefault true;
         music-player.enable = lib.mkDefault true;
       };
