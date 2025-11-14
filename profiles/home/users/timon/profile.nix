@@ -3,7 +3,7 @@
     default-desktop-apps.enable = lib.mkDefault true;
   };
   opts.user = {
-    name = lib.mkDefault "Timon Schelling";
+    name = lib.mkDefault "Timon";
     email = lib.mkDefault "me@timon.zip";
     persist.data.folders = lib.mkDefault [
       "code"
