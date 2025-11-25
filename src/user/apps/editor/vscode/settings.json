@@ -8,7 +8,7 @@
     "editor.minimap.enabled": false,
     "files.trimTrailingWhitespace": true,
     "files.trimFinalNewlines": true,
-    "editor.renderWhitespace": "all",
+    "editor.renderWhitespace": "boundary",
     "files.autoSave": "onFocusChange",
     "keyboard.dispatch": "keyCode",
     "editor.inlineSuggest.enabled": true,
