@@ -2,6 +2,7 @@
   lib,
   stdenv,
   rustPlatform,
+  runCommand,
   fetchFromGitHub,
   fetchurl,
   fetchNpmDeps,
@@ -17,7 +18,7 @@
   nodejs,
   pkg-config,
   wasm-bindgen-cli_0_2_100,
-  libcef,
+  cef-binary,
   wayland,
   openssl,
   vulkan-loader,
@@ -27,13 +28,16 @@
 }:
 
 let
-  version = "0-unstable-2025-10-12";
-  rev = "8369f6830130a76eb345b61a512d35b6fd3224d6";
+  version = "0-unstable-2025-12-01";
+  rev = "1a973e748701cc639a8a035b72e7678e445bbef7";
 
-  srcHash = "sha256-Q4WalpE4wdFZdLm1OQ8VDZvHXJNFkTBWanEKfOHjeQk=";
-  shaderHash = "sha256-ovE4TT7UaAMdhh4/s+bkCg/YQA2cItkMIvsq0BGPaAc=";
-  cargoHash = "sha256-nc/x/REn/CNHhs/+dEk/mVdVCi2H3kNE1prI9DeZTM0=";
-  npmHash = "sha256-UWuJpKNYj2Xn34rpMDZ75pzMYUOLQjPeGuJ/QlPbX9A=";
+  srcHash = "sha256-LgG491iIHbhrT9Vc+VOwGoiSVeeky/rllGvB+o9nja8=";
+  shaderHash = "sha256-uc6FU0df5Xqp6YXEwODULhgUjSQvjRFGvdk+uFB7II0=";
+  cargoHash = "sha256-TkwjntAriuTnxBbIHjkXQw0w3bA9/ZHv4jC8BLRmbZk=";
+  npmHash = "sha256-D8VCNK+Ca3gxO+5wriBn8FszG8/x8n/zM6/MPo9E2j4=";
+
+  brandingRev = "f8b02e68c92f5bbd27626bdd7a51102303b70a40";
+  brandingHash = "d06fd7b79fa9b7509c23072fa56745415fdc6eb98575d15214b0acc47ea4dd42";
 
   binName = "graphite";
 
@@ -45,15 +49,22 @@ let
   };
 
   shaders = fetchurl {
-    url = "https://raw.githubusercontent.com/timon-schelling/graphite-artifacts/refs/heads/main/rev/${rev}/graphene_raster_nodes_shaders_entrypoint.wgsl";
+    url = "https://raw.githubusercontent.com/timon-schelling/graphite-artifacts/refs/heads/main/rev/${rev}/raster_nodes_shaders_entrypoint.wgsl";
     hash = shaderHash;
   };
 
+  brandingTar = fetchurl {
+    url = "https://github.com/Keavon/graphite-branded-assets/archive/${brandingRev}.tar.gz";
+    sha256 = brandingHash;
+  };
+  branding = runCommand "graphite-editor-branding" { } ''
+    mkdir -p $out
+    tar -xvf ${brandingTar} -C $out --strip-components 1
+  '';
+
   resources = stdenv.mkDerivation (finalAttrs: {
     pname = "graphite-editor-resources";
-    inherit version;
-
-    inherit src;
+    inherit version src;
 
     cargoDeps = rustPlatform.fetchCargoVendor {
       src = finalAttrs.src;
@@ -87,16 +98,23 @@ let
       makeWrapper
     ];
 
-    npmBuildScript = "build-desktop";
+    prePatch = ''
+      mkdir branding
+      cp -r ${branding}/* branding
+      cp $src/.branding branding/.branding
+    '';
 
     buildPhase = ''
-      cd frontend
-      npm run ${finalAttrs.npmBuildScript}
+      export HOME="$TMPDIR"
+
+      pushd frontend
+      npm run native:build-production
+      popd
     '';
 
     installPhase = ''
       mkdir -p $out
-      cp -r dist/* $out
+      cp -r frontend/dist/* $out/
     '';
   });
 
@@ -108,23 +126,29 @@ let
     wayland
     libGL
   ];
-  cefPath = stdenv.mkDerivation {
-    pname = "cef-path";
-    version = libcef.version;
-    dontUnpack = true;
-    installPhase = ''
-      mkdir -p "$out"
-      find ${libcef}/lib -type f -name "*" -exec cp {} $out/ \;
-      find ${libcef}/libexec -type f -name "*" -exec cp {} $out/ \;
-      cp -r ${libcef}/share/cef/* $out/
+  cef = cef-binary.overrideAttrs (
+    _: _: {
+      postInstall = ''
+        strip $out/Release/*.so*
+      '';
+    }
+  );
 
-      mkdir -p "$out/include"
-      cp -r ${libcef}/include/* "$out/include/"
-    '';
-    postFixup = ''
-      strip $out/*.so*
-    '';
-  };
+  cefPath = runCommand "cef-path" { } ''
+    mkdir -p $out
+
+    ln -s ${cef}/include $out/include
+    find ${cef}/Release -name "*" -type f -exec ln -s {} $out/ \;
+    find ${cef}/Resources -name "*" -maxdepth 1 -exec ln -s {} $out/ \;
+
+    echo '${
+      builtins.toJSON {
+        type = "minimal";
+        name = builtins.baseNameOf cef.src.url;
+        sha1 = "";
+      }
+    }' > $out/archive.json
+  '';
   libraryPath = "${lib.makeLibraryPath libraries}:${cefPath}";
 
   native = rustPlatform.buildRustPackage (finalAttrs: {
@@ -144,14 +168,8 @@ let
 
     buildInputs = libraries;
 
-    # Remove cef version check
-    postPatch = ''
-      substituteInPlace $cargoDepsCopy/cef-dll-sys-*/build.rs \
-        --replace-fail 'download_cef::check_archive_json(&env::var("CARGO_PKG_VERSION")?, &cef_path)?;' '''
-    '';
-
     env.CEF_PATH = cefPath;
-    env.GRAPHENE_RASTER_NODES_SHADER_PATH = shaders;
+    env.RASTER_NODES_SHADER_PATH = shaders;
     cargoBuildFlags = [
       "-p"
       "graphite-desktop"
@@ -160,17 +178,20 @@ let
       "recommended"
     ];
 
+    postUnpack = ''
+      mkdir ./branding
+      cp -r ${branding}/* ./branding
+    '';
+
     postInstall = ''
       mkdir -p $out/share/applications
       cp $src/desktop/assets/*.desktop $out/share/applications/
 
       mkdir -p $out/share/icons/hicolor/scalable/apps
-      cp $src/desktop/assets/graphite-icon-color.svg $out/share/icons/hicolor/scalable/apps/
+      cp ${branding}/app-icons/graphite.svg $out/share/icons/hicolor/scalable/apps/
     '';
 
     postFixup = ''
-      mv $out/bin/graphite-desktop $out/bin/${binName}
-
       wrapProgram "$out/bin/${binName}" \
         --prefix LD_LIBRARY_PATH : "${libraryPath}" \
         --set CEF_PATH "${cefPath}"
@@ -214,9 +235,8 @@ stdenv.mkDerivation (finalAttrs: {
 
     # All of Graphite's code is licensed under Apache-2.0 license.
     #
-    # However, this derivation also bundles the default iconset which is owned by the official Graphite project.
-    # NixOS is permitted to redistribute full Graphite sources and binaries,
-    # including the default iconset build from the official Graphite repository.
+    # However, this derivation also bundles the official branding which is owned by the Graphite project.
+    # NixOS is permitted to redistribute full Graphite sources and binaries, including the official branding.
     license = lib.licenses.asl20;
     maintainers = with lib.maintainers; [ timon ];
     mainProgram = binName;

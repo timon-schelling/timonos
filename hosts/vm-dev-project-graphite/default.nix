@@ -52,23 +52,22 @@
       '';
       rustGpuPathOverride = "${rustGpuCargo}/bin:${rustGpuToolchainPkg}/bin";
 
-      libcef = pkgs.libcef.overrideAttrs (finalAttrs: previousAttrs: {
+      cef = pkgs.cef-binary.overrideAttrs (_: _: {
         postInstall = ''
-          strip $out/lib/*
+          strip $out/Release/*.so*
         '';
       });
 
-      libcefPath = pkgs.runCommand "libcef-path" {} ''
+      cefPath = pkgs.runCommand "cef-path" {} ''
         mkdir -p $out
 
-        ln -s ${libcef}/include $out/include
-        find ${libcef}/lib -type f -name "*" -exec ln -s {} $out/ \;
-        find ${libcef}/libexec -type f -name "*" -exec ln -s {} $out/ \;
-        cp -r ${libcef}/share/cef/* $out/
+        ln -s ${cef}/include $out/include
+        find ${cef}/Release -name "*" -type f -exec ln -s {} $out/ \;
+        find ${cef}/Resources -name "*" -maxdepth 1 -exec ln -s {} $out/ \;
 
         echo '${builtins.toJSON {
           type = "minimal";
-          name = builtins.baseNameOf libcef.src.url;
+          name = builtins.baseNameOf cef.src.url;
           sha1 = "";
         }}' > $out/archive.json
       '';
@@ -144,9 +143,9 @@
     {
       environment.systemPackages = buildInputs ++ buildTools ++ devTools;
       environment.sessionVariables = {
-        LD_LIBRARY_PATH = lib.mkForce ("${pkgs.lib.makeLibraryPath buildInputs}:${libcefPath}");
+        LD_LIBRARY_PATH = lib.mkForce ("${pkgs.lib.makeLibraryPath buildInputs}:${cefPath}");
         PKG_CONFIG_PATH = pkgs.lib.makeSearchPath "lib/pkgconfig" buildInputs;
-        CEF_PATH = libcefPath;
+        CEF_PATH = cefPath;
         XDG_DATA_DIRS = lib.mkForce "${pkgs.gtk3}/share/gsettings-schemas/${pkgs.gtk3.name}:$XDG_DATA_DIRS";
 
         # For rust-gpu
