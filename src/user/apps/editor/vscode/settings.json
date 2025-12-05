@@ -53,5 +53,10 @@
     "editor.cursorSmoothCaretAnimation": "on",
     "telemetry.telemetryLevel": "off",
     "update.showReleaseNotes": false,
-    "workbench.colorTheme": "Min Dark"
+    "workbench.colorTheme": "Min Dark",
+    "git-graph.dialog.deleteBranch.forceDelete": true,
+    "git-graph.repository.fetchAndPrune": true,
+    "git-graph.repository.commits.fetchAvatars": true,
+    "git-graph.repository.showRemoteHeads": false,
+    "git-graph.showStatusBarItem": true
 }
