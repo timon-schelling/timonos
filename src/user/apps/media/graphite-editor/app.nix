@@ -2,7 +2,7 @@
 
 {
   platform.user.persist.folders = [
-    ".local/share/graphite-editor"
+    ".local/share/graphite"
   ];
 
   home.packages = [

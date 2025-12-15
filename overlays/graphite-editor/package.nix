@@ -2,16 +2,17 @@
   lib,
   stdenv,
   rustPlatform,
-  runCommand,
   fetchFromGitHub,
   fetchurl,
+  fetchzip,
   fetchNpmDeps,
+  symlinkJoin,
   makeWrapper,
   rustc,
   cargo,
   npmHooks,
+  writableTmpDirAsHomeHook,
   lld,
-  llvm,
   binaryen,
   wasm-pack,
   cargo-about,
@@ -28,18 +29,16 @@
 }:
 
 let
-  version = "0-unstable-2025-12-14";
-  rev = "9e42e81b46b7aee4457752a254f8fb107c0285fb";
+  version = "0-unstable-2025-12-15";
+  rev = "5a36b5eec8aede92ce9f4114334ebe84c2a57211";
 
-  srcHash = "sha256-1YjKI8wXIKulzSfnS6RvTKEIcUxHnrN0eifNQ3j+Has=";
+  srcHash = "sha256-7VnU378mDTWI9v+rypfXDAsobphGZf3+bP4tItKEGmY=";
   shaderHash = "sha256-uc6FU0df5Xqp6YXEwODULhgUjSQvjRFGvdk+uFB7II0=";
   cargoHash = "sha256-S8nwyUw+ehcHPSbu6dY2+4IVKSB7Tp0K/+2aeiQKNBA=";
   npmHash = "sha256-D8VCNK+Ca3gxO+5wriBn8FszG8/x8n/zM6/MPo9E2j4=";
 
   brandingRev = "f8b02e68c92f5bbd27626bdd7a51102303b70a40";
-  brandingHash = "d06fd7b79fa9b7509c23072fa56745415fdc6eb98575d15214b0acc47ea4dd42";
-
-  binName = "graphite";
+  brandingHash = "sha256-Q/p04xtYjt8nEKEPcWRGjTvP54fAr3cLlEpZn61IGyQ=";
 
   src = fetchFromGitHub {
     owner = "GraphiteEditor";
@@ -53,14 +52,10 @@ let
     hash = shaderHash;
   };
 
-  brandingTar = fetchurl {
+  branding = fetchzip {
     url = "https://github.com/Keavon/graphite-branded-assets/archive/${brandingRev}.tar.gz";
-    sha256 = brandingHash;
+    hash = brandingHash;
   };
-  branding = runCommand "graphite-editor-branding" { } ''
-    mkdir -p $out
-    tar -xvf ${brandingTar} -C $out --strip-components 1
-  '';
 
   resources = stdenv.mkDerivation (finalAttrs: {
     pname = "graphite-editor-resources";
@@ -88,7 +83,7 @@ let
       cargo
       npmHooks.npmConfigHook
       lld
-      llvm
+      writableTmpDirAsHomeHook
       binaryen
       wasm-pack
       nodejs
@@ -105,16 +100,18 @@ let
     '';
 
     buildPhase = ''
-      export HOME="$TMPDIR"
-
+      runHook preBuild
       pushd frontend
       npm run native:build-production
       popd
+      runHook postBuild
     '';
 
     installPhase = ''
+      runHook preInstall
       mkdir -p $out
       cp -r frontend/dist/* $out/
+      runHook postInstall
     '';
   });
 
@@ -126,43 +123,36 @@ let
     wayland
     libGL
   ];
-  cef = cef-binary.overrideAttrs (
-    _: _: {
-      postInstall = ''
-        strip $out/Release/*.so*
-      '';
-    }
-  );
-
-  cefPath = runCommand "cef-path" { } ''
-    mkdir -p $out
-
-    ln -s ${cef}/include $out/include
-    find ${cef}/Release -name "*" -type f -exec ln -s {} $out/ \;
-    find ${cef}/Resources -name "*" -maxdepth 1 -exec ln -s {} $out/ \;
-
-    echo '${
-      builtins.toJSON {
-        type = "minimal";
-        name = builtins.baseNameOf cef.src.url;
-        sha1 = "";
-      }
-    }' > $out/archive.json
-  '';
+  cef = cef-binary.overrideAttrs {
+    postFixup = ''
+      strip $out/Release/*.so*
+    '';
+  };
+  cefPath = symlinkJoin {
+    name = "cef-path";
+    paths = [
+      "${cef}/Release"
+      "${cef}/Resources"
+    ];
+    postBuild = ''
+      ln -s ${cef}/include $out/include
+      echo '${
+        builtins.toJSON {
+          type = "minimal";
+          name = builtins.baseNameOf cef.src.url;
+          sha1 = "";
+        }
+      }' > $out/archive.json
+    '';
+  };
   libraryPath = "${lib.makeLibraryPath libraries}:${cefPath}";
 
   native = rustPlatform.buildRustPackage (finalAttrs: {
     pname = "graphite-editor-native-application";
-    inherit version;
-
-    inherit src;
-
-    inherit cargoHash;
+    inherit version src cargoHash;
 
     nativeBuildInputs = [
       pkg-config
-      lld
-      llvm
       makeWrapper
     ];
 
@@ -192,7 +182,7 @@ let
     '';
 
     postFixup = ''
-      wrapProgram "$out/bin/${binName}" \
+      wrapProgram "$out/bin/graphite" \
         --prefix LD_LIBRARY_PATH : "${libraryPath}" \
         --set CEF_PATH "${cefPath}"
     '';
@@ -200,7 +190,7 @@ let
     # There are currently no tests for the desktop application
     doCheck = false;
 
-    meta.mainProgram = binName;
+    meta.mainProgram = "graphite";
   });
 
   bin = lib.getExe native;
@@ -208,37 +198,34 @@ let
 in
 stdenv.mkDerivation (finalAttrs: {
   pname = "graphite-editor";
-  inherit version;
+  inherit version resources;
 
-  phases = [ "installPhase" ];
+  nativeBuildInputs = [ makeWrapper ];
 
-  inherit resources;
-
+  dontUnpack = true;
+  dontBuild = true;
   installPhase = ''
-    mkdir -p $out/bin
+    runHook preInstall
 
-    cat > $out/bin/graphite <<'EOF'
-    #!${stdenv.shell}
-    export GRAPHITE_RESOURCES=${finalAttrs.resources}
-    exec ${bin} "$@"
-    EOF
-
-    chmod +x $out/bin/graphite
+    makeWrapper ${bin} $out/bin/graphite \
+      --set GRAPHITE_RESOURCES ${finalAttrs.resources}
 
     mkdir -p $out/share
     cp -r ${native}/share/* $out/share/
+
+    runHook postInstall
   '';
 
   meta = {
-    description = "2D vector & raster editor that melds traditional layers & tools with a modern node-based, non-destructive, procedural workflow";
+    description = "Node-based, non-destructive, procedural 2D vector & raster editor";
     homepage = "https://github.com/GraphiteEditor/Graphite";
 
     # All of Graphite's code is licensed under Apache-2.0 license.
     #
     # However, this derivation also bundles the official branding which is owned by the Graphite project.
     # NixOS is permitted to redistribute full Graphite sources and binaries, including the official branding.
-    license = lib.licenses.asl20;
+    license = lib.licenses.unfreeRedistributable;
     maintainers = with lib.maintainers; [ timon ];
-    mainProgram = binName;
+    mainProgram = "graphite";
   };
 })
