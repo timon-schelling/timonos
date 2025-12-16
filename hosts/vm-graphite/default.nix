@@ -8,7 +8,7 @@
 
   config = {
     environment.systemPackages = [
-      pkgs.graphite-editor
+      pkgs.graphite
     ];
   };
 }

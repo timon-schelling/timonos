@@ -58,7 +58,7 @@ let
   };
 
   resources = stdenv.mkDerivation (finalAttrs: {
-    pname = "graphite-editor-resources";
+    pname = "graphite-resources";
     inherit version src;
 
     cargoDeps = rustPlatform.fetchCargoVendor {
@@ -147,8 +147,8 @@ let
   };
   libraryPath = "${lib.makeLibraryPath libraries}:${cefPath}";
 
-  native = rustPlatform.buildRustPackage (finalAttrs: {
-    pname = "graphite-editor-native-application";
+  binary = rustPlatform.buildRustPackage (finalAttrs: {
+    pname = "graphite-binary";
     inherit version src cargoHash;
 
     nativeBuildInputs = [
@@ -193,39 +193,49 @@ let
     meta.mainProgram = "graphite";
   });
 
-  bin = lib.getExe native;
-
 in
 stdenv.mkDerivation (finalAttrs: {
-  pname = "graphite-editor";
-  inherit version resources;
+  pname = "graphite";
+  inherit version binary resources;
 
   nativeBuildInputs = [ makeWrapper ];
 
   dontUnpack = true;
-  dontBuild = true;
   installPhase = ''
     runHook preInstall
 
-    makeWrapper ${bin} $out/bin/graphite \
+    makeWrapper ${lib.getExe finalAttrs.binary} $out/bin/graphite \
       --set GRAPHITE_RESOURCES ${finalAttrs.resources}
 
     mkdir -p $out/share
-    cp -r ${native}/share/* $out/share/
+    cp -r ${finalAttrs.binary}/share/* $out/share/
 
     runHook postInstall
   '';
 
   meta = {
-    description = "Node-based, non-destructive, procedural 2D vector & raster editor";
-    homepage = "https://github.com/GraphiteEditor/Graphite";
-
-    # All of Graphite's code is licensed under Apache-2.0 license.
-    #
-    # However, this derivation also bundles the official branding which is owned by the Graphite project.
-    # NixOS is permitted to redistribute full Graphite sources and binaries, including the official branding.
-    license = lib.licenses.unfreeRedistributable;
-    maintainers = with lib.maintainers; [ timon ];
+    description = "Open source vector graphics editor and procedural design engine";
+    homepage = "https://graphite.art";
     mainProgram = "graphite";
+    longDescription = ''
+      Graphite is an open source vector graphics editor and procedural design engine.
+      Create and animate with a nondestructive editing workflow that
+      combines layer-based compositing with node-based generative design.
+    '';
+
+    # All Graphite code is licensed under the Apache License 2.0.
+    # This derivation also bundles the official branding assets
+    # which are licensed under the separate Graphite Branding License.
+    license = with lib.licenses; [
+      asl20
+      {
+        fullName = "Graphite Branding License";
+        url = "https://graphite.art/license/#branding";
+        free = false;
+        redistributable = true;
+      }
+    ];
+    platforms = lib.platforms.linux;
+    maintainers = with lib.maintainers; [ timon ];
   };
 })

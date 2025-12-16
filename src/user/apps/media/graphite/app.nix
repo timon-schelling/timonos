@@ -7,6 +7,6 @@
 
   home.packages = [
     pkgs.zenity
-    pkgs.graphite-editor
+    pkgs.graphite
   ];
 }

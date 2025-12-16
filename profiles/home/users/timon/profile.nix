@@ -24,7 +24,7 @@
         enpass.enable = lib.mkDefault true;
       };
       media = {
-        graphite-editor.enable = lib.mkDefault true;
+        graphite.enable = lib.mkDefault true;
         gimp.enable = lib.mkDefault true;
         kdenlive.enable = lib.mkDefault true;
         obs-studio.enable = lib.mkDefault true;
