@@ -138,6 +138,8 @@
         gnuplot
         samply
         cargo-flamegraph
+
+        flatpak-builder
       ];
     in
     {
@@ -165,5 +167,7 @@
       ];
 
       services.desktopManager.plasma6.enable = true;
+
+      services.flatpak.enable = true;
     };
 }
