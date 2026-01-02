@@ -26,15 +26,17 @@
   mesa,
   libraw,
   libGL,
+  libxkbcommon,
+  xorg,
 }:
 
 let
-  version = "0-unstable-2025-12-15";
-  rev = "5a36b5eec8aede92ce9f4114334ebe84c2a57211";
+  version = "0-unstable-2026-01-02";
+  rev = "ee2e61f38fc67d1a034ec945dcf8c50964b844d3";
 
-  srcHash = "sha256-7VnU378mDTWI9v+rypfXDAsobphGZf3+bP4tItKEGmY=";
+  srcHash = "sha256-shex3B82+DcnZXY5mcND/qFNj/KSu1JC5m9cGH0M/vs=";
   shaderHash = "sha256-uc6FU0df5Xqp6YXEwODULhgUjSQvjRFGvdk+uFB7II0=";
-  cargoHash = "sha256-S8nwyUw+ehcHPSbu6dY2+4IVKSB7Tp0K/+2aeiQKNBA=";
+  cargoHash = "sha256-BbJ/fQgtLz00yAlsVokvkE/0y7gcvp2jI9/saBLAvRU=";
   npmHash = "sha256-D8VCNK+Ca3gxO+5wriBn8FszG8/x8n/zM6/MPo9E2j4=";
 
   brandingRev = "f8b02e68c92f5bbd27626bdd7a51102303b70a40";
@@ -122,6 +124,10 @@ let
     libraw
     wayland
     libGL
+    libxkbcommon
+    xorg.libXcursor
+    xorg.libxcb
+    xorg.libX11
   ];
   cef = cef-binary.overrideAttrs {
     postFixup = ''
