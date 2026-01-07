@@ -31,12 +31,12 @@
 }:
 
 let
-  version = "0-unstable-2026-01-02";
-  rev = "ee2e61f38fc67d1a034ec945dcf8c50964b844d3";
+  version = "0-unstable-2026-01-06";
+  rev = "e88db022afa0bae62e90ee834cc48eb3f32b6f52";
 
-  srcHash = "sha256-shex3B82+DcnZXY5mcND/qFNj/KSu1JC5m9cGH0M/vs=";
+  srcHash = "sha256-orVg/SPBjoBQ6HWcL4OPGT9H/ezRykvGd4CP2uf+6+Y=";
   shaderHash = "sha256-uc6FU0df5Xqp6YXEwODULhgUjSQvjRFGvdk+uFB7II0=";
-  cargoHash = "sha256-BbJ/fQgtLz00yAlsVokvkE/0y7gcvp2jI9/saBLAvRU=";
+  cargoHash = "sha256-sWVDd8i2gaDpO65tT8XRMvEQ39KNgGLqjM1Zw8QHaDU=";
   npmHash = "sha256-D8VCNK+Ca3gxO+5wriBn8FszG8/x8n/zM6/MPo9E2j4=";
 
   brandingRev = "f8b02e68c92f5bbd27626bdd7a51102303b70a40";
@@ -184,7 +184,7 @@ let
       cp $src/desktop/assets/*.desktop $out/share/applications/
 
       mkdir -p $out/share/icons/hicolor/scalable/apps
-      cp ${branding}/app-icons/graphite.svg $out/share/icons/hicolor/scalable/apps/
+      cp ${branding}/app-icons/graphite.svg $out/share/icons/hicolor/scalable/apps/art.graphite.Graphite.svg
     '';
 
     postFixup = ''
