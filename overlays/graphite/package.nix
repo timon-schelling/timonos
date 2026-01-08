@@ -151,73 +151,54 @@ let
       }' > $out/archive.json
     '';
   };
-  libraryPath = "${lib.makeLibraryPath libraries}:${cefPath}";
-
-  binary = rustPlatform.buildRustPackage (finalAttrs: {
-    pname = "graphite-binary";
-    inherit version src cargoHash;
-
-    nativeBuildInputs = [
-      pkg-config
-      makeWrapper
-    ];
-
-    buildInputs = libraries;
-
-    env.CEF_PATH = cefPath;
-    env.RASTER_NODES_SHADER_PATH = shaders;
-    cargoBuildFlags = [
-      "-p"
-      "graphite-desktop"
-      "--no-default-features"
-      "--features"
-      "recommended"
-    ];
-
-    postUnpack = ''
-      mkdir ./branding
-      cp -r ${branding}/* ./branding
-    '';
-
-    postInstall = ''
-      mkdir -p $out/share/applications
-      cp $src/desktop/assets/*.desktop $out/share/applications/
-
-      mkdir -p $out/share/icons/hicolor/scalable/apps
-      cp ${branding}/app-icons/graphite.svg $out/share/icons/hicolor/scalable/apps/art.graphite.Graphite.svg
-    '';
-
-    postFixup = ''
-      wrapProgram "$out/bin/graphite" \
-        --prefix LD_LIBRARY_PATH : "${libraryPath}" \
-        --set CEF_PATH "${cefPath}"
-    '';
-
-    # There are currently no tests for the desktop application
-    doCheck = false;
-
-    meta.mainProgram = "graphite";
-  });
-
 in
-stdenv.mkDerivation (finalAttrs: {
+rustPlatform.buildRustPackage {
   pname = "graphite";
-  inherit version binary resources;
+  inherit version src cargoHash;
 
-  nativeBuildInputs = [ makeWrapper ];
+  nativeBuildInputs = [
+    pkg-config
+    makeWrapper
+  ];
 
-  dontUnpack = true;
-  installPhase = ''
-    runHook preInstall
+  buildInputs = libraries;
 
-    makeWrapper ${lib.getExe finalAttrs.binary} $out/bin/graphite \
-      --set GRAPHITE_RESOURCES ${finalAttrs.resources}
+  env.CEF_PATH = cefPath;
+  env.RASTER_NODES_SHADER_PATH = shaders;
+  env.EMBEDDED_RESOURCES = resources;
+  cargoBuildFlags = [
+    "-p"
+    "graphite-desktop"
+  ];
 
-    mkdir -p $out/share
-    cp -r ${finalAttrs.binary}/share/* $out/share/
-
-    runHook postInstall
+  postUnpack = ''
+    mkdir ./branding
+    cp -r ${branding}/* ./branding
   '';
+
+  postInstall = ''
+    mkdir -p $out/share/applications
+    cp $src/desktop/assets/*.desktop $out/share/applications/
+
+    mkdir -p $out/share/icons/hicolor/scalable/apps
+    cp ${branding}/app-icons/graphite.svg $out/share/icons/hicolor/scalable/apps/art.graphite.Graphite.svg
+  '';
+
+  postFixup = ''
+    patchelf \
+      --add-needed libvulkan.so \
+      --add-needed libGL.so \
+      --add-rpath "${
+        lib.makeLibraryPath [
+          vulkan-loader
+          libGL
+        ]
+      }" \
+      $out/bin/graphite
+  '';
+
+  # There are currently no tests for the desktop application
+  doCheck = false;
 
   meta = {
     description = "Open source vector graphics editor and procedural design engine";
@@ -244,4 +225,4 @@ stdenv.mkDerivation (finalAttrs: {
     platforms = lib.platforms.linux;
     maintainers = with lib.maintainers; [ timon ];
   };
-})
+}
