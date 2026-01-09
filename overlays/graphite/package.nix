@@ -23,8 +23,6 @@
   wayland,
   openssl,
   vulkan-loader,
-  mesa,
-  libraw,
   libGL,
   libxkbcommon,
   xorg,
@@ -118,12 +116,12 @@ let
   });
 
   libraries = [
-    openssl
+    stdenv.cc.cc.lib
+    stdenv.cc.libc.out
     vulkan-loader
-    mesa
-    libraw
-    wayland
     libGL
+    wayland
+    openssl
     libxkbcommon
     xorg.libXcursor
     xorg.libxcb
@@ -186,14 +184,8 @@ rustPlatform.buildRustPackage {
 
   postFixup = ''
     patchelf \
-      --add-needed libvulkan.so \
+      --set-rpath "${lib.makeLibraryPath libraries}:${cefPath}" \
       --add-needed libGL.so \
-      --add-rpath "${
-        lib.makeLibraryPath [
-          vulkan-loader
-          libGL
-        ]
-      }" \
       $out/bin/graphite
   '';
 
