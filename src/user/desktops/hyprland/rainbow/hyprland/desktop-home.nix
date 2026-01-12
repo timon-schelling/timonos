@@ -218,13 +218,13 @@
       }
 
       # see if a window runs in xwayland
-      windowrulev2 = bordercolor rgba(b53600ee), xwayland: 1
+      windowrule = border_color rgba(b53600ee), match:xwayland 1
 
       # see if a window is from a vm
-      windowrulev2 = bordercolor rgba(0052a5ee), initialTitle: \[vm.*\] - .*
+      windowrule = border_color rgba(0052a5ee), match:initial_title \[vm.*\] - .*
 
       # app specific rules
-      windowrulev2 = float, class:^(.*iwgtk)$
+      windowrule = float on, match:class ^(.*iwgtk)$
     '';
   };
 }

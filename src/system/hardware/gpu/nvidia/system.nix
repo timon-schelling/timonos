@@ -29,10 +29,7 @@ in
       package = driverPkg;
       enable32Bit = true;
     };
-    nixpkgs.config = {
-      allowUnfree = true;
-      nvidia.acceptLicense = true;
-    };
+    nixpkgs.config.nvidia.acceptLicense = true;
     environment.variables = {
       "LIBVA_DRIVER_NAME" = "nvidia";
       "GBM_BACKEND" = "nvidia-drm";

@@ -38,7 +38,7 @@
       other = {
         beeper.enable = lib.mkDefault true;
         signal.enable = lib.mkDefault true;
-        webcord.enable = lib.mkDefault true;
+        # webcord.enable = lib.mkDefault true; TODO: fix webcord
       };
     };
     git.enable = lib.mkDefault true;

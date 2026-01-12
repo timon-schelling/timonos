@@ -9,7 +9,9 @@
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    impermanence.url = "github:nix-community/impermanence";
+    impermanence = {
+      url = "github:nix-community/impermanence/4b3e914cdf97a5b536a889e939fb2fd2b043a170";
+    };
     contain = {
       url = "github:timon-schelling/contain";
       inputs.nixpkgs.follows = "nixpkgs";
