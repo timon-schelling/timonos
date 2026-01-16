@@ -154,9 +154,9 @@
         RUST_GPU_PATH_OVERRIDE = rustGpuPathOverride;
         RUSTC_CODEGEN_SPIRV_PATH = "${rustGpuCodegen}/lib/librustc_codegen_spirv.so";
       };
-      home-manager.users.user.programs.nushell.extraConfig = lib.mkAfter ''
-        alias cargo = mold --run cargo
-      '';
+      # home-manager.users.user.programs.nushell.extraConfig = lib.mkAfter ''
+      #   alias cargo = mold --run cargo
+      # '';
       home-manager.users.user.programs.vscode.profiles.default.extensions = [
         pkgs.vscode-extension-wgsl-analyzer
         pkgs.vscode-extensions.svelte.svelte-vscode

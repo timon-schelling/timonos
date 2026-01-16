@@ -5,6 +5,8 @@
     ../vm-base
     ../vm-base-workspace
     ../vm-base-vcs
+    ../vm-base-persist
+    ../vm-base-docker
   ];
 
   config = {
