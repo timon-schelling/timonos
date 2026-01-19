@@ -2,7 +2,7 @@
 
 {
   opts.users.user.home = {
-    name = lib.mkDefault "Timon Schelling";
+    name = lib.mkDefault "Timon";
     email = lib.mkDefault "me@timon.zip";
     git.enable = lib.mkDefault true;
     jujutsu.enable = lib.mkDefault true;
