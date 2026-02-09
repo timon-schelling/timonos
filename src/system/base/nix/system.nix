@@ -3,9 +3,11 @@
 {
   nix.settings.substituters = [
     "https://nix-community.cachix.org"
+    "https://graphite.cachix.org"
   ];
   nix.settings.trusted-public-keys = [
     "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+    "graphite.cachix.org-1:B7Il1yMpkquN/dXM+5GRmz+4Xmu2aaCS1GcWNfFhsOo="
   ];
   nix.registry = {
     pkgs.flake = inputs.self;
