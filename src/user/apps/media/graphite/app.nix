@@ -8,5 +8,6 @@
   home.packages = [
     pkgs.zenity
     pkgs.graphite
+    pkgs.graphite-unstable
   ];
 }
