@@ -117,7 +117,7 @@
         nodejs
         nodePackages.npm
         binaryen
-        wasm-bindgen-cli
+        wasm-bindgen-cli_0_2_100
         wasm-pack
         pkg-config
         cargo-about
