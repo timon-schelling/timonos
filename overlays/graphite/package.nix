@@ -30,12 +30,12 @@
 }:
 
 let
-  version = "0-unstable-2026-03-01";
-  rev = "deb2c6d9e46179cf38f2ab66494a98992c15a88a";
+  version = "0-unstable-2026-03-04";
+  rev = "c9d117ee6f98ebc49cc83efeee47df6e81e56986";
 
-  srcHash = "sha256-fAHz/IaPgHNYhW5tfes+QFtmdvXOPAl3rMPu2RoU+Eo=";
+  srcHash = "sha256-v6waqhspmXsBOKDoeUdlxnYquKBYZCeTCjqPf/QGvA8=";
   shaderHash = "sha256-uc6FU0df5Xqp6YXEwODULhgUjSQvjRFGvdk+uFB7II0=";
-  cargoHash = "sha256-07wXR2bc6DWPuUhqoMzcZOKcwyIZaPm6LMZDVWz3Dl8=";
+  cargoHash = "sha256-WoGFdPcoLz7GEvNYn6wjya3BUaVlJqZ0Im113U48LAY=";
   npmHash = "sha256-4tpHnBQUftu2MvPfHW4IKnYD4/e1lRVLzghRhbfETxE=";
 
   brandingRev = "8ae15dc9c51a3855475d8cab1d0f29d9d9bc622c";
@@ -49,7 +49,7 @@ let
   };
 
   shaders = fetchurl {
-    url = "https://raw.githubusercontent.com/timon-schelling/graphite-artifacts/refs/heads/main/rev/a8b5203d6c6664c286fca9bc48278a7291a5aeda/raster_nodes_shaders_entrypoint.wgsl";
+    url = "https://raw.githubusercontent.com/timon-schelling/graphite-artifacts/refs/heads/main/rev/${rev}/raster_nodes_shaders_entrypoint.wgsl";
     hash = shaderHash;
   };
 
@@ -71,6 +71,7 @@ let
     libx11
   ];
   cefPath = cef-binary.overrideAttrs (finalAttrs: {
+    pname = "cef-path";
     postInstall = ''
       find $out -mindepth 1 -delete
       strip ./Release/*.so*

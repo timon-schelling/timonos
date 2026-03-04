@@ -123,7 +123,6 @@
         cargo-about
         cargo-deny
 
-        cmake
         python3
         gdb
 
