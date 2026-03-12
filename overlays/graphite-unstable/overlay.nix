@@ -1,7 +1,7 @@
 inputs: self: super:
 
 let
-  flake = builtins.getFlake "github:GraphiteEditor/Graphite/5d222920728eeaabc232dd52cd1e8f4405c91fbc";
+  flake = builtins.getFlake "github:GraphiteEditor/Graphite/a3f88b0f966d8c22d89999e29b607f824206f380";
 in
 {
   graphite-unstable = self.runCommand "graphite-unstable" {} ''
