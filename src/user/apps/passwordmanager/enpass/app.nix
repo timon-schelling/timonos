@@ -36,7 +36,7 @@ in
 
   home.activation.enpassConfigCopy = lib.hm.dag.entryAfter ["writeBoundary"] ''
     mkdir -p ${config.home.homeDirectory}/.config/sinew.in
-    cp ${configFile} ${config.home.homeDirectory}/.config/sinew.in/Enpass.conf
+    cp ${configFile} ${config.home.homeDirectory}/.config/sinew.in/Enpass.conf || true
   '';
 
   home.packages = [
