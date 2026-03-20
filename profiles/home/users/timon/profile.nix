@@ -32,6 +32,7 @@
         music-player.enable = lib.mkDefault true;
       };
       utils = {
+        rustdesk.enable = lib.mkDefault true;
         btop.enable = lib.mkDefault true;
         gitui.enable = lib.mkDefault true;
       };
