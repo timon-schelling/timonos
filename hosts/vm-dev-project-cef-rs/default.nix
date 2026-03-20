@@ -35,7 +35,7 @@
           glib
           nspr
           nss
-          xorg.libxcb
+          libxcb
           libxkbcommon
           libxkbcommon.dev
           libGL

@@ -4,6 +4,8 @@
   stdenv,
   nodejs,
   pnpm,
+  fetchPnpmDeps,
+  pnpmConfigHook,
   vsce,
   unzip,
   jq,
@@ -33,7 +35,7 @@ stdenv.mkDerivation (finalAttrs: {
 
   extSubDir = "editor/code";
 
-  pnpmDeps = pnpm.fetchDeps {
+  pnpmDeps = fetchPnpmDeps {
     inherit (finalAttrs) pname version src;
     fetcherVersion = 1;
     sourceRoot = "${finalAttrs.src.name}/${finalAttrs.extSubDir}";
@@ -45,7 +47,8 @@ stdenv.mkDerivation (finalAttrs: {
   nativeBuildInputs =
     [
       nodejs
-      pnpm.configHook
+      pnpm
+      pnpmConfigHook
       vsce
       unzip
     ]
