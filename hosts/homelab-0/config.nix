@@ -16,7 +16,6 @@
         home = {
           name = "Timon";
           email = "me@timon.zip";
-          profiles.default-desktop-apps.enable = true;
           persist.data.folders = [
             "tmp"
             "data"
@@ -24,25 +23,17 @@
           desktops.gnome.mac.enable = true;
           apps = {
             terminal = {
-              rio.enable = true;
+              ghostty.enable = true;
             };
             settings = {
               wifi.enable = true;
               audio.enable = true;
             };
-            editor = {
-              vscode.enable = true;
-            };
             browser = {
               firefox.enable = true;
-              chromium.enable = true;
-              epiphany.enable = true;
             };
             filemanager = {
               nautilus.enable = true;
-            };
-            media = {
-              spotify.enable = true;
             };
           };
         };

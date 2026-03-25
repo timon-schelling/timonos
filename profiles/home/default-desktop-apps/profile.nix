@@ -1,7 +1,6 @@
 { lib, ... }: {
   opts.user.apps = {
     terminal = {
-      rio.enable = lib.mkDefault true;
       ghostty.enable = lib.mkDefault true;
     };
     settings = {
