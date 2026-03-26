@@ -157,14 +157,17 @@
       # home-manager.users.user.programs.nushell.extraConfig = lib.mkAfter ''
       #   alias cargo = mold --run cargo
       # '';
-      home-manager.users.user.programs.vscode.profiles.default.extensions = [
-        pkgs.vscode-extension-wgsl-analyzer
-        pkgs.vscode-extensions.svelte.svelte-vscode
-        pkgs.vscode-extensions.dbaeumer.vscode-eslint
-        pkgs.vscode-extensions.esbenp.prettier-vscode
-        pkgs.vscode-extensions.vitaliymaz.vscode-svg-previewer
-        pkgs.vscode-extensions.jgclark.vscode-todo-highlight
-      ];
+      home-manager.users.user.programs.vscode.profiles.default = {
+        extensions = [
+          pkgs.vscode-extension-wgsl-analyzer
+          pkgs.vscode-extensions.svelte.svelte-vscode
+          pkgs.vscode-extensions.dbaeumer.vscode-eslint
+          pkgs.vscode-extensions.esbenp.prettier-vscode
+          pkgs.vscode-extensions.vitaliymaz.vscode-svg-previewer
+          pkgs.vscode-extensions.jgclark.vscode-todo-highlight
+        ];
+        userSettings."rust-analyzer.cargo.targetDir" = true;
+      };
 
       services.desktopManager.plasma6.enable = true;
 
