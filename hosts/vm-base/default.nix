@@ -35,7 +35,6 @@
           desktops.guest.default.enable = true;
           apps = {
             terminal = {
-              rio.enable = true;
               ghostty.enable = true;
             };
             editor = {
@@ -52,9 +51,6 @@
             };
             utils = {
               btop.enable = true;
-            };
-            passwordmanager = {
-              enpass.enable = true;
             };
           };
         };

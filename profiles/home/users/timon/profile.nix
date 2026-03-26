@@ -21,7 +21,7 @@
         tor-browser.enable = lib.mkDefault true;
       };
       passwordmanager = {
-        enpass.enable = lib.mkDefault true;
+        bitwarden.enable = lib.mkDefault true;
       };
       media = {
         graphite.enable = lib.mkDefault true;

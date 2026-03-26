@@ -8,7 +8,8 @@ let
   configDir = "/etc/${configDirInEtc}";
   dataDir = "/var/lib/${basename}";
   targetName = "homelab";
-  domain = "home.timon.zip";
+
+  domain = "timon.zip";
   backend = "podman";
   containers = {
     ddns = {
@@ -70,7 +71,7 @@ let
       labels = {
         "traefik.enable" = "true";
         "traefik.http.routers.hass.entrypoints" = "websecure";
-        "traefik.http.routers.hass.rule" = "Host(`${domain}`)";
+        "traefik.http.routers.hass.rule" = "Host(`home.${domain}`)";
         "traefik.http.routers.hass.tls.certresolver" = "main";
         "traefik.http.services.hass.loadbalancer.server.port" = "8123";
       };
@@ -126,6 +127,58 @@ let
         "--network-alias=zigbee2mqtt"
       ];
     };
+    vault = {
+      image = "docker.io/vaultwarden/server:latest";
+      environment = {
+        "DOMAIN" = "https://vault.${domain}";
+        "SIGNUPS_ALLOWED" = "false";
+      };
+      labels = {
+        "traefik.enable" = "true";
+        "traefik.http.routers.vault.entrypoints" = "websecure";
+        "traefik.http.routers.vault.rule" = "Host(`vault.${domain}`)";
+        "traefik.http.routers.vault.tls.certresolver" = "main";
+        "traefik.http.services.vault.loadbalancer.server.port" = "80";
+      };
+      volumes = [
+        "${dataDir}/vault/data:/data:rw"
+      ];
+      ports = [
+        "8083:80/tcp"
+      ];
+      log-driver = "journald";
+      extraOptions = [
+        "--network-alias=vault"
+      ];
+    };
+    # NOTE: before this will work you must configure rclone once manually:
+    #   podman run --rm -it -v /var/lib/homelab/vault/backup:/config/ docker.io/ttionya/vaultwarden-backup:latest rclone config
+    # Set the remote name to "VaultBackup" (the default) or update
+    # RCLONE_REMOTE_NAME below to match whatever name you choose.
+    vault-backup = {
+      image = "docker.io/ttionya/vaultwarden-backup:latest";
+      environment = {
+        "DATA_DIR"           = "/data";
+        "RCLONE_REMOTE_NAME" = "VaultBackup";
+        "RCLONE_REMOTE_DIR"  = "backups/vault/";
+        "CRON"               = "0 * * * *";
+        "ZIP_ENABLE"         = "false";
+        "BACKUP_KEEP_DAYS"   = "256";
+        "TIMEZONE"           = "Europe/Berlin";
+        "DISPLAY_NAME"       = "vault";
+      };
+      volumes = [
+        "${dataDir}/vault/data:/data:ro"
+        "${dataDir}/vault/backup:/config/:rw"
+      ];
+      dependsOn = [
+        "vault"
+      ];
+      log-driver = "journald";
+      extraOptions = [
+        "--network-alias=vault-backup"
+      ];
+    };
   };
   dataDirs = [
     "${dataDir}/ddns/data"
@@ -138,6 +191,9 @@ let
     "${dataDir}/traefik/data"
 
     "${dataDir}/zigbee2mqtt/data"
+
+    "${dataDir}/vault/data"
+    "${dataDir}/vault/backup"
   ];
   zigbee2mqttConf = {
     homeassistant = true;
