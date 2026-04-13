@@ -115,7 +115,6 @@
       buildTools = with pkgs; [
         rust
         nodejs
-        nodePackages.npm
         binaryen
         wasm-bindgen-cli_0_2_100
         wasm-pack

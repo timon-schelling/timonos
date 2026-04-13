@@ -12,7 +12,6 @@
   config = {
     environment.systemPackages = with pkgs; [
       nodejs
-      nodePackages.npm
     ];
   };
 }
