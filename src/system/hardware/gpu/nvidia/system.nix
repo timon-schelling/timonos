@@ -1,4 +1,4 @@
-{ lib, config, ... }:
+{ lib, config, pkgs, ... }:
 
 let
   cfg = config.opts.system.hardware.gpu.nvidia;
@@ -28,6 +28,7 @@ in
       enable = true;
       package = driverPkg;
       enable32Bit = true;
+      extraPackages = [ pkgs.mesa ];
     };
     nixpkgs.config.nvidia.acceptLicense = true;
     environment.variables = {
