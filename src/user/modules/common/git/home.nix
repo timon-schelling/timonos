@@ -25,6 +25,7 @@ in
         user.name = cfg.name;
         user.email = cfg.email;
         init.defaultBranch = "main";
+        merge.conflictstyle = "diff3";
       };
     };
   };
