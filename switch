@@ -4,11 +4,11 @@ cd "$(dirname "$0")"
 
 if command -v nh &> /dev/null
 then
-    sudo nh os switch -R --ask . $@ -- \
-        --option extra-substituters "https://cache.nixos.org https://nix-community.cachix.org https://graphite.cachix.org" \
-        --option extra-trusted-public-keys "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs= graphite.cachix.org-1:B7Il1yMpkquN/dXM+5GRmz+4Xmu2aaCS1GcWNfFhsOo="
+    NH_COMMAND="nh"
 else
-    nix run nixpkgs#nh -- os switch --ask . $@ -- \
-        --option extra-substituters "https://cache.nixos.org https://nix-community.cachix.org https://graphite.cachix.org" \
-        --option extra-trusted-public-keys "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs= graphite.cachix.org-1:B7Il1yMpkquN/dXM+5GRmz+4Xmu2aaCS1GcWNfFhsOo="
+    NH_COMMAND="nix run nixpkgs#nh --"
 fi
+
+sudo $NH_COMMAND os switch -R --ask . $@ -- \
+    --option extra-substituters "https://cache.nixos.org https://nix-community.cachix.org https://graphite.cachix.org" \
+    --option extra-trusted-public-keys "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs= graphite.cachix.org-1:B7Il1yMpkquN/dXM+5GRmz+4Xmu2aaCS1GcWNfFhsOo="
