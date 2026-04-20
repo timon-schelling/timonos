@@ -27,12 +27,10 @@ in
       package = themePkg;
       name = themeName;
     };
-
     iconTheme = {
       package = pkgs.whitesur-icon-theme;
       name = "WhiteSur-dark";
     };
-
     font = {
       name = "Sans";
       size = 11;

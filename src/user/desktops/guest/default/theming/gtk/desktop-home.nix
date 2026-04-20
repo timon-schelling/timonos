@@ -17,12 +17,10 @@ in
       package = themePkg;
       name = themeName;
     };
-
     iconTheme = {
       package = pkgs.whitesur-icon-theme;
       name = "WhiteSur-dark";
     };
-
     font = {
       name = "Sans";
       size = 11;
@@ -32,6 +30,10 @@ in
     };
     gtk4.extraConfig = {
       gtk-application-prefer-dark-theme = 1;
+    };
+    gtk4.theme = {
+      package = themePkg;
+      name = themeName;
     };
   };
   dconf.settings = {
