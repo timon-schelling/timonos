@@ -11,14 +11,8 @@
 
   config =
     let
-      rustExtensions = [ "rust-src" "rust-analyzer" "clippy" "cargo" ];
-      rust = pkgs.rust-bin.stable.latest.default.override {
-        targets = [ "wasm32-unknown-unknown" ];
-        extensions = rustExtensions;
-      };
-
-      rustGpuToolchainPkg = pkgs.rust-bin.nightly."2025-06-23".default.override {
-        extensions = rustExtensions ++ [ "rustc-dev" "llvm-tools" ];
+      rustGpuToolchainPkg = pkgs.rust-bin.nightly."2026-04-11".default.override {
+        extensions = [ "rust-src" "rust-analyzer" "clippy" "cargo" "rustc-dev" "llvm-tools" ];
       };
       rustGpuToolchainRustPlatform = pkgs.makeRustPlatform {
         cargo = rustGpuToolchainPkg;
@@ -26,15 +20,18 @@
       };
       rustGpuCodegen = rustGpuToolchainRustPlatform.buildRustPackage (finalAttrs: {
         pname = "rustc_codegen_spirv";
-        version = "0-unstable-2025-08-04";
-        src = pkgs.fetchFromGitHub {
-          owner = "Rust-GPU";
-          repo = "rust-gpu";
-          rev = "c12f216121820580731440ee79ebc7403d6ea04f";
-          hash = "sha256-rG1cZvOV0vYb1dETOzzbJ0asYdE039UZImobXZfKIno=";
+        version = "0.10.0-alpha.1";
+        src = pkgs.fetchCrate {
+          inherit (finalAttrs) pname version;
+          sha256 = "sha256-zJEpExkPgYzwo7fR4ge4GxJNj7H5yo4bJ4eTOw36+7c=";
         };
-        cargoHash = "sha256-AEigcEc5wiBd3zLqWN/2HSbkfOVFneAqNvg9HsouZf4=";
-        cargoBuildFlags = [ "-p" "rustc_codegen_spirv" "--features=use-compiled-tools" "--no-default-features" ];
+        cargoHash = "sha256-J1rtbfGqrL2NJ7Bu2pYfDwCdUmnECB/kzxrpYluA0kY=";
+        cargoBuildFlags = [
+          "-p"
+          "rustc_codegen_spirv"
+          "--features=use-compiled-tools"
+          "--no-default-features"
+        ];
         doCheck = false;
       });
       rustGpuCargo = pkgs.writeShellScriptBin "cargo" ''
@@ -52,26 +49,7 @@
       '';
       rustGpuPathOverride = "${rustGpuCargo}/bin:${rustGpuToolchainPkg}/bin";
 
-      cefPath = pkgs.cef-binary.overrideAttrs (finalAttrs: {
-        postInstall = ''
-          rm -r $out/* $out/.* || true
-          strip ./Release/*.so*
-          mv ./Release/* $out/
-          find "./Resources/locales" -maxdepth 1 -type f ! -name 'en-US.pak' -delete
-          mv ./Resources/* $out/
-          mv ./include $out/
-
-          cat ./CREDITS.html | ${pkgs.xz}/bin/xz -9 -e -c > $out/CREDITS.html.xz
-
-          echo '${
-            builtins.toJSON {
-              type = "minimal";
-              name = builtins.baseNameOf finalAttrs.src.url;
-              sha1 = "";
-            }
-          }' > $out/archive.json
-        '';
-      });
+      cefPath = pkgs.callPackage ./cef/package.nix { inherit pkgs; };
 
       buildInputs = with pkgs; [
         # System libraries
@@ -113,7 +91,6 @@
         udev.dev
       ];
       buildTools = with pkgs; [
-        rust
         nodejs
         binaryen
         wasm-bindgen-cli_0_2_100

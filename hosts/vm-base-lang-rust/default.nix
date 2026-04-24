@@ -2,8 +2,13 @@
 
 {
   environment.systemPackages = [
+    pkgs.rustc
+    pkgs.cargo
     pkgs.gcc
     pkgs.lldb
+    pkgs.lld
+    pkgs.rust-analyzer
+    pkgs.clippy
   ];
 
   nixpkgs.overlays = [
@@ -12,8 +17,8 @@
         overlay = super.fetchFromGitHub {
           repo = "rust-overlay";
           owner = "oxalica";
-          rev = "a35a6144b976f70827c2fe2f5c89d16d8f9179d8";
-          hash = "sha256-vINZAJpXQTZd5cfh06Rcw7hesH7sGSvi+Tn+HUieJn8=";
+          rev = "403c09094a877e6c4816462d00b1a56ff8198e06";
+          hash = "sha256-CZ5FKUSA8FCJf0h9GWdPJXoVVDL9H5yC74GkVc5ubIM=";
         };
       in
       {
