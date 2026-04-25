@@ -1,4 +1,4 @@
-{ lib, pkgs, config, ... }:
+{ lib, pkgs, ... }:
 
 {
   imports = [
@@ -6,136 +6,38 @@
     ../vm-base-workspace
     ../vm-base-vcs
     ../vm-base-persist
-    ../vm-base-lang-rust
   ];
 
   config =
     let
-      rustGpuToolchainPkg = pkgs.rust-bin.nightly."2026-04-11".default.override {
-        extensions = [ "rust-src" "rust-analyzer" "clippy" "cargo" "rustc-dev" "llvm-tools" ];
-      };
-      rustGpuToolchainRustPlatform = pkgs.makeRustPlatform {
-        cargo = rustGpuToolchainPkg;
-        rustc = rustGpuToolchainPkg;
-      };
-      rustGpuCodegen = rustGpuToolchainRustPlatform.buildRustPackage (finalAttrs: {
-        pname = "rustc_codegen_spirv";
-        version = "0.10.0-alpha.1";
-        src = pkgs.fetchCrate {
-          inherit (finalAttrs) pname version;
-          sha256 = "sha256-zJEpExkPgYzwo7fR4ge4GxJNj7H5yo4bJ4eTOw36+7c=";
-        };
-        cargoHash = "sha256-J1rtbfGqrL2NJ7Bu2pYfDwCdUmnECB/kzxrpYluA0kY=";
-        cargoBuildFlags = [
-          "-p"
-          "rustc_codegen_spirv"
-          "--features=use-compiled-tools"
-          "--no-default-features"
-        ];
-        doCheck = false;
-      });
-      rustGpuCargo = pkgs.writeShellScriptBin "cargo" ''
-        #!${pkgs.lib.getExe pkgs.bash}
-
-        filtered_args=()
-        for arg in "$@"; do
-          case "$arg" in
-            +nightly|+nightly-*) ;;
-            *) filtered_args+=("$arg") ;;
-          esac
-        done
-
-        exec ${rustGpuToolchainPkg}/bin/cargo ${"\${filtered_args[@]}"}
-      '';
-      rustGpuPathOverride = "${rustGpuCargo}/bin:${rustGpuToolchainPkg}/bin";
-
-      cefPath = pkgs.callPackage ./cef/package.nix { inherit pkgs; };
-
-      buildInputs = with pkgs; [
-        # System libraries
-        openssl
-        openssl.dev
-        vulkan-loader
-        mesa
-        libraw
-
-        # cef-rs deps
-        wayland
-        wayland.dev
-        gtk3
-        glib
-        nspr
-        nss
-        libxcb
-        libxkbcommon
-        libxkbcommon.dev
-        libGL
-        libdrm
-        mesa
-        alsa-lib
-        at-spi2-atk
-        at-spi2-core
-        atk
-        cairo
-        cups
-        dbus
-        expat
-        fontconfig
-        freetype
-        gdk-pixbuf
-        pango
-        vulkan-loader
-        libgbm
-        systemd
-        udev
-        udev.dev
-      ];
-      buildTools = with pkgs; [
-        nodejs
-        binaryen
-        wasm-bindgen-cli_0_2_100
-        wasm-pack
-        pkg-config
-        cargo-about
-        cargo-deny
-
-        python3
-        gdb
-
-        # Linker
-        mold
-      ];
-      devTools = with pkgs; [
-        cargo-watch
-        cargo-nextest
-        cargo-expand
-
-        # Profiling tools
-        gnuplot
-        samply
-        cargo-flamegraph
-
-        flatpak-builder
-      ];
+      rev = "3c04c2bb8bc9edc725d3a1abe3580cd52e5359c5";
+      # Update with `nix flake metadata --json github:GraphiteEditor/Graphite/<new-rev>`
+      hash = "sha256-ubY6YP5GKxKl6ogoKzHxjBaKRKo4oR1D524+gE1e1MQ=";
+      flake = builtins.getFlake "github:GraphiteEditor/Graphite/${rev}?narHash=${hash}";
+      devShell = flake.devShells.${pkgs.stdenv.hostPlatform.system}.default;
+      basePackages = devShell.buildInputs ++ devShell.nativeBuildInputs ++ [ pkgs.stdenv.cc ];
+      packages = builtins.concatMap (
+        pkg:
+          if builtins.isAttrs pkg && builtins.hasAttr "out" pkg then
+            [ pkg pkg.out ]
+          else
+            [ pkg ]
+      ) basePackages;
+      sessionVariables = lib.filterAttrs (
+        name: value:
+          builtins.match "^[A-Z_][A-Z0-9_]*$" name != null
+          && value != null
+      ) devShell;
     in
     {
-      environment.systemPackages = buildInputs ++ buildTools ++ devTools;
-      environment.sessionVariables = {
-        LD_LIBRARY_PATH = lib.mkForce ("${pkgs.lib.makeLibraryPath buildInputs}:${cefPath}");
-        PKG_CONFIG_PATH = pkgs.lib.makeSearchPath "lib/pkgconfig" buildInputs;
-        CEF_PATH = cefPath;
-        XDG_DATA_DIRS = lib.mkForce "${pkgs.gtk3}/share/gsettings-schemas/${pkgs.gtk3.name}:$XDG_DATA_DIRS";
-
-        # For rust-gpu
-        RUST_GPU_PATH_OVERRIDE = rustGpuPathOverride;
-        RUSTC_CODEGEN_SPIRV_PATH = "${rustGpuCodegen}/lib/librustc_codegen_spirv.so";
-      };
-      # home-manager.users.user.programs.nushell.extraConfig = lib.mkAfter ''
-      #   alias cargo = mold --run cargo
-      # '';
+      environment.systemPackages = packages;
+      environment.sessionVariables = lib.mapAttrs (_: value: lib.mkForce value) sessionVariables;
       home-manager.users.user.programs.vscode.profiles.default = {
         extensions = [
           pkgs.vscode-extension-wgsl-analyzer
+          pkgs.vscode-extensions.rust-lang.rust-analyzer
+          pkgs.vscode-extensions.vadimcn.vscode-lldb
+          pkgs.vscode-extensions.tamasfe.even-better-toml
           pkgs.vscode-extensions.svelte.svelte-vscode
           pkgs.vscode-extensions.dbaeumer.vscode-eslint
           pkgs.vscode-extensions.esbenp.prettier-vscode
@@ -145,8 +47,9 @@
         userSettings."rust-analyzer.cargo.targetDir" = true;
       };
 
-      services.desktopManager.plasma6.enable = true;
+      opts.users.user.home.persist.state.folders = [ ".cargo" ];
 
-      services.flatpak.enable = true;
+      # services.desktopManager.plasma6.enable = true;
+      # services.flatpak.enable = true;
     };
 }
