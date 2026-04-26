@@ -124,6 +124,7 @@
 
       render {
         direct_scanout = no
+        cm_sdr_eotf = 3
       }
 
       $mainMod = SUPER
