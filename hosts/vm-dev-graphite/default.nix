@@ -35,6 +35,7 @@
       home-manager.users.user.programs.vscode.profiles.default = {
         extensions = [
           pkgs.vscode-extension-wgsl-analyzer
+          pkgs.vscode-extension-openai-chatgpt
           pkgs.vscode-extensions.rust-lang.rust-analyzer
           pkgs.vscode-extensions.vadimcn.vscode-lldb
           pkgs.vscode-extensions.tamasfe.even-better-toml
@@ -43,6 +44,7 @@
           pkgs.vscode-extensions.esbenp.prettier-vscode
           pkgs.vscode-extensions.vitaliymaz.vscode-svg-previewer
           pkgs.vscode-extensions.jgclark.vscode-todo-highlight
+
         ];
         userSettings."rust-analyzer.cargo.targetDir" = true;
       };
