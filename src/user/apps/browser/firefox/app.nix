@@ -2,12 +2,13 @@
 
 {
   platform.user.persist.folders = [
-    ".mozilla/firefox/main"
+    ".config/mozilla/firefox/main"
     # ".cache/mozilla"
   ];
 
   programs.firefox = {
     enable = true;
+    configPath = "${config.xdg.configHome}/mozilla/firefox";
     policies = {
       DisableTelemetry = true;
       DisableFirefoxStudies = true;

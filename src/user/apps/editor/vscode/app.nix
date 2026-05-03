@@ -25,6 +25,7 @@
       extensions = with pkgs.vscode-extensions; [
         jnoortheen.nix-ide
         mhutchie.git-graph
+        jjk.jjk
         thenuprojectcontributors.vscode-nushell-lang
         ms-vscode.hexeditor
         streetsidesoftware.code-spell-checker
@@ -34,8 +35,6 @@
         streetsidesoftware.code-spell-checker-german
         bierner.color-info
         miguelsolorio.min-theme
-
-        pkgs.vscode-extension-jjk
       ];
       enableUpdateCheck = false;
       enableExtensionUpdateCheck = false;

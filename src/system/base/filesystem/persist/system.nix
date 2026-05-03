@@ -6,12 +6,20 @@
   ];
 
   config = lib.mkIf config.platform.system.filesystem.persist.enable {
-    fileSystems."/persist".neededForBoot = true;
     environment.persistence."/persist/system" = {
       hideMounts = true;
       directories = config.platform.system.persist.folders ++ config.opts.system.persist.folders;
       files = config.platform.system.persist.files ++ config.opts.system.persist.files;
     };
+
+    fileSystems = {
+        "/persist".neededForBoot = true;
+    } // (
+      lib.genAttrs
+        (map (d: if builtins.isString d then d else d.directory)
+          config.environment.persistence."/persist/system".directories)
+        (_: { fsType = lib.mkDefault "auto"; })
+    );
 
     systemd.services."create-persist-user-dir" = {
       description = "Create /persist/user directory for Home Manager Impermanence with 1700 permissions";
