@@ -1,8 +1,5 @@
 { ... }:
 
 {
-  documentation.nixos = {
-    includeAllModules = true;
-    options.warningsAreErrors = false;
-  };
+  documentation.nixos.enable = false;
 }

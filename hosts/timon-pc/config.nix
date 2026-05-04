@@ -12,7 +12,10 @@
         };
         bluetooth.enable = true;
       };
-      network.wifi.enable = true;
+      network = {
+        wifi.enable = true;
+        routeViaGateway = [ "10.0.0.0/8" "fd00::/8" ];
+      };
     };
     users = {
       timon = {
@@ -38,5 +41,4 @@
 
   # disable the tpm module because it not supported and causes failures during boot
   boot.blacklistedKernelModules = [ "tpm" "tpm_atmel" "tpm_infineon" "tpm_nsc" "tpm_tis" "tpm_crb" ];
-
 }

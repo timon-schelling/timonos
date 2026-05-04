@@ -6,7 +6,10 @@
         swap.size = "16G";
       };
       hardware.bluetooth.enable = true;
-      network.wifi.enable = true;
+      network = {
+        wifi.enable = true;
+        routeViaGateway = [ "10.0.0.0/8" "fd00::/8" ];
+      };
       desktops.gnome.enable = true;
     };
     users = {

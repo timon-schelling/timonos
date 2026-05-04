@@ -4,6 +4,7 @@
 
   imports = [
     ./wifi.nix
+    ./route-via-gateway.nix
   ];
 
   networking = {
