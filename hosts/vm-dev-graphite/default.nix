@@ -49,7 +49,10 @@
         userSettings."rust-analyzer.cargo.targetDir" = true;
       };
 
-      opts.users.user.home.persist.state.folders = [ ".cargo" ];
+      opts.users.user.home.persist.state.folders = [
+        ".cargo"
+        ".codex"
+      ];
 
       # services.desktopManager.plasma6.enable = true;
       # services.flatpak.enable = true;
