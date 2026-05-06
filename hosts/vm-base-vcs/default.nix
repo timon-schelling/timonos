@@ -9,4 +9,9 @@
   };
 
   home-manager.users.user.programs.jujutsu.settings.ui.editor = "code -w";
+
+  home-manager.users.user.programs.git.ignores = [
+    ".tmp/"
+    ".Trash-*"
+  ];
 }

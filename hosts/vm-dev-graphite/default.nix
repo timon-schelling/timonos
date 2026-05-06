@@ -54,6 +54,11 @@
         ".codex"
       ];
 
+      home-manager.users.user.programs.git.ignores = [
+        ".codex/"
+        ".codex"
+      ];
+
       # services.desktopManager.plasma6.enable = true;
       # services.flatpak.enable = true;
     };
