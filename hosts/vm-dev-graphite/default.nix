@@ -30,12 +30,13 @@
       ) devShell;
     in
     {
-      environment.systemPackages = packages;
+      environment.systemPackages = packages ++ [
+        pkgs.claude-code
+      ];
       environment.sessionVariables = lib.mapAttrs (_: value: lib.mkForce value) sessionVariables;
       home-manager.users.user.programs.vscode.profiles.default = {
         extensions = [
           pkgs.vscode-extension-wgsl-analyzer
-          pkgs.vscode-extension-openai-chatgpt
           pkgs.vscode-extensions.rust-lang.rust-analyzer
           pkgs.vscode-extensions.vadimcn.vscode-lldb
           pkgs.vscode-extensions.tamasfe.even-better-toml
@@ -44,17 +45,26 @@
           pkgs.vscode-extensions.esbenp.prettier-vscode
           pkgs.vscode-extensions.vitaliymaz.vscode-svg-previewer
           pkgs.vscode-extensions.jgclark.vscode-todo-highlight
-
+          pkgs.vscode-extensions.anthropic.claude-code
+          pkgs.vscode-extension-openai-chatgpt
         ];
         userSettings."rust-analyzer.cargo.targetDir" = true;
       };
 
-      opts.users.user.home.persist.state.folders = [
-        ".cargo"
-        ".codex"
-      ];
+      opts.users.user.home.persist.state = {
+        folders = [
+          ".claude"
+          ".cargo"
+          ".codex"
+        ];
+        files = [
+          ".claude.json"
+        ];
+      };
 
       home-manager.users.user.programs.git.ignores = [
+        "CLAUDE.md"
+        ".claude"
         ".codex/"
         ".codex"
       ];
