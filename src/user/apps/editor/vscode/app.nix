@@ -30,8 +30,6 @@
         ms-vscode.hexeditor
         streetsidesoftware.code-spell-checker
         pkief.material-icon-theme
-        github.copilot
-        github.copilot-chat
         streetsidesoftware.code-spell-checker-german
         bierner.color-info
         miguelsolorio.min-theme

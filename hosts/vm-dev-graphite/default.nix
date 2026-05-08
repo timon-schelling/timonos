@@ -6,6 +6,7 @@
     ../vm-base-workspace
     ../vm-base-vcs
     ../vm-base-persist
+    ../vm-base-ai-tools
   ];
 
   config =
@@ -30,9 +31,7 @@
       ) devShell;
     in
     {
-      environment.systemPackages = packages ++ [
-        pkgs.claude-code
-      ];
+      environment.systemPackages = packages;
       environment.sessionVariables = lib.mapAttrs (_: value: lib.mkForce value) sessionVariables;
       home-manager.users.user.programs.vscode.profiles.default = {
         extensions = [
@@ -45,28 +44,12 @@
           pkgs.vscode-extensions.esbenp.prettier-vscode
           pkgs.vscode-extensions.vitaliymaz.vscode-svg-previewer
           pkgs.vscode-extensions.jgclark.vscode-todo-highlight
-          pkgs.vscode-extensions.anthropic.claude-code
-          pkgs.vscode-extension-openai-chatgpt
         ];
         userSettings."rust-analyzer.cargo.targetDir" = true;
       };
 
-      opts.users.user.home.persist.state = {
-        folders = [
-          ".claude"
-          ".cargo"
-          ".codex"
-        ];
-        files = [
-          ".claude.json"
-        ];
-      };
-
-      home-manager.users.user.programs.git.ignores = [
-        "CLAUDE.md"
-        ".claude"
-        ".codex/"
-        ".codex"
+      home-manager.users.user.opts.user.persist.state.folders = [
+        ".cargo"
       ];
 
       # services.desktopManager.plasma6.enable = true;
