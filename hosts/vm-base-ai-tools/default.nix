@@ -12,6 +12,10 @@
     pkgs.vscode-extension-openai-chatgpt
   ];
 
+  home-manager.users.user.programs.vscode.profiles.default.userSettings = {
+    "chat.disableAIFeatures" = lib.mkForce false;
+  };
+
   home-manager.users.user.opts.user.persist.state.folders = [
     ".claude"
     ".copilot"

@@ -12,9 +12,7 @@
     "files.autoSave": "onFocusChange",
     "keyboard.dispatch": "keyCode",
     "editor.inlineSuggest.enabled": true,
-    "github.copilot.enable": {
-        "*": true
-    },
+    "chat.disableAIFeatures": true,
     "editor.cursorSurroundingLines": 7,
     "editor.lineNumbers": "relative",
     "projectManager.git.baseFolders": [
