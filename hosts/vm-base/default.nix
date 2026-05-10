@@ -92,6 +92,8 @@
     alias h = daemon code .
     alias k = daemon firefox
     alias l = daemon nautilus .
+
+    $env.EDITOR = "code -w"
   '';
 
   home-manager.users.user.programs.starship.settings.format = lib.mkForce ''
