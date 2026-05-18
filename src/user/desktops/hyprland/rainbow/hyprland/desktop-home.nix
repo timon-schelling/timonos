@@ -109,7 +109,6 @@
       }
 
       dwindle {
-        pseudotile = yes
         preserve_split = yes
       }
 
@@ -118,7 +117,7 @@
       misc {
         disable_hyprland_logo = true
         disable_splash_rendering = true
-        background_color = 0x161616
+        background_color = 0x1C1C1C
         enable_anr_dialog = false
       }
 
@@ -137,7 +136,7 @@
       bind = $mainMod, Q, killactive
       bind = $mainMod, M, fullscreen
       bind = $mainMod, G, togglefloating
-      bind = $mainMod, O, togglesplit
+      bind = $mainMod, O, layoutmsg, togglesplit
       bind = $mainMod, S, pseudo
       bind = $mainMod, F, fullscreenstate, -1, 3
 
