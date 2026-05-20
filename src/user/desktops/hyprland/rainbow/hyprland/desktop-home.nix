@@ -117,7 +117,7 @@
       misc {
         disable_hyprland_logo = true
         disable_splash_rendering = true
-        background_color = 0x1C1C1C
+        background_color = rgba(161616ff)
         enable_anr_dialog = false
       }
 
