@@ -5,12 +5,17 @@
   opts.user = {
     name = lib.mkDefault "Timon";
     email = lib.mkDefault "me@timon.zip";
-    persist.data.folders = lib.mkDefault [
-      "code"
-      "data"
-      "media"
-      "tmp"
-    ];
+    persist = {
+      data.folders = lib.mkDefault [
+        "code"
+        "data"
+        "media"
+        "tmp"
+      ];
+      state.folders = lib.mkDefault [
+          ".ssh"
+      ];
+    };
     desktops.hyprland.rainbow.enable = lib.mkDefault true;
     apps = {
       editor = {
