@@ -7,6 +7,7 @@
     ../vm-base-vcs
     ../vm-base-persist
     ../vm-base-docker
+    ../vm-base-ai-tools
   ];
 
   config = {
