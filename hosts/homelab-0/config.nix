@@ -39,6 +39,7 @@
               nautilus.enable = true;
             };
           };
+          git.enable = true;
         };
       };
     };
