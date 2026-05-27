@@ -7,8 +7,8 @@
       };
       hardware.bluetooth.enable = true;
       network = {
-        wifi.enable = true;
-        routeViaGateway = [ "10.0.0.0/8" "fd00::/8" ];
+        # wifi.enable = true;
+        # routeViaGateway = [ "10.0.0.0/8" "fd00::/8" ];
       };
       desktops.gnome.enable = true;
     };
@@ -29,7 +29,7 @@
               ghostty.enable = true;
             };
             settings = {
-              wifi.enable = true;
+              # wifi.enable = true;
               audio.enable = true;
             };
             browser = {
