@@ -63,7 +63,7 @@ let
       ];
     };
     hass = {
-      image = "ghcr.io/home-assistant/home-assistant:2024.9";
+      image = "ghcr.io/home-assistant/home-assistant:2026.6";
       volumes = [
         "${dataDir}/hass/data:/config:rw"
         # "/etc/localtime:/etc/localtime:ro"
@@ -85,7 +85,7 @@ let
       ];
     };
     mqtt = {
-      image = "docker.io/library/eclipse-mosquitto:2.0.15";
+      image = "docker.io/library/eclipse-mosquitto:2";
       volumes = [
         "${configDir}/mqtt/config:/mosquitto/config/mosquitto.conf:ro"
         "${dataDir}/mqtt/log:/mosquitto/log:rw"
@@ -101,7 +101,7 @@ let
       ];
     };
     zigbee2mqtt = {
-      image = "ghcr.io/koenkk/zigbee2mqtt:1.40.1";
+      image = "ghcr.io/koenkk/zigbee2mqtt:2.11";
       environment = {
         "TZ" = "Europe/Berlin";
       };
