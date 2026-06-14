@@ -1,6 +1,10 @@
 { pkgs, ... }:
 
 {
+  imports = [
+    ./raop.nix
+  ];
+
   services = {
     pulseaudio.enable = false;
     pipewire = {
