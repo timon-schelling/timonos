@@ -10,4 +10,7 @@
 
   # needed for systemd and some programs that need a persistent machine id
   platform.system.persist.files = [ "/etc/machine-id" ];
+
+  # TODO: Remove when https://github.com/NixOS/nixpkgs/issues/526914
+  nixpkgs.config.permittedInsecurePackages = [ "electron-39.8.10" ];
 }

@@ -1,5 +1,7 @@
 { ... }:
 
 {
-  systemd.user.extraConfig = "DefaultLimitNOFILE=1048576";
+  systemd.user.settings.Manager = {
+    DefaultLimitNOFILE = 1048576;
+  };
 }
