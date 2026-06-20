@@ -37,6 +37,7 @@
           Mode = "active-backup";
           MIIMonitorSec="0.100s";
           PrimaryReselectPolicy="better";
+          FailOverMACPolicy = "active";
         };
       };
     };
