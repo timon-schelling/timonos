@@ -46,6 +46,9 @@
       };
     };
 
-    programs.fuse.userAllowOther = true;
+    programs.fuse = {
+      enable = true;
+      userAllowOther = true;
+    };
   };
 }
