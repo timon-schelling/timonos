@@ -3,6 +3,7 @@
 {
   platform.user.persist.folders = [
     ".config/zed"
+    ".local/share/zed"
   ];
 
   programs.zed-editor = {
@@ -12,6 +13,7 @@
       "nix"
       "nu"
     ];
+    mutableUserSettings = false;
     userSettings = {
       auto_update = false;
       telemetry = {
