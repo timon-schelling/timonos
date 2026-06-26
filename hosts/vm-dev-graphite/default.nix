@@ -48,6 +48,11 @@
         userSettings."rust-analyzer.cargo.targetDir" = true;
       };
 
+      home-manager.users.user.programs.zed-editor = {
+        extensions = [ "wgsl" "svelte" "toml" ];
+        userSettings.lsp."rust-analyzer".initialization_options.cargo.targetDir = true;
+      };
+
       home-manager.users.user.opts.user.persist.state.folders = [
         ".cargo"
       ];

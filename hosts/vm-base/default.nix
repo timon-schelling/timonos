@@ -39,7 +39,7 @@
             };
             editor = {
               vscode.enable = true;
-              lapce.enable = true;
+              zed.enable = true;
             };
             browser = {
               firefox.enable = true;

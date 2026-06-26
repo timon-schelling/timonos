@@ -3,6 +3,7 @@
 {
   environment.systemPackages = [
     pkgs.go
+    pkgs.gopls
   ];
 
   home-manager.users.user = {

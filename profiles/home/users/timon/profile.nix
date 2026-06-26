@@ -19,7 +19,7 @@
     desktops.hyprland.rainbow.enable = lib.mkDefault true;
     apps = {
       editor = {
-        lapce.enable = lib.mkDefault true;
+        zed.enable = lib.mkDefault true;
       };
       browser = {
         chromium.enable = lib.mkDefault true;

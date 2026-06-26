@@ -16,6 +16,8 @@
     "chat.disableAIFeatures" = lib.mkForce false;
   };
 
+  home-manager.users.user.programs.zed-editor.userSettings.disable_ai = lib.mkForce false;
+
   home-manager.users.user.opts.user.persist.state.folders = [
     ".claude"
     ".copilot"

@@ -39,5 +39,15 @@
       userSettings."rust-analyzer.check.command" = "clippy";
       userSettings."rust-analyzer.check.workspace" = false;
     };
+
+    programs.zed-editor = {
+      extensions = [ "toml" "cargo-appraiser" ];
+      userSettings.lsp."rust-analyzer".initialization_options = {
+        check = {
+          command = "clippy";
+          workspace = false;
+        };
+      };
+    };
   };
 }
