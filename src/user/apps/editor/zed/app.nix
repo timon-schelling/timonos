@@ -7,7 +7,7 @@
 
   programs.zed-editor = {
     enable = true;
-    themes."ayu-darker" = ./theme.json;
+    themes."theme" = ./theme.json;
     extensions = [
       "nix"
       "nu"
@@ -34,7 +34,7 @@
       theme = {
         mode = "dark";
         light = "One Light";
-        dark = "Ayu Darker";
+        dark = "Monokai soda";
       };
       title_bar = {
         show_sign_in = false;
@@ -67,6 +67,10 @@
           };
         };
       };
+      languages."Nix".language_servers = [
+        "nil"
+        "!nixd"
+      ];
     };
   };
 
