@@ -16,7 +16,7 @@ let
 
       let pkg = $"github:GraphiteEditor/Graphite/($sha)"
 
-      ${self.ghostty}/bin/ghostty -e ${self.bash}/bin/sh -c $"${self.nix}/bin/nix --extra-experimental-features 'nix-command flakes' build '($pkg)' || { echo 'Build failed, press enter to close'; read _; }"
+      ${self.ghostty}/bin/ghostty -e ${self.bash}/bin/sh -c $"${self.nix}/bin/nix --extra-experimental-features 'nix-command flakes' build --no-link '($pkg)'|| { echo 'Build failed, press enter to close'; read _; }"
 
       ${self.nix}/bin/nix --extra-experimental-features 'nix-command flakes' run $pkg -- ...$args
     }
