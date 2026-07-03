@@ -18,6 +18,13 @@
       monitor = DP-2, 1920x1200, 0x0, 1, transform, 1
       monitor = DP-1, 1920x1200, 3760x0, 1, transform, 1
 
+      device {
+        name = wacom-co.-ltd.-wacom-one-pen-tablet-medium
+        output = DP-3
+        active_area_size = 216 121.5
+        active_area_position = 0 6.75
+      }
+
       # laptop
       monitor = eDP-1, 1920x1200, 0x0 ,1
 
