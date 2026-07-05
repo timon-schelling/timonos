@@ -20,6 +20,7 @@
     users = {
       timon = {
         home = {
+          apps.media.krita.enable = true;
           apps.other.steam.enable = true;
         };
       };
