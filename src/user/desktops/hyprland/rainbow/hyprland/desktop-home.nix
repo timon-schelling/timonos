@@ -11,7 +11,7 @@
     settings.env = lib.attrsets.mapAttrsToList (name: value: "${name},${builtins.toString value}") config.home.sessionVariables;
     extraConfig = ''
 
-      #TODO: monitors should be set per host
+      # TODO: monitors should be set per host
 
       # desktop
       monitor = DP-3, 2560x1440, 1200x250, 1
@@ -20,6 +20,12 @@
 
       device {
         name = wacom-co.-ltd.-wacom-one-pen-tablet-medium
+        output = DP-3
+        active_area_size = 216 121.5
+        active_area_position = 0 6.75
+      }
+      device {
+        name = wacom-one-pen-tablet-medium
         output = DP-3
         active_area_size = 216 121.5
         active_area_position = 0 6.75
