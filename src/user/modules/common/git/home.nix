@@ -28,5 +28,13 @@ in
         merge.conflictstyle = "diff3";
       };
     };
+    programs.delta = {
+      enable = true;
+      options = {
+        navigate = true;
+        syntax-theme = "Monokai Extended";
+      };
+      enableGitIntegration = true;
+    };
   };
 }
