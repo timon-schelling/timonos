@@ -18,7 +18,7 @@ module contain-nix-helper {
         let path = $path | path expand;
         let mounts = sys disks | select mount device type
         mut parent_mount = parent-mount $path $mounts
-        mut rewrite = null;
+        mut rewrite: any = null;
         while ($parent_mount.type == 'fuse' and $parent_mount.mount != '/') {
             $rewrite = $parent_mount.device | path join ($path | path relative-to $parent_mount.mount)
             $parent_mount = parent-mount $rewrite $mounts;
