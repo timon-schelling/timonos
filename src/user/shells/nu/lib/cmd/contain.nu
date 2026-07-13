@@ -2,32 +2,41 @@
 
 module contain-nix-helper {
     def parent-mount [path, disks?] {
-        let mounts = if ($disks != null) { $disks } else { sys disks }
+        let mounts = $disks | default (sys disks)
         (generate {|e|
             if ($e != '/') {
-                let parent = $e | path dirname;
-                {out: $parent, next: $parent}
-            } else { {} }
+                {out: $e, next: ($e | path dirname)}
+            } else { {out: '/'} }
         } $path)
-        | each { |path|
-        $mounts | where { $in.mount == $path }
-        } | where { ($in | length) > 0 } | get 0.0
+        | each {|p| $mounts | where mount == $p }
+        | where { ($in | length) > 0 }
+        | get 0.0
     }
 
     def resolve-fuse-indirections [path] {
-        let path = $path | path expand;
         let mounts = sys disks | select mount device type
-        mut parent_mount = parent-mount $path $mounts
-        mut rewrite: any = null;
+        mut current = $path | path expand
+        mut rewritten = false
+        mut parent_mount = parent-mount $current $mounts
+        mut depth = 0
         while ($parent_mount.type == 'fuse' and $parent_mount.mount != '/') {
-            $rewrite = $parent_mount.device | path join ($path | path relative-to $parent_mount.mount)
-            $parent_mount = parent-mount $rewrite $mounts;
+            if ($depth >= 42) {
+                error make {msg: $"too many FUSE indirections while resolving ($path)"}
+            }
+            $current = $parent_mount.device | path join ($current | path relative-to $parent_mount.mount)
+            $parent_mount = parent-mount $current $mounts
+            $rewritten = true
+            $depth += 1
         }
-        $rewrite
+        if $rewritten { $current } else { null }
     }
 
     def args-to-replace-fuse-indirections [config] {
-        $config | get filesystem.shares.source | enumerate | each { |it|
+        $config
+        | get -o filesystem.shares.source
+        | default []
+        | enumerate
+        | each { |it|
             resolve-fuse-indirections $it.item | do {
                 if ($in != null) {
                     {
@@ -37,7 +46,9 @@ module contain-nix-helper {
                     }
                 } else { null }
             }
-        } | each { ["-c", $"filesystem.shares[($in.position)].source", $in.rewrite] } | flatten
+        }
+        | each { ["-c", $"filesystem.shares[($in.position)].source", $in.rewrite] }
+        | flatten
     }
 
     export def extra-args [config] {
