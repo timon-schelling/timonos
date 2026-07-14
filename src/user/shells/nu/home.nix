@@ -67,7 +67,7 @@
   programs.nushell.extraEnv = ''
     $env.ATUIN_NOBIND = true
   '';
-  programs.nushell.extraConfig = lib.mkAfter ''
+  programs.nushell.extraConfig = lib.mkOrder 2500 ''
     $env.config = (
       $env.config | upsert keybindings (
         $env.config.keybindings | append {
