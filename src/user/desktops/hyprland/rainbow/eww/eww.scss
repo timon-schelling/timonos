@@ -4,6 +4,7 @@ $foreground-color: #878787;
 $background-color: #1e1e1e;
 $base-size: 45px;
 $spacing: 12px;
+$icon-font: "DejaVuSansM Nerd Font Mono";
 $window-boarder-radius: $base-size/2 + $spacing;
 $base-border-radius: $window-boarder-radius - $spacing;
 
@@ -22,6 +23,7 @@ window {
 .power {
     button {
         all: unset;
+        font-family: $icon-font;
         font-size: $base-size/1.4;
         background-color: $primary-color;
         color: $foreground-color;
@@ -47,6 +49,7 @@ window {
         margin-top: $spacing;
         label {
             all: unset;
+            font-family: $icon-font;
             font-size: $font-size;
             background: $highlight-color;
             border-radius: $border-radius;
@@ -113,6 +116,9 @@ window {
         color: $foreground-color;
         margin-right: -4px;
     }
+    .icon {
+        font-family: $icon-font;
+    }
     .inner {
         margin-bottom: -40px;
     }
@@ -145,8 +151,8 @@ $gauge-color: #6f6f6f;
     }
     .icon {
         color: $color;
-        font-size: $gauge-icon-size/1.8;
-        margin: -10px 0px 0px -19px;
+        font-size: $gauge-icon-size * 1.1;
+        margin: -6px 0px 0px 3px;
     }
 }
 
