@@ -21,9 +21,13 @@ in
   config = lib.mkIf cfg.enable {
     programs.jujutsu = {
       enable = true;
-      settings.user = {
-        name = cfg.name;
-        email = cfg.email;
+      settings = {
+        user = {
+          name = cfg.name;
+          email = cfg.email;
+        };
+        revset-aliases."immutable_heads()" = "present(main@origin) | present(master@origin)";
+        revsets.log = "all()";
       };
     };
   };
