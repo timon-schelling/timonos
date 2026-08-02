@@ -35,10 +35,10 @@
       environment.sessionVariables = lib.mapAttrs (_: value: lib.mkForce value) sessionVariables;
       home-manager.users.user.programs.vscode.profiles.default = {
         extensions = [
-          pkgs.vscode-extension-wgsl-analyzer
           pkgs.vscode-extensions.rust-lang.rust-analyzer
           pkgs.vscode-extensions.vadimcn.vscode-lldb
           pkgs.vscode-extensions.tamasfe.even-better-toml
+          pkgs.vscode-extensions.wgsl-analyzer.wgsl-analyzer
           pkgs.vscode-extensions.svelte.svelte-vscode
           pkgs.vscode-extensions.dbaeumer.vscode-eslint
           pkgs.vscode-extensions.esbenp.prettier-vscode
