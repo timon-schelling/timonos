@@ -7,6 +7,7 @@
     ../vm-base-vcs
     ../vm-base-persist
     ../vm-base-ai-tools
+    ../vm-base-rust-rover
   ];
 
   config =
