@@ -60,6 +60,8 @@
 
   boot.kernel.sysctl."net.ipv4.ip_unprivileged_port_start" = lib.mkDefault 64;
 
+  programs.ssh.systemd-ssh-proxy.enable = false;
+
   environment.sessionVariables = {
     GDK_BACKEND = "wayland";
     SDL_VIDEODRIVER = "wayland";
