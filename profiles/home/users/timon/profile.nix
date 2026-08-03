@@ -12,9 +12,6 @@
         "media"
         "tmp"
       ];
-      state.folders = lib.mkDefault [
-          ".ssh"
-      ];
     };
     desktops.hyprland.rainbow.enable = lib.mkDefault true;
     apps = {
