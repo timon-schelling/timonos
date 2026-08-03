@@ -39,7 +39,6 @@
       utils = {
         rustdesk.enable = lib.mkDefault true;
         btop.enable = lib.mkDefault true;
-        gitui.enable = lib.mkDefault true;
       };
       other = {
         beeper.enable = lib.mkDefault true;
@@ -47,8 +46,7 @@
         # webcord.enable = lib.mkDefault true; TODO: fix webcord
       };
     };
-    git.enable = lib.mkDefault true;
-    jujutsu.enable = lib.mkDefault true;
+    vcs.enable = lib.mkDefault true;
     podman.enable = lib.mkDefault true;
   };
 }

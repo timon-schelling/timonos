@@ -1,12 +1,12 @@
 { config, lib, ... }:
 
 let
-  cfg = config.opts.user.git;
+  cfg = config.opts.user.vcs;
 in
 {
   options = {
-    opts.user.git = {
-      enable = lib.mkEnableOption "Git";
+    opts.user.vcs = {
+      enable = lib.mkEnableOption "VCS";
       name = lib.mkOption {
         type = lib.types.nullOr lib.types.str;
         default = config.opts.user.name;
@@ -27,6 +27,18 @@ in
         init.defaultBranch = "main";
         merge.conflictstyle = "diff3";
       };
+      ignores = [
+        ".jj/"
+        ".tmp/"
+        ".Trash-*"
+      ];
+    };
+    programs.jujutsu = {
+      enable = true;
+      settings.user = {
+        name = cfg.name;
+        email = cfg.email;
+      };
     };
     programs.delta = {
       enable = true;
@@ -35,6 +47,7 @@ in
         syntax-theme = "Monokai Extended";
       };
       enableGitIntegration = true;
+      enableJujutsuIntegration = true;
     };
   };
 }
