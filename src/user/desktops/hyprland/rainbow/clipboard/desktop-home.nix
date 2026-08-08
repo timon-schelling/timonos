@@ -12,11 +12,10 @@
       alias clip = ${lib.getExe pkgs.cliphist}
       clip list | select-ui | clip decode | ${pkgs.wl-clipboard}/bin/wl-copy
     '')
+    (pkgs.nu.writeScriptBin "clipboard-daemon" ''
+      ${pkgs.wl-clipboard}/bin/wl-paste --watch ${lib.getExe pkgs.cliphist} store
+    '')
   ];
-
-  wayland.windowManager.hyprland.extraConfig = lib.mkAfter ''
-    exec-once = ${pkgs.wl-clipboard}/bin/wl-paste --watch ${lib.getExe pkgs.cliphist} store
-  '';
 
   # platform.user.persist.folders = [
   #   ".cache/clipcat"
