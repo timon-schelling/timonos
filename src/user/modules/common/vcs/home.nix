@@ -35,9 +35,14 @@ in
     };
     programs.jujutsu = {
       enable = true;
-      settings.user = {
-        name = cfg.name;
-        email = cfg.email;
+      settings = {
+        user = {
+          name = cfg.name;
+          email = cfg.email;
+        };
+        revset-aliases = {
+          "immutable_heads()" = "remote_bookmarks(regex:'^(main|master)$')";
+        };
       };
     };
     programs.delta = {
