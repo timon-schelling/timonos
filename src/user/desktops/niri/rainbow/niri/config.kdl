@@ -1,0 +1,190 @@
+// Ported from the hyprland rainbow config in ../../../hyprland/rainbow.
+//
+// The `environment` and `spawn-at-startup` nodes are appended by
+// desktop-home.nix, everything that does not depend on nix lives here.
+
+input {
+    keyboard {
+        xkb {
+            // `compose:sclk` sets scrolllock as the compose key, needed by keyd
+            options "compose:sclk"
+        }
+    }
+
+    touchpad {
+        natural-scroll
+    }
+
+    tablet {
+        map-to-output "DP-3"
+
+        // hyprland cropped the tablet to 216x121.5mm at y 6.75mm out of its full
+        // 216x135mm, to match the 16:9 monitor. niri has no active area setting,
+        // so the same crop is expressed as a calibration matrix.
+        calibration-matrix 1.0 0.0 0.0 0.0 1.111111 -0.055556
+    }
+
+    focus-follows-mouse
+}
+
+// TODO: outputs should be set per host
+
+// desktop
+output "DP-3" {
+    mode "2560x1440"
+    position x=1200 y=250
+    scale 1
+}
+output "DP-2" {
+    mode "1920x1200"
+    position x=0 y=0
+    scale 1
+    transform "90"
+}
+output "DP-1" {
+    mode "1920x1200"
+    position x=3760 y=0
+    scale 1
+    transform "90"
+}
+
+// laptop
+output "eDP-1" {
+    mode "1920x1200"
+    position x=0 y=0
+    scale 1
+}
+
+layout {
+    // hyprland used gaps_in 5 and gaps_out 7, niri gaps apply between windows and
+    // at the screen edge alike, so the extra outer 2 comes from struts.
+    gaps 5
+    struts {
+        left 2
+        right 2
+        top 2
+        bottom 2
+    }
+
+    border {
+        width 4
+
+        // niri gradients take exactly two stops, so the ten stop hyprland rainbow
+        // is approximated by interpolating magenta to blue the long way around the
+        // hue circle, which passes through orange, green and cyan on the way.
+        active-gradient from="#8f0064ee" to="#0052a5ee" angle=40 in="oklch longer hue"
+        inactive-color "#393939ff"
+    }
+
+    // hyprland drew a border only, no second highlight
+    focus-ring {
+        off
+    }
+
+    shadow {
+        off
+    }
+}
+
+cursor {
+    hide-after-inactive-ms 3000
+}
+
+// hyprland started without a splash, keep niri quiet too
+hotkey-overlay {
+    skip-at-startup
+}
+
+// hyprland rounding 10
+window-rule {
+    geometry-corner-radius 10
+    clip-to-geometry true
+}
+
+// vms
+window-rule {
+    match title=r"^\[vm.*\] - .*$"
+
+    border {
+        active-color "#0052a5ee"
+    }
+}
+
+// floating
+window-rule {
+    match app-id=r"^(.*iwgtk)$"
+
+    open-floating true
+}
+
+binds {
+    // focus, crossing monitors like hyprland's movefocus did
+    Mod+Left  { focus-column-or-monitor-left; }
+    Mod+Right { focus-column-or-monitor-right; }
+    Mod+Up    { focus-window-up; }
+    Mod+Down  { focus-window-down; }
+
+    Mod+Q { close-window; }
+    Mod+M { fullscreen-window; }
+    Mod+G { toggle-window-floating; }
+    Mod+F { toggle-windowed-fullscreen; }
+
+    // hyprland bound togglesplit and pseudo here, neither of which a scrolling
+    // layout has, so the keys drive niri's column handling instead
+    Mod+O       { toggle-column-tabbed-display; }
+    Mod+S       { consume-or-expel-window-right; }
+    Mod+Shift+S { consume-or-expel-window-left; }
+
+    // resize
+    Mod+Ctrl+Shift+Right { set-column-width "+20"; }
+    Mod+Ctrl+Shift+Left  { set-column-width "-20"; }
+    Mod+Ctrl+Shift+Up    { set-window-height "-20"; }
+    Mod+Ctrl+Shift+Down  { set-window-height "+20"; }
+
+    // move
+    Mod+Shift+Right { move-column-right-or-to-monitor-right; }
+    Mod+Shift+Left  { move-column-left-or-to-monitor-left; }
+    Mod+Shift+Up    { move-window-up; }
+    Mod+Shift+Down  { move-window-down; }
+
+    // workspaces
+    Mod+Page_Up   { focus-workspace-up; }
+    Mod+Page_Down { focus-workspace-down; }
+    Mod+WheelScrollUp   cooldown-ms=150 { focus-workspace-up; }
+    Mod+WheelScrollDown cooldown-ms=150 { focus-workspace-down; }
+    Mod+Shift+Page_Up   { move-column-to-workspace-up; }
+    Mod+Shift+Page_Down { move-column-to-workspace-down; }
+
+    // niri has no hyprland counterpart for these, but is awkward without them
+    Mod+Tab { toggle-overview; }
+    Mod+R   { switch-preset-column-width; }
+    Mod+C   { center-column; }
+
+    Mod+V       { spawn "clipboard-history"; }
+    Mod+B       { spawn "waybar-toggle"; }
+    Mod+Super_L { spawn "control-panel-toggle"; }
+
+    XF86MonBrightnessUp   allow-when-locked=true { spawn "monitor-set-brightness" "+10%"; }
+    XF86MonBrightnessDown allow-when-locked=true { spawn "monitor-set-brightness" "10-%"; }
+    XF86AudioRaiseVolume  allow-when-locked=true { spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "5%+" "-l" "2.0"; }
+    XF86AudioLowerVolume  allow-when-locked=true { spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "5%-" "-l" "2.0"; }
+    XF86AudioMute         allow-when-locked=true { spawn "wpctl" "set-mute" "@DEFAULT_AUDIO_SINK@" "toggle"; }
+
+    Print { spawn "screenshot"; }
+
+    Alt+Space { spawn "anyrun"; }
+
+    Mod+1 { spawn "ghostty"; }
+    Mod+2 { spawn "code"; }
+    Mod+3 { spawn "firefox"; }
+    Mod+4 { spawn "nautilus" "--new-window"; }
+    Mod+5 { spawn "bitwarden"; }
+    Mod+6 { spawn "rio"; }
+    Mod+7 { spawn "spotify"; }
+    Mod+8 { spawn "beeper"; }
+
+    Mod+Shift+Q { quit; }
+    // hyprland reloaded the renderer here. niri has no such thing and reloads its
+    // config on its own, so the key takes niri's own meaning for it.
+    Mod+Shift+R { switch-preset-window-height; }
+}

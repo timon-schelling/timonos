@@ -1,6 +1,20 @@
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
 
 {
+  specialisation = {
+    "niri".configuration = {
+      opts.system.desktops = {
+        hyprland.enable = lib.mkForce false;
+        niri.enable = true;
+      };
+      opts.users.timon.home.desktops = {
+        hyprland.rainbow.enable = false;
+        niri.rainbow.enable = true;
+      };
+      system.nixos.tags = [ "niri" ];
+    };
+  };
+
   opts = {
     system = {
       filesystem.drive = "/dev/nvme1n1";
