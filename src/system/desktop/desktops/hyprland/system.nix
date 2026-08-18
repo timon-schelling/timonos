@@ -1,4 +1,4 @@
-{ lib, config, pkgs, inputs, ... }@args:
+{ lib, config, pkgs, ... }:
 
 let
   cfg = config.opts.system.desktops.hyprland;
@@ -15,5 +15,7 @@ in
       enable = true;
       extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
     };
+
+    services.gvfs.enable = config.opts.system.hardware.automount.enable;
   };
 }

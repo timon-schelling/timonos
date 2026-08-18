@@ -12,6 +12,7 @@
         intelBusId = "PCI:0:2:0";
       };
       bluetooth.enable = true;
+      automount.enable = true;
     };
     network.wifi.enable = true;
   };
