@@ -13,7 +13,7 @@
         "tmp"
       ];
     };
-    desktops.hyprland.rainbow.enable = lib.mkDefault true;
+    desktops.hyprland.noctalia.enable = lib.mkDefault true;
     apps = {
       editor = {
         zed.enable = lib.mkDefault true;

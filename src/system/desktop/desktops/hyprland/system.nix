@@ -17,5 +17,8 @@ in
     };
 
     services.gvfs.enable = config.opts.system.hardware.automount.enable;
+
+    services.upower.enable = true;
+    services.power-profiles-daemon.enable = true;
   };
 }
