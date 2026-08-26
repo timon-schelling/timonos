@@ -113,10 +113,11 @@ let
     bar.default = {
       enabled = true;
       position = "top";
-      start = [ "workspaces" ];
+      start = [ "workspaces" "spacer_a" "media" ];
       center = [ "clock" ];
       end = [
         "battery"
+        "sysmon"
         "network"
         "bluetooth"
         "brightness"
@@ -139,7 +140,6 @@ let
       capsule_thickness = 1.0;
       concave_edge_corners = false;
       panel_overlap = 0;
-      dead_zone.actions.left = "panel-toggle control-center";
     };
 
     widget = {
@@ -171,22 +171,25 @@ let
         mute_color = "on_surface";
         show_label = false;
       };
+      media.hide_when_no_media = true;
+      sysmon = {
+        display = "none";
+        highlight_color = "on_surface_variant";
+      };
+      spacer_a = {
+        type = "spacer";
+        length = 15;
+      };
     };
 
     control_center = {
-      sidebar = "compact";
+      sidebar = "none";
+      sidebar_section = "none";
       width = 1000;
       show_session_button = true;
       show_shortcut_labels = true;
-      hidden_tabs = [ "home" "weather" "calendar" "screen-time" ];
-      shortcuts = [
-        { type = "wifi"; }
-        { type = "bluetooth"; }
-        { type = "audio"; }
-        { type = "mic_mute"; }
-        { type = "system"; }
-        { type = "power_profile"; }
-      ];
+      hidden_tabs = [ "weather" ];
+      shortcuts = [ ];
     };
 
     system.monitor = {
