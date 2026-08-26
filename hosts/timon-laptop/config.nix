@@ -36,4 +36,6 @@
       system.nixos.tags = [ "hybrid-gpu" ];
     };
   };
+
+  opts.system.network.tailscale.enable = true;
 }
