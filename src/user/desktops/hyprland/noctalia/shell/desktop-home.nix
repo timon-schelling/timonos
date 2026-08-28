@@ -252,7 +252,7 @@ let
       templates = {
         enable_builtin_templates = true;
         enable_community_templates = false;
-        builtin_ids = [ "GTK 3" "GTK 4" "Qt" "KColorScheme" ];
+        builtin_ids = [ ];
         community_ids = [ ];
       };
     };
