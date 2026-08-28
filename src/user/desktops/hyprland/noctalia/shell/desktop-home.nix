@@ -150,7 +150,7 @@ let
       workspaces = {
         show_all_outputs = false;
         hide_when_empty = false;
-        display = "none";
+        show_labels = false;
         pill_scale = 0.65;
         active_pill_size = 2.0;
       };
@@ -173,7 +173,8 @@ let
       };
       media.hide_when_no_media = true;
       sysmon = {
-        display = "none";
+        visualization = "none";
+        show_value = false;
         highlight_color = "on_surface_variant";
       };
       spacer_a = {
