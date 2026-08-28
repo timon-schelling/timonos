@@ -1,4 +1,4 @@
-{ config, lib, ... }:
+{ config, lib, pkgs, ... }:
 
 let
   cfg = config.opts.user.vcs;
@@ -33,6 +33,7 @@ in
         ".Trash-*"
       ];
     };
+
     programs.jujutsu = {
       enable = true;
       settings = {
@@ -43,8 +44,21 @@ in
         revset-aliases = {
           "immutable_heads()" = "remote_bookmarks(regex:'^(main|master)$')";
         };
+        aliases = {
+          setup = [ "util" "exec" "--" "jjf" "setup" ];
+          sync = [ "util" "exec" "--" "jjf" "sync" ];
+          pub = [ "util" "exec" "--" "jjf" "pub" ];
+          unpub = [ "util" "exec" "--" "jjf" "unpub" ];
+          arc = [ "util" "exec" "--" "jjf" "arc" ];
+          unarc = [ "util" "exec" "--" "jjf" "unarc" ];
+          arcs = [ "util" "exec" "--" "jjf" "arcs" ];
+        };
       };
     };
+    home.packages = [
+      (pkgs.nu.writeScriptBin "jjf" (builtins.readFile ./jjf.nu))
+    ];
+
     programs.delta = {
       enable = true;
       options = {
@@ -53,6 +67,12 @@ in
       };
       enableGitIntegration = true;
       enableJujutsuIntegration = true;
+    };
+
+    services.ssh-agent.enable = true;
+    programs.ssh = {
+      enable = true;
+      matchBlocks."*".addKeysToAgent = "yes";
     };
   };
 }
