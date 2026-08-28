@@ -13,6 +13,15 @@ def header [text: string] {
     print $"(ansi cyan_bold)($text)(ansi reset)"
 }
 
+def warn [msg: string] {
+    print --stderr $"(ansi yellow)warning:(ansi reset) ($msg)"
+}
+
+def first-or-null []: list -> any {
+    let items = $in
+    if ($items | is-empty) { null } else { $items | first }
+}
+
 def confirm [prompt: string] {
     (input $"($prompt) [y/N] " | str trim) == "y"
 }
@@ -71,11 +80,6 @@ def rev-exists [rev: string] {
     (do { jj log -r $rev --no-graph --ignore-working-copy -T '""' } | complete | get exit_code) == 0
 }
 
-def commit-of [rev: string] {
-    let res = do { jj log -r $rev --no-graph --ignore-working-copy -T 'commit_id' } | complete
-    if $res.exit_code == 0 { $res.stdout | str trim } else { null }
-}
-
 def untrack-quiet [ref: string] {
     do { jj bookmark untrack $ref } | complete | ignore
 }
@@ -90,13 +94,31 @@ def is-tracked [name: string, remote: string] {
     | is-not-empty
 }
 
-def trunk-name [] {
-    let res = do { jj config get 'revset-aliases."trunk()"' } | complete
-    if $res.exit_code == 0 {
-        $res.stdout | str trim | split row "@" | first
-    } else {
-        "main"
-    }
+def trunk-name []: nothing -> any {
+    jj log -r 'trunk()' --no-graph --ignore-working-copy -T 'local_bookmarks.map(|b| b.name()).join("\n")'
+    | lines
+    | each { str trim }
+    | where { $in != "" }
+    | each { unquote }
+    | first-or-null
+}
+
+def tracked-bookmarks [remote: string]: nothing -> list<string> {
+    jj bookmark list --tracked --remote $remote -T 'name ++ "\n"'
+    | lines
+    | each { unquote }
+    | uniq
+}
+
+def bookmark-commit [name: string, remote: string]: nothing -> any {
+    jj bookmark list --all-remotes $name -T 'if(present, if(conflict, "", name ++ "\t" ++ remote ++ "\t" ++ normal_target.commit_id() ++ "\n"), "")'
+    | lines
+    | parse "{name}\t{remote}\t{commit}"
+    | update name { unquote }
+    | update remote { unquote }
+    | where {|r| $r.name == $name and $r.remote == $remote }
+    | get commit
+    | first-or-null
 }
 
 def main [] {
@@ -142,6 +164,7 @@ def "main sync" [
 ] {
     let recorded = local-bookmark-positions
     if not $no_fetch {
+        header "fetch"
         jj git fetch --remote $PUBLIC --remote $PRIVATE
     }
 
@@ -189,7 +212,11 @@ def "main sync" [
         fail $"skipped: ($skipped | str join ', '); nothing was pushed"
     }
 
-    jj bookmark track 'glob:*' --remote $PRIVATE
+    let tracked_private = tracked-bookmarks $PRIVATE
+    let to_track = local-bookmarks | where {|b| $b not-in $tracked_private }
+    if not ($to_track | is-empty) {
+        jj bookmark track ...$to_track --remote $PRIVATE
+    }
 
     print ""
     header $PRIVATE
@@ -206,8 +233,10 @@ def "main sync" [
     if $public_plan.exit_code != 0 { exit $public_plan.exit_code }
 
     let trunk = trunk-name
-    if (not $allow_trunk) and ((commit-of $trunk) != (commit-of $"($trunk)@($PUBLIC)")) {
-        fail $"the ($PUBLIC) plan moves trunk '($trunk)'; rerun with --allow-trunk if intended"
+    if $trunk == null {
+        warn $"no local bookmark points at trunk\(\); skipping the trunk check"
+    } else if (not $allow_trunk) and ((bookmark-commit $trunk "") != (bookmark-commit $trunk $PUBLIC)) {
+        fail $"'($trunk)' and ($trunk)@($PUBLIC) point at different commits; rerun with --allow-trunk if intended"
     }
 
     if $dry_run { return }
@@ -321,7 +350,7 @@ def "main arcs" [
     for b in $archives {
         let parsed = $b | parse -r $ARCHIVE_RE
         if ($parsed | is-empty) {
-            print --stderr $"(ansi yellow)warning:(ansi reset) skipping '($b)': does not match archive/<date>[-<pr>]-<name>"
+            warn $"skipping '($b)': does not match archive/<date>[-<pr>]-<name>"
             continue
         }
         let p = $parsed | first
