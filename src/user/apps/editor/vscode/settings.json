@@ -56,5 +56,6 @@
     "git-graph.repository.fetchAndPrune": true,
     "git-graph.repository.commits.fetchAvatars": true,
     "git-graph.repository.showRemoteHeads": false,
-    "git-graph.showStatusBarItem": true
+    "git-graph.showStatusBarItem": true,
+    "diffEditor.renderSideBySide": false
 }
