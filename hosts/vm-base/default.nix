@@ -21,7 +21,7 @@
   opts = {
     system = {
       filesystem.type = "none";
-      adminAllowNoPassword = true;
+      sudo.noPassword = true;
       login.auto = {
         enable = true;
         user = "user";

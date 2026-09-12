@@ -7,7 +7,7 @@ vscode-utils.buildVscodeMarketplaceExtension {
   mktplcRef = {
     name = "chatgpt";
     publisher = "openai";
-    version = "26.5721.30844";
-    hash = "sha256-iT4v/aZ+3U1m0ykrZI2/mWUHV3ezbnhA8IiUfbgu73c=";
+    version = "26.5908.31748";
+    hash = "sha256-9KtSVNm2LsrZrQu5B4XGt3W33nDJQEJKK4ATa1vluL8=";
   };
 }

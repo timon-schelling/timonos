@@ -96,10 +96,13 @@ let
 
       session = {
         show_shortcuts = true;
+        grid = true;
+        grid_columns = 2;
         actions = [
-          { action = "logout"; enabled = true; shortcut = "1"; }
-          { action = "reboot"; enabled = true; shortcut = "2"; }
-          { action = "shutdown"; enabled = true; shortcut = "3"; }
+          { action = "lock"; enabled = true; shortcut = "1"; }
+          { action = "shutdown"; enabled = true; shortcut = "2"; }
+          { action = "logout"; enabled = true; shortcut = "3"; }
+          { action = "reboot"; enabled = true; shortcut = "4"; }
         ];
       };
       screen_corners.enabled = false;
@@ -259,11 +262,13 @@ let
     };
 
     lockscreen = {
-      enabled = false;
-      lock_before_suspend = false;
+      enabled = true;
+      lock_before_suspend = true;
+      blurred_desktop = true;
     };
 
     idle = {
+      pre_action_fade_seconds = 30;
       behavior.lock.enabled = false;
       behavior."screen-off".enabled = false;
       behavior.suspend.enabled = false;
