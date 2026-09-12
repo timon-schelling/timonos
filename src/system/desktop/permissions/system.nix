@@ -1,6 +1,9 @@
 { ... }:
 
 {
-  security.polkit.enable = true;
-  security.polkit.adminIdentities = [ "unix-group:admin" ];
+  security.polkit = {
+    enable = true;
+    adminIdentities = [ "unix-group:admin" ];
+    enablePkexecWrapper = true;
+  };
 }

@@ -9,6 +9,7 @@
       network = {
         # wifi.enable = true;
         # routeViaGateway = [ "10.0.0.0/8" "fd00::/8" ];
+        tailscale.enable = true;
       };
       desktops.gnome.enable = true;
     };

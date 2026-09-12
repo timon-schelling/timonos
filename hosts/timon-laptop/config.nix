@@ -13,8 +13,13 @@
       };
       bluetooth.enable = true;
       automount.enable = true;
+      fingerprint.enable = true;
     };
-    network.wifi.enable = true;
+    network = {
+      wifi.enable = true;
+      tailscale.enable = true;
+    };
+    sudo.timeout = 0;
   };
 
   boot = {
@@ -36,6 +41,4 @@
       system.nixos.tags = [ "hybrid-gpu" ];
     };
   };
-
-  opts.system.network.tailscale.enable = true;
 }

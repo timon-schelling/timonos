@@ -16,7 +16,7 @@
       };
       network = {
         wifi.enable = true;
-        routeViaGateway = [ "10.0.0.0/8" "fd00::/8" ];
+        tailscale.enable = true;
       };
     };
     users = {
@@ -46,7 +46,6 @@
   boot.blacklistedKernelModules = [ "tpm" "tpm_atmel" "tpm_infineon" "tpm_nsc" "tpm_tis" "tpm_crb" ];
 
   # Remote access setup
-  opts.system.network.tailscale.enable = true;
   opts.system.persist = {
     files = [
       "/etc/ssh/ssh_host_ed25519_key"
