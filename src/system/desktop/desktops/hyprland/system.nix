@@ -8,7 +8,10 @@ in
   config = lib.mkIf cfg.enable {
     programs.hyprland = {
       enable = true;
+      withUWSM = true;
     };
+
+    programs.uwsm.enable = true;
 
     programs.dconf.enable = true;
     xdg.portal = {

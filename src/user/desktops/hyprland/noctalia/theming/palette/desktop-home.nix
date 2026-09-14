@@ -4,10 +4,6 @@ let
   name = "custom";
 
   palette = {
-    # The dark tones step 161616 -> 1e1e1e -> 292929 -> 3d3d3d -> 444444. The
-    # shell now sits on 161616, the same background hyprland paints (T.background
-    # in hyprland/lua/theme.lua), and every other dark tone moved down one step
-    # onto it. The light foreground tones are untouched, so contrast only grows.
     dark = {
       mPrimary = "#aaaaaa";
       mOnPrimary = "#161616";

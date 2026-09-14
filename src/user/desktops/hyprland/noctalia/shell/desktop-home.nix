@@ -95,7 +95,7 @@ let
       };
 
       session = {
-        show_shortcuts = true;
+        show_shortcuts = false;
         grid = true;
         grid_columns = 2;
         actions = [

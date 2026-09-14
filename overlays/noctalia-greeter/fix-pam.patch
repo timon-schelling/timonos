@@ -1,0 +1,273 @@
+diff --git a/src/greeter/greeter.cpp b/src/greeter/greeter.cpp
+index ffee92bc9d..99ef1920df 100644
+--- a/src/greeter/greeter.cpp
++++ b/src/greeter/greeter.cpp
+@@ -389,6 +389,11 @@
+   }
+   setActiveSurface(keyboardSurface);
+
++  if (!m_initialAuthRequested && m_activeSurface != nullptr) {
++    m_initialAuthRequested = true;
++    m_activeSurface->startAuthentication();
++  }
++
+   m_syncingOutputWindows = false;
+   if (m_pendingOutputSync) {
+     syncOutputWindows();
+@@ -396,6 +401,13 @@
+ }
+
+ void Greeter::setActiveSurface(GreeterSurface* surface) {
++  if (surface != nullptr && m_authSurface != nullptr && m_authSurface != surface) {
++    surface->takeAuthenticationFrom(*m_authSurface);
++    m_authSurface = surface;
++    for (auto& view : m_views) {
++      view.surface->setSharedAuthBlocked(view.surface.get() != surface);
++    }
++  }
+   m_activeSurface = surface;
+   for (auto& view : m_views) {
+     view.surface->setKeyboardOwner(view.surface.get() == surface);
+diff --git a/src/greeter/greeter.h b/src/greeter/greeter.h
+index 635f711f66..e707731bc2 100644
+--- a/src/greeter/greeter.h
++++ b/src/greeter/greeter.h
+@@ -71,4 +71,5 @@
+   bool m_pendingOutputSync = false;
+   bool m_syncingOutputWindows = false;
+   bool m_greetdUnavailable = false;
++  bool m_initialAuthRequested = false;
+ };
+diff --git a/src/greeter/greeter_surface.cpp b/src/greeter/greeter_surface.cpp
+index 8b56bfda0f..a670591a21 100644
+--- a/src/greeter/greeter_surface.cpp
++++ b/src/greeter/greeter_surface.cpp
+@@ -45,6 +45,7 @@
+ #include <sstream>
+ #include <sys/types.h>
+ #include <unordered_set>
++#include <utility>
+ #include <wayland-client.h>
+
+ namespace {
+@@ -775,6 +776,21 @@
+   commitImmediateFrame(true);
+ }
+
++void GreeterSurface::takeAuthenticationFrom(GreeterSurface& other) {
++  m_authenticating = std::exchange(other.m_authenticating, false);
++  m_authSessionStarted = std::exchange(other.m_authSessionStarted, false);
++  m_cancelAuthRequested = std::exchange(other.m_cancelAuthRequested, false);
++  m_secretPromptWaiting = std::exchange(other.m_secretPromptWaiting, false);
++  m_hasPendingResponse = std::exchange(other.m_hasPendingResponse, false);
++  m_pendingResponse = std::exchange(other.m_pendingResponse, {});
++  m_pendingReplies = std::exchange(other.m_pendingReplies, {});
++  m_password = other.m_password;
++  if (m_passwordField != nullptr) {
++    m_passwordField->setValue(m_password);
++  }
++  other.clearPasswordInput();
++}
++
+ void GreeterSurface::setOutputViewport(float x, float y, float width, float height) {
+   m_viewportX = x;
+   m_viewportY = y;
+@@ -999,7 +1015,7 @@
+ }
+
+ void GreeterSurface::enterPasswordStep(std::size_t userIndex) {
+-  if (userIndex >= m_users.size()) {
++  if (userIndex >= m_users.size() || m_sharedAuthBlocked || awaitingReply() || m_authSessionStarted) {
+     return;
+   }
+   m_selectedUser = userIndex;
+@@ -1014,6 +1030,7 @@
+   }
+   refreshSelectionLabels();
+   notifyStateChanged();
++  startAuthentication();
+   commitImmediateFrame(true);
+ }
+
+@@ -1365,8 +1382,35 @@
+   }
+ }
+
++void GreeterSurface::startAuthentication() {
++  if (!m_passwordVisible
++      || m_username.empty()
++      || m_greetdClient == nullptr
++      || !m_greetdClient->isConnected()
++      || m_greetdUnavailable
++      || m_sharedAuthBlocked
++      || m_authSessionStarted
++      || awaitingReply()) {
++    return;
++  }
++  if (m_onAuthBeginRequested && !m_onAuthBeginRequested(this)) {
++    return;
++  }
++  m_authenticating = true;
++  kLog.info("greetd: create_session for '{}'", m_username);
++  if (!m_greetdClient->requestCreateSession(m_username)) {
++    reportGreetdTransportError(
++        m_greetdClient->lastError().value_or(GreetdError{GreetdErrorType::Error, "failed to send request"})
++    );
++    return;
++  }
++  m_authSessionStarted = true;
++  m_pendingReplies.push_back(AuthRequest::CreateSession);
++  syncAuthInteractivity();
++  commitImmediateFrame(false);
++}
++
+ void GreeterSurface::tryAuthenticate() {
+-  // Ignore re-submits while a request is already in flight.
+   if (m_greetdClient == nullptr || m_greetdUnavailable || m_sharedAuthBlocked || awaitingReply()) {
+     return;
+   }
+@@ -1375,31 +1419,16 @@
+     commitImmediateFrame(false);
+     return;
+   }
+-  if (m_password.empty() && !m_allowEmptyPassword) {
++  if (m_secretPromptWaiting && m_password.empty() && !m_allowEmptyPassword) {
+     updateStatus("Enter a password", true);
+     commitImmediateFrame(false);
+     return;
+   }
+
+   if (!m_authSessionStarted) {
+-    if (m_onAuthBeginRequested && !m_onAuthBeginRequested(this)) {
+-      return;
+-    }
+-    // Arm the typed input (possibly empty) to answer the first secret prompt.
+     m_pendingResponse = m_password;
+-    m_hasPendingResponse = true;
+-    m_authenticating = true;
+-    kLog.info("greetd: create_session for '{}'", m_username);
+-    if (!m_greetdClient->requestCreateSession(m_username)) {
+-      reportGreetdTransportError(
+-          m_greetdClient->lastError().value_or(GreetdError{GreetdErrorType::Error, "failed to send request"})
+-      );
+-      return;
+-    }
+-    m_authSessionStarted = true;
+-    m_pendingReplies.push_back(AuthRequest::CreateSession);
+-    syncAuthInteractivity();
+-    commitImmediateFrame(false);
++    m_hasPendingResponse = !m_password.empty();
++    startAuthentication();
+   } else if (m_secretPromptWaiting) {
+     postAuthResponse(m_password);
+   }
+@@ -1441,6 +1470,11 @@
+
+   // Cancel ack drained the queue; re-enable input it had locked.
+   if (expected == AuthRequest::Cancel) {
++    if (response.type != GreetdResponseType::Success) {
++      reportGreetdTransportError(GreetdError{GreetdErrorType::Error, "failed to cancel authentication"});
++      return;
++    }
++    m_cancelAuthRequested = false;
+     if (m_onAuthEnded) {
+       m_onAuthEnded(this);
+     }
+@@ -1449,6 +1483,17 @@
+     return;
+   }
+
++  // Back may be pressed while PAM is scanning. Drain its outstanding reply,
++  // including success, before cancelling; never launch the abandoned login.
++  if (m_cancelAuthRequested) {
++    if (!resetAuthSession()) {
++      return;
++    }
++    syncAuthInteractivity();
++    commitImmediateFrame(false);
++    return;
++  }
++
+   switch (response.type) {
+   case GreetdResponseType::Error:
+     onAuthError(response.error);
+@@ -1554,6 +1599,7 @@
+   m_greetdUnavailable = true;
+   m_authenticating = false;
+   m_authSessionStarted = false;
++  m_cancelAuthRequested = false;
+   m_secretPromptWaiting = false;
+   m_hasPendingResponse = false;
+   m_pendingResponse.clear();
+@@ -1690,6 +1736,7 @@
+     m_statusLabel->setText(text);
+     m_statusLabel->setColor(colorForRole(isError ? ColorRole::Error : ColorRole::OnSurfaceVariant));
+   }
++  notifyStateChanged();
+   requestLayout();
+ }
+
+@@ -2163,9 +2210,22 @@
+ }
+
+ void GreeterSurface::runBackAction() {
+-  if (!showsUserDropdown()) {
++  if (!showsUserDropdown()
++      || m_sharedAuthBlocked
++      || m_greetdUnavailable
++      || (!m_pendingReplies.empty() && m_pendingReplies.front() == AuthRequest::StartSession)) {
+     return;
+   }
++  m_authenticating = false;
++  m_secretPromptWaiting = false;
++  m_hasPendingResponse = false;
++  m_pendingResponse.clear();
++  if (m_authSessionStarted) {
++    m_cancelAuthRequested = true;
++    if (!awaitingReply() && !resetAuthSession()) {
++      return;
++    }
++  }
+   m_passwordVisible = false;
+   m_passwordField->setValue("");
+   m_password.clear();
+@@ -2868,7 +2928,7 @@
+ }
+
+ bool GreeterSurface::handleNavigationKey(std::uint32_t sym, std::uint32_t utf32, std::uint32_t modifiers) {
+-  if (m_authenticating) {
++  if (m_sharedAuthBlocked || (!m_pendingReplies.empty() && m_pendingReplies.front() == AuthRequest::StartSession)) {
+     return false;
+   }
+   const bool shift = (modifiers & KeyMod::Shift) != 0;
+diff --git a/src/greeter/greeter_surface.h b/src/greeter/greeter_surface.h
+index ab739a15bf..7c71c0d2ae 100644
+--- a/src/greeter/greeter_surface.h
++++ b/src/greeter/greeter_surface.h
+@@ -59,6 +59,8 @@
+
+   // Drive the greetd auth conversation forward when its socket is readable.
+   void onGreetdReadable();
++  // Start PAM without supplying credentials when the selected user's form opens.
++  void startAuthentication();
+   // Fail closed without sending another request when the shared greetd backend
+   // can no longer make progress.
+   void setGreetdUnavailable(std::string_view reason);
+@@ -88,6 +90,9 @@
+   [[nodiscard]] Node* sceneRoot() noexcept { return &m_root; }
+
+ private:
++  friend class Greeter;
++  friend struct GreeterAuthTest;
++  void takeAuthenticationFrom(GreeterSurface& other);
+   void notifyStateChanged();
+   [[nodiscard]] bool pointerInViewport(float x, float y) const;
+   void syncScaledTypography();
+@@ -240,6 +245,7 @@
+   bool m_greetdUnavailable = false;
+   bool m_sharedAuthBlocked = false;
+   bool m_authSessionStarted = false;
++  bool m_cancelAuthRequested = false;
+   bool m_secretPromptWaiting = false; // greetd wants secret input from the user
+   bool m_hasPendingResponse = false;  // user-supplied input armed for next prompt
+   std::string m_pendingResponse;

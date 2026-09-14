@@ -7,8 +7,8 @@ in
   options = {
     opts.system.login = {
       greeter = lib.mkOption {
-        type = lib.types.enum [ "tui" "gui" "tty" ];
-        default = "tui";
+        type = lib.types.enum [ "tui" "gui" "tty" "noctalia" ];
+        default = "noctalia";
       };
       auto = lib.mkOption {
         type = lib.types.submodule {
@@ -171,6 +171,46 @@ in
           mode = "0755";
         }
       ];
+    })
+
+    (lib.mkIf (cfg.greeter == "noctalia") {
+      services.displayManager.noctalia-greeter = {
+        enable = true;
+        settings.appearance = {
+          scheme = "Synced";
+          theme_mode = "dark";
+          palette = {
+            primary = "#878787";
+            on_primary = "#161616";
+            secondary = "#878787";
+            on_secondary = "#161616";
+            tertiary = "#878787";
+            on_tertiary = "#161616";
+            error = "#7e0000";
+            on_error = "#ffffff";
+            surface = "#161616";
+            on_surface = "#878787";
+            surface_variant = "#161616";
+            on_surface_variant = "#878787";
+            outline = "#3d3d3d";
+            shadow = "#000000";
+            hover = "#292929";
+            on_hover = "#878787";
+          };
+          scheme_selector_position = "hidden";
+          hide_logo = true;
+        };
+      };
+
+      services.greetd.settings.default_session = {
+        user = "greeter";
+        command = "${pkgs.nu.writeScript "greetd-noctalia" ''
+          $env.XCURSOR_THEME = "oreo_custom_cursors"
+          $env.XCURSOR_PATH = "${pkgs.oreo-custom-cursors}/share/icons"
+          $env.XCURSOR_SIZE = "96"
+          exec ${lib.getExe pkgs.cage} -m last -- ${pkgs.noctalia-greeter}/bin/noctalia-greeter
+        ''}";
+      };
     })
   ];
 }
