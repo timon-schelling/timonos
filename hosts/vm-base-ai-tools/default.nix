@@ -3,6 +3,7 @@
 {
   environment.systemPackages = [
     pkgs.claude-code
+    pkgs.codex
   ];
 
   home-manager.users.user.programs.vscode.profiles.default.extensions = [
