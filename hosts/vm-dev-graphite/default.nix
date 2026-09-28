@@ -17,7 +17,7 @@
       hash = "sha256-vCCTFjhroux8cKR/hY6l4fxlJcW9gSzhn4bGct3vYVA==";
       flake = builtins.getFlake "github:GraphiteEditor/Graphite/${rev}?narHash=${hash}";
       devShell = flake.devShells.${pkgs.stdenv.hostPlatform.system}.default;
-      basePackages = devShell.buildInputs ++ devShell.nativeBuildInputs ++ [ pkgs.stdenv.cc ];
+      basePackages = devShell.buildInputs ++ devShell.nativeBuildInputs ++ [ (pkgs.useWildLinker pkgs.stdenv).cc ];
       packages = builtins.concatMap (
         pkg:
           if builtins.isAttrs pkg && builtins.hasAttr "out" pkg then
