@@ -12,9 +12,9 @@
 
   config =
     let
-      rev = "34a9aa9a48ba20101222bb422ace06de4e039566";
+      rev = "d10ccbedac06497ee4766a7061d29281ee5df811";
       # Update with `nix flake metadata --json github:GraphiteEditor/Graphite/<new-rev>`
-      hash = "sha256-vCCTFjhroux8cKR/hY6l4fxlJcW9gSzhn4bGct3vYVA==";
+      hash = "sha256-zE3eH4DaZhALFcJ6vjp1K/ItJayuc1oUscRF5XtOjG8=";
       flake = builtins.getFlake "github:GraphiteEditor/Graphite/${rev}?narHash=${hash}";
       devShell = flake.devShells.${pkgs.stdenv.hostPlatform.system}.default;
       basePackages = devShell.buildInputs ++ devShell.nativeBuildInputs ++ [ (pkgs.useWildLinker pkgs.stdenv).cc ];
