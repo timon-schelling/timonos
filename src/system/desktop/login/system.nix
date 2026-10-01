@@ -7,7 +7,7 @@ in
   options = {
     opts.system.login = {
       greeter = lib.mkOption {
-        type = lib.types.enum [ "tui" "gui" "tty" "noctalia" ];
+        type = lib.types.enum [ "tui" "gui" "tty" "noctalia" "none" ];
         default = "noctalia";
       };
       auto = lib.mkOption {
@@ -34,9 +34,9 @@ in
 
   config = lib.mkMerge [
 
-    {
+    (lib.mkIf (cfg.greeter != "none") {
       services.greetd.enable = true;
-    }
+    })
 
     (lib.mkIf cfg.auto.enable {
       services = {
@@ -151,7 +151,6 @@ in
     (lib.mkIf (cfg.greeter == "tty") {
       services.greetd = {
         enable = true;
-        vt = 7;
         settings.default_session = {
           command = "${lib.getExe pkgs.tuigreet} -g '' --time --remember --remember-user-session --asterisks";
           user = "greeter";
