@@ -1,0 +1,137 @@
+diff --git a/lix/libfetchers/path.cc b/lix/libfetchers/path.cc
+index ea07c76cf..57f24c685 100644
+--- a/lix/libfetchers/path.cc
++++ b/lix/libfetchers/path.cc
+@@ -3,10 +3,76 @@
+ #include "lix/libstore/store-api.hh"
+ #include "lix/libutil/archive.hh"
+ #include "lix/libutil/async-io.hh"
++#include "lix/libutil/logging.hh"
++#include "lix/libutil/processes.hh"
+ #include "lix/libutil/result.hh"
++#include "lix/libutil/strings.hh"
++
++#include <sys/stat.h>
++#include <unistd.h>
+
+ namespace nix::fetchers {
+
++static std::optional<Path> findJjRoot(Path dir)
++{
++    while (true) {
++        if (pathExists(dir + "/.git"))
++            return std::nullopt;
++        if (pathExists(dir + "/.jj"))
++            return dir;
++        if (dir == "/")
++            return std::nullopt;
++        dir = dirOf(dir);
++    }
++}
++
++static kj::Promise<Result<std::pair<int, std::string>>>
++runJjFileList(const Path & jjRoot, bool snapshot)
++{
++    Strings args = {
++        "--no-pager", "--color=never", "-R", jjRoot, "file", "list", "-T", "path ++ \"\\0\""
++    };
++    if (!snapshot)
++        args.push_front("--ignore-working-copy");
++    return runProgram(RunOptions{
++        .program = "jj",
++        .args = args,
++    });
++}
++
++static kj::Promise<Result<std::set<std::string>>>
++jjTrackedFiles(const Path & jjRoot, const Path & root)
++try {
++    bool snapshot = lstat(jjRoot + "/.jj").st_uid == geteuid();
++    auto result = TRY_AWAIT(runJjFileList(jjRoot, snapshot));
++
++    if (snapshot && !statusOk(result.first)) {
++        printTaggedWarning(
++            "jj could not snapshot the working copy of '%s', using its last snapshot", jjRoot
++        );
++        result = TRY_AWAIT(runJjFileList(jjRoot, false));
++    }
++
++    if (!statusOk(result.first))
++        throw Error(
++            "could not list the files jj tracks in '%s': jj %s",
++            jjRoot,
++            statusToString(result.first)
++        );
++
++    auto & out = result.second;
++    auto prefix = root == jjRoot
++        ? std::string()
++        : root.substr(jjRoot.size() + (jjRoot == "/" ? 0 : 1)) + "/";
++    std::set<std::string> files;
++    for (auto & line : tokenizeString<Strings>(out, std::string_view("\0", 1)))
++        if (line.starts_with(prefix))
++            files.insert(line.substr(prefix.size()));
++    co_return files;
++} catch (...) {
++    co_return result::current_exception();
++}
++
+ /* Allow the user to pass in "fake" tree info
+    attributes. This is useful for making a pinned tree
+    work the same as the repository from which is exported
+@@ -143,8 +209,25 @@ struct PathInputScheme : InputScheme
+         if (!storePath || storePath->name() != "source"
+             || !TRY_AWAIT(store->isValidPath(*storePath)))
+         {
++            auto root = canonPath(absPath);
++            auto jjRoot = findJjRoot(root);
++            std::optional<std::set<std::string>> files;
++            if (jjRoot)
++                files = TRY_AWAIT(jjTrackedFiles(*jjRoot, root));
++
++            PathFilter filter = [&](const Path & p) -> bool {
++                if (!files)
++                    return true;
++                std::string file(p, root.size() + 1);
++                if (S_ISDIR(lstat(p).st_mode)) {
++                    auto prefix = file + "/";
++                    auto i = files->lower_bound(prefix);
++                    return i != files->end() && i->starts_with(prefix);
++                }
++                return files->count(file) > 0;
++            };
+             // FIXME: try to substitute storePath.
+-            auto src = AsyncGeneratorInputStream{dumpPathAndGetMtime(absPath, mtime)};
++            auto src = AsyncGeneratorInputStream{dumpPathAndGetMtime(root, mtime, filter)};
+             storePath = TRY_AWAIT(store->addToStoreFromDump(src, "source"));
+         }
+         input.attrs.insert_or_assign("lastModified", uint64_t(mtime));
+diff --git a/lix/libutil/archive.cc b/lix/libutil/archive.cc
+index 2a04e1797..c6680fb4e 100644
+--- a/lix/libutil/archive.cc
++++ b/lix/libutil/archive.cc
+@@ -175,9 +175,9 @@ static nar::Entry list(Path path, time_t & mtime, PathFilter & filter, bool retu
+     }
+ }
+
+-WireFormatGenerator dumpPathAndGetMtime(Path path, time_t & mtime)
++WireFormatGenerator dumpPathAndGetMtime(Path path, time_t & mtime, PathFilter & filter)
+ {
+-    co_yield dump(list(path, mtime, defaultPathFilter, true));
++    co_yield dump(list(path, mtime, filter, true));
+ }
+
+ WireFormatGenerator dumpPath(Path path, PathFilter & filter)
+diff --git a/lix/libutil/archive.hh b/lix/libutil/archive.hh
+index 35829fbb3..f65b1a1af 100644
+--- a/lix/libutil/archive.hh
++++ b/lix/libutil/archive.hh
+@@ -66,7 +66,7 @@ WireFormatGenerator dumpPath(Path path);
+ /**
+  * Same as dumpPath(), but returns the last modified date of the path.
+  */
+-WireFormatGenerator dumpPathAndGetMtime(Path path, time_t & mtime);
++WireFormatGenerator dumpPathAndGetMtime(Path path, time_t & mtime, PathFilter & filter = defaultPathFilter);
+
+ /**
+  * Reusable intermediate state of `dumpPath` with path filters applied.
