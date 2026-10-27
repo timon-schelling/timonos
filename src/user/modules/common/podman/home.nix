@@ -9,10 +9,7 @@ in
   };
   config = lib.mkIf cfg.enable {
     platform.user.persist.folders = [
-      {
-        directory = ".local/share/containers/storage";
-        method = "symlink";
-      }
+      ".local/share/containers/storage"
     ];
 
     home.packages = [

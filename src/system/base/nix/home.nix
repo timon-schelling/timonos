@@ -2,10 +2,7 @@
 
 {
   platform.user.persist.folders = [
-    {
-      directory = ".cache/nix";
-      method = "symlink";
-    }
+    ".cache/nix"
   ];
 
   home.stateVersion = config.opts.system.stateVersion;

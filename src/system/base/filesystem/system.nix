@@ -44,7 +44,7 @@
                     config.opts.system.filesystem.type == "impermanent" ||
                     config.opts.system.filesystem.type == "ephemeral"
                   );
-                  description = "persistence configuration with impermanece";
+                  description = "persistence configuration with bind mounts from /persist";
                 };
               };
             };
