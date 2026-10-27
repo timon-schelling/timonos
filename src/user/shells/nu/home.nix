@@ -1,4 +1,4 @@
-{ pkgs, config, lib, ... }:
+{ pkgs, lib, ... }:
 
 {
   platform.user.persist = {
@@ -13,7 +13,7 @@
 
   programs.nushell = {
     enable = true;
-    environmentVariables = config.home.sessionVariables;
+    loadSessionVariables = true;
     envFile.source = ./env.nu;
     configFile.source = ./config.nu;
   };
