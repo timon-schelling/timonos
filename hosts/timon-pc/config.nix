@@ -13,6 +13,7 @@
         bluetooth.enable = true;
         automount.enable = true;
         i2c.enable = true;
+        logitech.enable = true;
       };
       network = {
         wifi.enable = true;

@@ -29,6 +29,7 @@
   ];
 
   home-manager.users.user.programs.git.ignores = [
+    "AGENTS.md"
     "CLAUDE.md"
     ".claude"
     ".codex"
