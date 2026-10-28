@@ -9,6 +9,11 @@ in
     programs.hyprland = {
       enable = true;
       withUWSM = true;
+      package = pkgs.hyprland.overrideAttrs (old: {
+        postInstall = (old.postInstall or "") + ''
+          sed -i '/^\[Desktop Entry\]/a NoDisplay=true' $out/share/wayland-sessions/hyprland.desktop
+        '';
+      });
     };
 
     programs.uwsm.enable = true;
